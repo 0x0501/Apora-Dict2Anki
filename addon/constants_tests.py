@@ -1,4 +1,5 @@
 """For testing only. Do NOT import or use variables in this file!"""
+
 from constants import *
 
 
@@ -97,7 +98,7 @@ BACKWARDS_CARD_TEMPLATE_QFMT = """\
 BACKWARDS_CARD_TEMPLATE_AFMT = NORMAL_CARD_TEMPLATE_AFMT
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     fieldGroup = FieldGroup()
     normal_qfmt = normal_card_template_qfmt(fieldGroup)
     assert normal_qfmt == NORMAL_CARD_TEMPLATE_QFMT

@@ -1,3 +1,6 @@
 from . import youdao, eudict
 
-dictionaries = (youdao.Youdao, eudict.Eudict,)
+dictionaries = (
+    youdao.Youdao,
+    eudict.Eudict,
+)

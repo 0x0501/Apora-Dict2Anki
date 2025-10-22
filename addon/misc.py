@@ -3,7 +3,7 @@ from queue import Queue
 from threading import Thread
 from abc import ABC, abstractmethod
 
-logger = logging.getLogger('dict2Anki.misc')
+logger = logging.getLogger("dict2Anki.misc")
 
 
 class SimpleWord(ABC):
@@ -25,9 +25,16 @@ class SimpleWord(ABC):
             bookId = int(values[3])
         if n > 4:
             bookName = values[4]
-        return SimpleWord(term=term, trans=trans, modifiedTime=modifiedTime, bookId=bookId, bookName=bookName)
+        return SimpleWord(
+            term=term,
+            trans=trans,
+            modifiedTime=modifiedTime,
+            bookId=bookId,
+            bookName=bookName,
+        )
 
     """A SimpleWord includes the term and a brief translation, as well as other metadata."""
+
     def __init__(self, term: str, trans="", modifiedTime=0, bookId=0, bookName=""):
         self.term = term
         self.trans = trans
@@ -36,7 +43,7 @@ class SimpleWord(ABC):
         self.bookName = bookName
 
     def toString(self) -> str:
-        return f'{self.term} {self.trans} modifiedTime={self.modifiedTime}, bookId={self.bookId}, bookName={self.bookName}'
+        return f"{self.term} {self.trans} modifiedTime={self.modifiedTime}, bookId={self.bookId}, bookName={self.bookName}"
 
     def __str__(self) -> str:
         # return self.toString()
@@ -48,7 +55,6 @@ class SimpleWord(ABC):
 
 
 class AbstractDictionary(ABC):
-
     @staticmethod
     @abstractmethod
     def loginCheckCallbackFn(cookie: dict, content: str):
@@ -98,7 +104,7 @@ class Mask:
         self.info = info
 
     def __repr__(self):
-        return '*******'
+        return "*******"
 
     def __str__(self):
         return self.info

@@ -38,10 +38,12 @@ class TimedBufferingHandler(BufferingHandler):
         """
         super().__init__(capacity)
         self.eventEmitter = LogEventEmitter(parent)
-        formatter = Formatter('[$name][$levelname] $message', style="$")
+        formatter = Formatter("[$name][$levelname] $message", style="$")
         self.setFormatter(formatter)
         # flush logs every `flush_interval` seconds
-        self.timer_stopper, self.timer_thread = call_at_interval(flush_interval, self.flush)
+        self.timer_stopper, self.timer_thread = call_at_interval(
+            flush_interval, self.flush
+        )
 
     def flush(self):
         if not self.buffer:
@@ -69,5 +71,5 @@ class Formatter(logging.Formatter):
     def format(self, record):
         s = super(Formatter, self).format(record)
         if record.exc_text:
-            s = s.replace('\n', '')
+            s = s.replace("\n", "")
         return s

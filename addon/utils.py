@@ -11,17 +11,19 @@ def set_sub_ignore_case(a, b: set) -> set:
 
 
 def get_image(fieldValue: str) -> str:
-    if not fieldValue: return ""
+    if not fieldValue:
+        return ""
     soup = BeautifulSoup(fieldValue, features="html.parser")
     result = []
-    for img in soup.find_all('img', src=True):
-        result.append(img['src'])
+    for img in soup.find_all("img", src=True):
+        result.append(img["src"])
     return result[0] if result else ""
 
 
 def get_audio(fieldValue: str) -> str:
-    if not fieldValue: return ""
-    matches = re.findall(r'\[sound:(.+)]', fieldValue)
+    if not fieldValue:
+        return ""
+    matches = re.findall(r"\[sound:(.+)]", fieldValue)
     return matches[0] if matches else ""
 
 
@@ -43,7 +45,7 @@ def is_media_file_missing(fieldValue: str, media_dir: str, f_get) -> bool:
 
 def read_words_from_file(filename: str) -> [[str]]:
     lines = []
-    with open(filename, 'r', encoding='utf8') as f:
+    with open(filename, "r", encoding="utf8") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -51,13 +53,13 @@ def read_words_from_file(filename: str) -> [[str]]:
             lines.append(line)
     word_list = []
     for line in lines:
-        fields = [re.sub(r'\s+', ' ', f.strip()) for f in re.split(r'\t+', line)]
+        fields = [re.sub(r"\s+", " ", f.strip()) for f in re.split(r"\t+", line)]
         word_list.append(fields)
     return word_list
 
 
-if __name__ == '__main__':
-    words_file = 'words.txt'
+if __name__ == "__main__":
+    words_file = "words.txt"
     # homedir = str(Path.home())
     # words_file = homedir+'/words2中文文件名.txt'
     wordlist = read_words_from_file(words_file)

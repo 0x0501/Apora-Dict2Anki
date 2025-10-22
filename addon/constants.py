@@ -1,31 +1,58 @@
-VERSION = 'v6.3.6k'
-RELEASE_URL = 'https://github.com/lixvbnet/Dict2Anki'
-VERSION_CHECK_API = 'https://api.github.com/repos/lixvbnet/Dict2Anki/releases/latest'
-WINDOW_TITLE = f'Dict2Anki {VERSION}'
-MODEL_NAME = f'Dict2Anki'
+VERSION = "v6.3.6k"
+RELEASE_URL = "https://github.com/lixvbnet/Dict2Anki"
+VERSION_CHECK_API = "https://api.github.com/repos/lixvbnet/Dict2Anki/releases/latest"
+WINDOW_TITLE = f"Dict2Anki {VERSION}"
+MODEL_NAME = f"Dict2Anki"
 
-USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36'
-HEADERS = {
-    'User-Agent': USER_AGENT
-}
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+HEADERS = {"User-Agent": USER_AGENT}
 
-LOG_BUFFER_CAPACITY = 20    # number of log items
-LOG_FLUSH_INTERVAL = 3      # seconds
+LOG_BUFFER_CAPACITY = 20  # number of log items
+LOG_FLUSH_INTERVAL = 3  # seconds
 
 # continue to use Dict2Anki 4.x model
 ASSET_FILENAME_PREFIX = "MG"
 MODEL_FIELDS = [
-    'term', 'definition',
-    'definition_en',
-    'uk', 'us',
-    'phrase0', 'phrase1', 'phrase2', 'phrase_explain0', 'phrase_explain1', 'phrase_explain2',
-    'sentence0', 'sentence1', 'sentence2', 'sentence_explain0', 'sentence_explain1', 'sentence_explain2', 'sentence_speech0', 'sentence_speech1', 'sentence_speech2',
-    'pplaceHolder0', 'pplaceHolder1', 'pplaceHolder2',
-    'splaceHolder0', 'splaceHolder1', 'splaceHolder2',
-    'image', 'pronunciation',
-    'group', 'exam_type', 'modifiedTime',
+    "term",
+    "definition",
+    "definition_en",
+    "uk",
+    "us",
+    "phrase0",
+    "phrase1",
+    "phrase2",
+    "phrase_explain0",
+    "phrase_explain1",
+    "phrase_explain2",
+    "sentence0",
+    "sentence1",
+    "sentence2",
+    "sentence_explain0",
+    "sentence_explain1",
+    "sentence_explain2",
+    "sentence_speech0",
+    "sentence_speech1",
+    "sentence_speech2",
+    "pplaceHolder0",
+    "pplaceHolder1",
+    "pplaceHolder2",
+    "splaceHolder0",
+    "splaceHolder1",
+    "splaceHolder2",
+    "image",
+    "pronunciation",
+    "group",
+    "exam_type",
+    "modifiedTime",
 ]
-CARD_SETTINGS = ['definition_en', 'image', 'pronunciation', 'phrase', 'sentence', 'exam_type']
+CARD_SETTINGS = [
+    "definition_en",
+    "image",
+    "pronunciation",
+    "phrase",
+    "sentence",
+    "exam_type",
+]
 
 
 class FieldGroup:
@@ -39,27 +66,36 @@ class FieldGroup:
             ("{{phrase2}}", "{{phrase_explain2}}", "{{pplaceHolder2}}"),
         ]
         self.sentence = [
-            ("{{sentence0}}", "{{sentence_explain0}}", "{{splaceHolder0}}", '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech0}}"></audio>▶︎</a>'),
-            ("{{sentence1}}", "{{sentence_explain1}}", "{{splaceHolder1}}", '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech1}}"></audio>▶︎</a>'),
-            ("{{sentence2}}", "{{sentence_explain2}}", "{{splaceHolder2}}", '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech2}}"></audio>▶︎</a>'),
+            (
+                "{{sentence0}}",
+                "{{sentence_explain0}}",
+                "{{splaceHolder0}}",
+                '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech0}}"></audio>▶︎</a>',
+            ),
+            (
+                "{{sentence1}}",
+                "{{sentence_explain1}}",
+                "{{splaceHolder1}}",
+                '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech1}}"></audio>▶︎</a>',
+            ),
+            (
+                "{{sentence2}}",
+                "{{sentence_explain2}}",
+                "{{splaceHolder2}}",
+                '<a onclick="this.firstChild.play()"><audio src="{{sentence_speech2}}"></audio>▶︎</a>',
+            ),
         ]
         self.exam_type = "{{exam_type}}"
 
     def toggleOff(self, field):
         if field not in CARD_SETTINGS:
-            raise RuntimeError(f"Unexpected field: {field}. Must be in {CARD_SETTINGS}!")
-        if field == 'phrase':
-            setattr(self, field, [
-                ("", "", ""),
-                ("", "", ""),
-                ("", "", "")
-            ])
-        elif field == 'sentence':
-            setattr(self, field, [
-                ("", "", "", ""),
-                ("", "", "", ""),
-                ("", "", "", "")
-            ])
+            raise RuntimeError(
+                f"Unexpected field: {field}. Must be in {CARD_SETTINGS}!"
+            )
+        if field == "phrase":
+            setattr(self, field, [("", "", ""), ("", "", ""), ("", "", "")])
+        elif field == "sentence":
+            setattr(self, field, [("", "", "", ""), ("", "", "", ""), ("", "", "", "")])
         else:
             setattr(self, field, "")
 
@@ -258,7 +294,7 @@ tr {
 """
 
 
-PRON_TYPES = ['noPron', 'BrEPron', 'AmEPron']
+PRON_TYPES = ["noPron", "BrEPron", "AmEPron"]
 
 
 def get_pronunciation(word: dict, preferred_pron: int) -> (int, bool):

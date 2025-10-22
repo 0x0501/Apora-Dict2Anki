@@ -1,8 +1,22 @@
+# Set system path for external packages
+from . import setup  # noqa: F401
+
 import os
 import requests
 
+from aqt import mw, qconnect
+
+# import the "show info" tool from utils.py
+from aqt.utils import showInfo
+
+# import all of Qt GUI library
+from aqt.qt import QAction
+from .addon.addonWindow import Windows
+
 HOME = os.path.expanduser("~")
 BASHRC_FILE = HOME + "/.bashrc"
+
+print("__init__.py")
 
 
 def disable_ssl_check():
@@ -36,6 +50,8 @@ def disable_ssl_check_if_debug():
         pass
 
 
+print("__try__")
+
 try:
     from aqt import mw, qconnect
 
@@ -51,6 +67,8 @@ try:
         w = Windows()
         w.exec()
 
+    print("Add Dict2Anki-Apora to menuTools.")
+
     action = QAction("Dict2Anki...", mw)
     qconnect(action.triggered, show_window)
     mw.form.menuTools.addAction(action)
@@ -58,6 +76,9 @@ try:
 except Exception as ex:
     err = ex
     import os
+
+    print("Cannot import Qt GUI Library.")
+    print(ex)
 
     if os.environ.get("DEVDICT2ANKI"):
         import sys
@@ -68,3 +89,5 @@ except Exception as ex:
         window = Windows()
         window.exec()
         sys.exit(app.exec())
+
+print("__END__")

@@ -39,12 +39,16 @@ class Ui_Dialog(object):
         self.verticalLayout.addWidget(self.label)
         self.newWordListWidget = QtWidgets.QListWidget(parent=self.mainTab)
         self.newWordListWidget.setAlternatingRowColors(True)
-        self.newWordListWidget.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
+        self.newWordListWidget.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.MultiSelection
+        )
         self.newWordListWidget.setObjectName("newWordListWidget")
         self.verticalLayout.addWidget(self.newWordListWidget)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetDefaultConstraint)
+        self.verticalLayout_2.setSizeConstraint(
+            QtWidgets.QLayout.SizeConstraint.SetDefaultConstraint
+        )
         self.verticalLayout_2.setSpacing(2)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label_2 = QtWidgets.QLabel(parent=self.mainTab)
@@ -59,7 +63,9 @@ class Ui_Dialog(object):
         self.deckLayout = QtWidgets.QHBoxLayout()
         self.deckLayout.setObjectName("deckLayout")
         self.deckLabel = QtWidgets.QLabel(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.deckLabel.sizePolicy().hasHeightForWidth())
@@ -67,7 +73,9 @@ class Ui_Dialog(object):
         self.deckLabel.setObjectName("deckLabel")
         self.deckLayout.addWidget(self.deckLabel)
         self.deckComboBox = QtWidgets.QComboBox(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.deckComboBox.sizePolicy().hasHeightForWidth())
@@ -79,7 +87,9 @@ class Ui_Dialog(object):
         self.apiLayout = QtWidgets.QHBoxLayout()
         self.apiLayout.setObjectName("apiLayout")
         self.apiLabel = QtWidgets.QLabel(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apiLabel.sizePolicy().hasHeightForWidth())
@@ -87,7 +97,9 @@ class Ui_Dialog(object):
         self.apiLabel.setObjectName("apiLabel")
         self.apiLayout.addWidget(self.apiLabel)
         self.apiComboBox = QtWidgets.QComboBox(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.apiComboBox.sizePolicy().hasHeightForWidth())
@@ -98,18 +110,26 @@ class Ui_Dialog(object):
         self.dictionaryLayout = QtWidgets.QHBoxLayout()
         self.dictionaryLayout.setObjectName("dictionaryLayout")
         self.dictionaryLabel = QtWidgets.QLabel(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dictionaryLabel.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.dictionaryLabel.sizePolicy().hasHeightForWidth()
+        )
         self.dictionaryLabel.setSizePolicy(sizePolicy)
         self.dictionaryLabel.setObjectName("dictionaryLabel")
         self.dictionaryLayout.addWidget(self.dictionaryLabel)
         self.dictionaryComboBox = QtWidgets.QComboBox(parent=self.mainTab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dictionaryComboBox.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.dictionaryComboBox.sizePolicy().hasHeightForWidth()
+        )
         self.dictionaryComboBox.setSizePolicy(sizePolicy)
         self.dictionaryComboBox.setObjectName("dictionaryComboBox")
         self.dictionaryLayout.addWidget(self.dictionaryComboBox)
@@ -133,23 +153,33 @@ class Ui_Dialog(object):
         self.defaultConfigGroupBox.setObjectName("defaultConfigGroupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.defaultConfigGroupBox)
         self.gridLayout.setObjectName("gridLayout")
-        self.AmEPronRadioButton = QtWidgets.QRadioButton(parent=self.defaultConfigGroupBox)
+        self.AmEPronRadioButton = QtWidgets.QRadioButton(
+            parent=self.defaultConfigGroupBox
+        )
         self.AmEPronRadioButton.setChecked(True)
         self.AmEPronRadioButton.setObjectName("AmEPronRadioButton")
         self.gridLayout.addWidget(self.AmEPronRadioButton, 1, 2, 1, 1)
-        self.noPronRadioButton = QtWidgets.QRadioButton(parent=self.defaultConfigGroupBox)
+        self.noPronRadioButton = QtWidgets.QRadioButton(
+            parent=self.defaultConfigGroupBox
+        )
         self.noPronRadioButton.setEnabled(True)
         self.noPronRadioButton.setObjectName("noPronRadioButton")
         self.gridLayout.addWidget(self.noPronRadioButton, 1, 0, 1, 1)
-        self.briefDefinitionCheckBox = QtWidgets.QCheckBox(parent=self.defaultConfigGroupBox)
+        self.briefDefinitionCheckBox = QtWidgets.QCheckBox(
+            parent=self.defaultConfigGroupBox
+        )
         self.briefDefinitionCheckBox.setChecked(True)
         self.briefDefinitionCheckBox.setObjectName("briefDefinitionCheckBox")
         self.gridLayout.addWidget(self.briefDefinitionCheckBox, 0, 0, 1, 1)
-        self.BrEPronRadioButton = QtWidgets.QRadioButton(parent=self.defaultConfigGroupBox)
+        self.BrEPronRadioButton = QtWidgets.QRadioButton(
+            parent=self.defaultConfigGroupBox
+        )
         self.BrEPronRadioButton.setChecked(False)
         self.BrEPronRadioButton.setObjectName("BrEPronRadioButton")
         self.gridLayout.addWidget(self.BrEPronRadioButton, 1, 1, 1, 1)
-        self.syncTemplatesCheckbox = QtWidgets.QCheckBox(parent=self.defaultConfigGroupBox)
+        self.syncTemplatesCheckbox = QtWidgets.QCheckBox(
+            parent=self.defaultConfigGroupBox
+        )
         self.syncTemplatesCheckbox.setChecked(True)
         self.syncTemplatesCheckbox.setObjectName("syncTemplatesCheckbox")
         self.gridLayout.addWidget(self.syncTemplatesCheckbox, 0, 1, 1, 1)
@@ -159,10 +189,14 @@ class Ui_Dialog(object):
         self.gridLayout_3 = QtWidgets.QGridLayout(self.credentialGroupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.currentDictionaryLabel = QtWidgets.QLabel(parent=self.credentialGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.currentDictionaryLabel.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.currentDictionaryLabel.sizePolicy().hasHeightForWidth()
+        )
         self.currentDictionaryLabel.setSizePolicy(sizePolicy)
         self.currentDictionaryLabel.setObjectName("currentDictionaryLabel")
         self.gridLayout_3.addWidget(self.currentDictionaryLabel, 0, 0, 1, 2)
@@ -179,12 +213,18 @@ class Ui_Dialog(object):
         self.passwordLineEdit.setObjectName("passwordLineEdit")
         self.gridLayout_3.addWidget(self.passwordLineEdit, 1, 3, 1, 1)
         self.cookieLabel = QtWidgets.QLabel(parent=self.credentialGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cookieLabel.sizePolicy().hasHeightForWidth())
         self.cookieLabel.setSizePolicy(sizePolicy)
-        self.cookieLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeading|QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.cookieLabel.setAlignment(
+            QtCore.Qt.AlignmentFlag.AlignLeading
+            | QtCore.Qt.AlignmentFlag.AlignLeft
+            | QtCore.Qt.AlignmentFlag.AlignVCenter
+        )
         self.cookieLabel.setObjectName("cookieLabel")
         self.gridLayout_3.addWidget(self.cookieLabel, 2, 0, 1, 1)
         self.cookieLineEdit = QtWidgets.QLineEdit(parent=self.credentialGroupBox)
@@ -242,7 +282,9 @@ class Ui_Dialog(object):
         self.utilitiesGroupBox.setObjectName("utilitiesGroupBox")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.utilitiesGroupBox)
         self.gridLayout_7.setObjectName("gridLayout_7")
-        self.btnDownloadMissingAssets = QtWidgets.QPushButton(parent=self.utilitiesGroupBox)
+        self.btnDownloadMissingAssets = QtWidgets.QPushButton(
+            parent=self.utilitiesGroupBox
+        )
         self.btnDownloadMissingAssets.setObjectName("btnDownloadMissingAssets")
         self.gridLayout_7.addWidget(self.btnDownloadMissingAssets, 0, 0, 1, 1)
         self.btnFillMissingValues = QtWidgets.QPushButton(parent=self.utilitiesGroupBox)
@@ -279,14 +321,23 @@ class Ui_Dialog(object):
         self.apiLabel.setText(_translate("Dialog", "查询"))
         self.dictionaryLabel.setText(_translate("Dialog", "词典"))
         self.pullRemoteWordsBtn.setText(_translate("Dialog", "Pull words"))
-        self.btnImportFromFiles.setToolTip(_translate("Dialog", "Import words from txt files. (Use Tabs to separate the fields)"))
+        self.btnImportFromFiles.setToolTip(
+            _translate(
+                "Dialog",
+                "Import words from txt files. (Use Tabs to separate the fields)",
+            )
+        )
         self.btnImportFromFiles.setText(_translate("Dialog", "..."))
         self.queryBtn.setText(_translate("Dialog", "Query"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.mainTab), _translate("Dialog", "同步"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.mainTab), _translate("Dialog", "同步")
+        )
         self.defaultConfigGroupBox.setTitle(_translate("Dialog", "同步设置"))
         self.AmEPronRadioButton.setText(_translate("Dialog", "美式发音"))
         self.noPronRadioButton.setText(_translate("Dialog", "无发音"))
-        self.briefDefinitionCheckBox.setToolTip(_translate("Dialog", "Prefer Brief Definitions"))
+        self.briefDefinitionCheckBox.setToolTip(
+            _translate("Dialog", "Prefer Brief Definitions")
+        )
         self.briefDefinitionCheckBox.setText(_translate("Dialog", "精简释义"))
         self.BrEPronRadioButton.setText(_translate("Dialog", "英式发音"))
         self.syncTemplatesCheckbox.setText(_translate("Dialog", "同步模版"))
@@ -299,20 +350,42 @@ class Ui_Dialog(object):
         self.cardConfigGroupBox.setTitle(_translate("Dialog", "卡片设置"))
         self.phraseCheckBox.setText(_translate("Dialog", "短语"))
         self.pronunciationCheckBox.setText(_translate("Dialog", "发音"))
-        self.definitionEnCheckBox.setToolTip(_translate("Dialog", "Include English Translations"))
+        self.definitionEnCheckBox.setToolTip(
+            _translate("Dialog", "Include English Translations")
+        )
         self.definitionEnCheckBox.setText(_translate("Dialog", "英文释义"))
         self.imageCheckBox.setText(_translate("Dialog", "图片"))
         self.sentenceCheckBox.setText(_translate("Dialog", "例句"))
         self.examTypeCheckBox.setText(_translate("Dialog", "考试类型"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.settingTab), _translate("Dialog", "设置"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.settingTab), _translate("Dialog", "设置")
+        )
         self.dangerZoneGroupBox.setTitle(_translate("Dialog", "Danger Zone"))
-        self.btnBackwardTemplate.setText(_translate("Dialog", "Add/Delete Backwards Template"))
+        self.btnBackwardTemplate.setText(
+            _translate("Dialog", "Add/Delete Backwards Template")
+        )
         self.btnCheckTemplates.setText(_translate("Dialog", "Check Card Templates"))
         self.utilitiesGroupBox.setTitle(_translate("Dialog", "Utilities"))
-        self.btnDownloadMissingAssets.setToolTip(_translate("Dialog", "Check existing notes and download missing assets (images, audio files, etc.)"))
-        self.btnDownloadMissingAssets.setText(_translate("Dialog", "Download Missing Assets"))
-        self.btnFillMissingValues.setToolTip(_translate("Dialog", "Check existing notes and fill missing field values"))
+        self.btnDownloadMissingAssets.setToolTip(
+            _translate(
+                "Dialog",
+                "Check existing notes and download missing assets (images, audio files, etc.)",
+            )
+        )
+        self.btnDownloadMissingAssets.setText(
+            _translate("Dialog", "Download Missing Assets")
+        )
+        self.btnFillMissingValues.setToolTip(
+            _translate("Dialog", "Check existing notes and fill missing field values")
+        )
         self.btnFillMissingValues.setText(_translate("Dialog", "Fill Missing Values"))
-        self.btnExportAudio.setToolTip(_translate("Dialog", "Export all words in selected deck into a single audio file. (macOS only)"))
+        self.btnExportAudio.setToolTip(
+            _translate(
+                "Dialog",
+                "Export all words in selected deck into a single audio file. (macOS only)",
+            )
+        )
         self.btnExportAudio.setText(_translate("Dialog", "Export Audio (macOS only)"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.utilitiesTab), _translate("Dialog", "工具"))
+        self.tabWidget.setTabText(
+            self.tabWidget.indexOf(self.utilitiesTab), _translate("Dialog", "工具")
+        )

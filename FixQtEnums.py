@@ -6,9 +6,10 @@
 
 from typing import *
 import os, argparse, inspect, re
+
 q = "'"
 
-help_text = '''
+help_text = """
 Copyright (c) 2022 Kristof Mulier
 MIT licensed, see bottom
 
@@ -51,7 +52,7 @@ You can invoke this script in the following ways:
                                                       
     $ python enum_converter_tool.py --help            Show this help info
 
-'''
+"""
 
 # IMPORTANT: Point at the folder where PyQt6 stub files are located. This folder will be examined to
 # fill the 'enum_dict'.
@@ -70,26 +71,23 @@ pyqt6_folderpath = PyQt6.__path__[0]
 # in that directory. An os.walk() operation starts from this toplevel directory to find and process
 # all files.
 toplevel_directory = os.path.realpath(
-    os.path.dirname(
-        os.path.realpath(
-            inspect.getfile(
-                inspect.currentframe()
-            )
-        )
-    )
-).replace('\\', '/')
+    os.path.dirname(os.path.realpath(inspect.getfile(inspect.currentframe())))
+).replace("\\", "/")
 
 # Figure out the name of this script. It will be used later on to exclude oneself from the replace-
 # ments.
-script_name = os.path.realpath(
-    inspect.getfile(inspect.currentframe())
-).replace('\\', '/').split('/')[-1]
+script_name = (
+    os.path.realpath(inspect.getfile(inspect.currentframe()))
+    .replace("\\", "/")
+    .split("/")[-1]
+)
 
 # Create the dictionary that will be filled with enums
-enum_dict:Dict[str, str] = {}
+enum_dict: Dict[str, str] = {}
 
-def fill_enum_dict(filepath:str) -> None:
-    '''
+
+def fill_enum_dict(filepath: str) -> None:
+    """
     Parse the given stub file to extract the enums and flags. Each one is inside a class, possibly a
     nested one. For example:
 
@@ -110,28 +108,28 @@ def fill_enum_dict(filepath:str) -> None:
     enum_dict = {
         'Qt.Round' : 'Qt.HighDpiScaleFactorRoundingPolicy.Round'
     }
-    '''
-    content:str = ''
-    with open(filepath, 'r', encoding='utf-8', newline='\n', errors='replace') as f:
+    """
+    content: str = ""
+    with open(filepath, "r", encoding="utf-8", newline="\n", errors="replace") as f:
         content = f.read()
 
-    p = re.compile(r'(\w+)\s+=\s+\.\.\.\s+#\s*type:\s*([\w.]+)')
+    p = re.compile(r"(\w+)\s+=\s+\.\.\.\s+#\s*type:\s*([\w.]+)")
     for m in p.finditer(content):
         # Observe the enum's name, eg. 'Round'
         enum_name = m.group(1)
 
         # Figure out in which classes it is
-        class_list = m.group(2).split('.')
+        class_list = m.group(2).split(".")
 
         # If it belongs to just one class (no nesting), there is no point in continuing
         if len(class_list) == 1:
             continue
 
         # Extract the old and new enum's name
-        old_enum = f'{class_list[0]}.{enum_name}'
-        new_enum = ''
+        old_enum = f"{class_list[0]}.{enum_name}"
+        new_enum = ""
         for class_name in class_list:
-            new_enum += f'{class_name}.'
+            new_enum += f"{class_name}."
             continue
         new_enum += enum_name
 
@@ -140,26 +138,28 @@ def fill_enum_dict(filepath:str) -> None:
         continue
     return
 
+
 def show_help() -> None:
-    '''
+    """
     Print help info and quit.
-    '''
+    """
     print(help_text)
     return
 
-def convert_enums_in_file(filepath:str, dry_run:bool) -> None:
-    '''
+
+def convert_enums_in_file(filepath: str, dry_run: bool) -> None:
+    """
     Convert the enums in the given file.
-    '''
-    filename:str = filepath.split('/')[-1]
+    """
+    filename: str = filepath.split("/")[-1]
 
     # Ignore the file in some cases
-    if any(filename == fname for fname in (script_name, )):
+    if any(filename == fname for fname in (script_name,)):
         return
 
     # Read the content
-    content:str = ''
-    with open(filepath, 'r', encoding='utf-8', newline='\n', errors='replace') as f:
+    content: str = ""
+    with open(filepath, "r", encoding="utf-8", newline="\n", errors="replace") as f:
         content = f.read()
 
     # Loop over all the keys in the 'enum_dict'. Perform a replacement in the 'content' for each of
@@ -175,7 +175,7 @@ def convert_enums_in_file(filepath:str, dry_run:bool) -> None:
         # In the situation above, k is found in 'qt.Qt.WindowType.Window' such that a replacement
         # will take place there, messing up the code! By surrounding k with bounds in the regex pat-
         # tern, this won't happen.
-        p = re.compile(fr'\b{k}\b')
+        p = re.compile(rf"\b{k}\b")
 
         # Substitute all occurences of k (key) in 'content' with v (value). The 'subn()' method re-
         # turns a tuple (new_string, number_of_subs_made).
@@ -184,67 +184,70 @@ def convert_enums_in_file(filepath:str, dry_run:bool) -> None:
             assert new_content == content
             continue
         assert new_content != content
-        print(f'{q}{filename}{q}: Replace {q}{k}{q} => {q}{v}{q} ({n})')
+        print(f"{q}{filename}{q}: Replace {q}{k}{q} => {q}{v}{q} ({n})")
         content = new_content
         continue
 
     if dry_run:
         return
 
-    with open(filepath, 'w', encoding='utf-8', newline='\n', errors='replace') as f:
+    with open(filepath, "w", encoding="utf-8", newline="\n", errors="replace") as f:
         f.write(content)
     return
 
-def convert_all(dry_run:bool) -> None:
-    '''
+
+def convert_all(dry_run: bool) -> None:
+    """
     Search and replace all enums.
-    '''
+    """
     for root, dirs, files in os.walk(toplevel_directory):
         for f in files:
-            if not f.endswith('.py'):
+            if not f.endswith(".py"):
                 continue
-            filepath = os.path.join(root, f).replace('\\', '/')
+            filepath = os.path.join(root, f).replace("\\", "/")
             convert_enums_in_file(filepath, dry_run)
             continue
         continue
     return
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description = 'Convert enums to fully-qualified names',
-        add_help    = False,
+        description="Convert enums to fully-qualified names",
+        add_help=False,
     )
-    parser.add_argument('-h', '--help'    , action='store_true')
-    parser.add_argument('-d', '--dry_run' , action='store_true')
-    parser.add_argument('-s', '--show'    , action='store_true')
+    parser.add_argument("-h", "--help", action="store_true")
+    parser.add_argument("-d", "--dry_run", action="store_true")
+    parser.add_argument("-s", "--show", action="store_true")
     args = parser.parse_args()
     if args.help:
         show_help()
     else:
-        #& Check if 'pyqt6_folderpath' exists
+        # & Check if 'pyqt6_folderpath' exists
         if not os.path.exists(pyqt6_folderpath):
             print(
-                f'\nERROR:\n'
-                f'Folder {q}{pyqt6_folderpath}{q} could not be found. Make sure that variable '
-                f'{q}pyqt6_folderpath{q} from line 57 points to the PyQt6 installation folder.\n'
+                f"\nERROR:\n"
+                f"Folder {q}{pyqt6_folderpath}{q} could not be found. Make sure that variable "
+                f"{q}pyqt6_folderpath{q} from line 57 points to the PyQt6 installation folder.\n"
             )
         else:
-            #& Fill the 'enum_dict'
+            # & Fill the 'enum_dict'
             type_hint_files = [
                 os.path.join(pyqt6_folderpath, _filename)
                 for _filename in os.listdir(pyqt6_folderpath)
-                if _filename.endswith('.pyi')
+                if _filename.endswith(".pyi")
             ]
             for _filepath in type_hint_files:
                 fill_enum_dict(_filepath)
                 continue
 
-            #& Perform requested action
+            # & Perform requested action
             if args.show:
                 import pprint
+
                 pprint.pprint(enum_dict)
             elif args.dry_run:
-                print('\nDRY RUN\n')
+                print("\nDRY RUN\n")
                 convert_all(dry_run=True)
             else:
                 convert_all(dry_run=False)

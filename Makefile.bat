@@ -8,7 +8,7 @@ echo "addons21 dir: %addons21%"
 echo "==================================================="
 
 echo Creating Hard Link...
-mklink /j "%addons21%\Dict2Anki" "%cd%"
+mklink /j "%addons21%\Dict2Anki-Apora" "%cd%"
 
 echo.
 echo Done!

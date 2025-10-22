@@ -6,7 +6,7 @@ from aqt.qt import QUrl, pyqtSignal
 from aqt.qt import QDialog
 from aqt.qt import QWebEngineView, QWebEngineProfile
 
-logger = logging.getLogger('dict2Anki')
+logger = logging.getLogger("dict2Anki")
 
 
 class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
@@ -27,25 +27,25 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
         self.page.loadFinished.connect(self.checkLoginState)
 
     def _reload(self):
-        logger.debug('Reload page')
+        logger.debug("Reload page")
         self.page.cookieStore.deleteAllCookies()
         self.page.load(QUrl(self.address.text()))
 
     def checkLoginState(self):
         def contentLoaded(content):
-            logger.debug(f'Cookie:{self.page.cookie}')
-            logger.debug(f'Content{content}')
+            logger.debug(f"Cookie:{self.page.cookie}")
+            logger.debug(f"Content{content}")
             if self.loginCheckCallbackFn(cookie=self.page.cookie, content=content):
-                logger.info(f'Login Success!')
+                logger.info(f"Login Success!")
                 self.onLoginSucceed()
-            logger.info(f'Login Fail!')
+            logger.info(f"Login Fail!")
 
         self.page.page().toHtml(contentLoaded)
 
     def onLoginSucceed(self):
-        logger.info('Destruct login dialog')
+        logger.info("Destruct login dialog")
         self.close()
-        logger.debug('emit cookie')
+        logger.debug("emit cookie")
         self.loginSucceed.emit(json.dumps(self.page.cookie))
 
 
@@ -61,8 +61,8 @@ class LoginWebEngineView(QWebEngineView):
         self.show()
 
     def onCookieAdd(self, cookie):
-        name = cookie.name().data().decode('utf-8')
-        value = cookie.value().data().decode('utf-8')
+        name = cookie.name().data().decode("utf-8")
+        value = cookie.value().data().decode("utf-8")
         self._cookies[name] = value
 
     @property

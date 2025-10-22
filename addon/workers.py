@@ -15,21 +15,21 @@ class VersionCheckWorker(QObject):
     haveNewVersion = pyqtSignal(str, str)
     finished = pyqtSignal()
     start = pyqtSignal()
-    logger = logging.getLogger('dict2Anki.workers.UpdateCheckWorker')
+    logger = logging.getLogger("dict2Anki.workers.UpdateCheckWorker")
 
     def run(self):
         try:
-            self.logger.info('检查新版本')
+            self.logger.info("检查新版本")
             rsp = requests.get(VERSION_CHECK_API, timeout=20).json()
-            version = rsp['tag_name']
-            changeLog = rsp['body']
+            version = rsp["tag_name"]
+            changeLog = rsp["body"]
             if version != VERSION:
-                self.logger.info(f'检查到新版本:{version}--{changeLog.strip()}')
+                self.logger.info(f"检查到新版本:{version}--{changeLog.strip()}")
                 self.haveNewVersion.emit(version.strip(), changeLog.strip())
             else:
-                self.logger.info(f'当前为最新版本:{VERSION}')
+                self.logger.info(f"当前为最新版本:{VERSION}")
         except Exception as e:
-            self.logger.error(f'版本检查失败{e}')
+            self.logger.error(f"版本检查失败{e}")
 
         finally:
             self.finished.emit()
@@ -59,7 +59,7 @@ class RemoteWordFetchingWorker(QObject):
     setProgress = pyqtSignal(int)
     done = pyqtSignal()
     doneThisGroup = pyqtSignal(list)
-    logger = logging.getLogger('dict2Anki.workers.RemoteWordFetchingWorker')
+    logger = logging.getLogger("dict2Anki.workers.RemoteWordFetchingWorker")
 
     def __init__(self, selectedDict, selectedGroups: [tuple]):
         super().__init__()
@@ -94,7 +94,7 @@ class QueryWorker(QObject):
     thisRowDone = pyqtSignal(int, dict)
     thisRowFailed = pyqtSignal(int)
     allQueryDone = pyqtSignal()
-    logger = logging.getLogger('dict2Anki.workers.QueryWorker')
+    logger = logging.getLogger("dict2Anki.workers.QueryWorker")
 
     def __init__(self, wordList: [(SimpleWord, int)], api):
         super().__init__()
@@ -109,17 +109,17 @@ class QueryWorker(QObject):
                 return
             queryResult = self.api.query(word)
             if queryResult:
-                self.logger.info(f'查询成功: {word} -- {queryResult}')
+                self.logger.info(f"查询成功: {word} -- {queryResult}")
                 self.thisRowDone.emit(row, queryResult)
             else:
-                self.logger.warning(f'查询失败: {word}')
+                self.logger.warning(f"查询失败: {word}")
                 self.thisRowFailed.emit(row)
 
             self.tick.emit()
             return queryResult
 
         with ThreadPool(max_workers=3) as executor:
-            for (word, row) in self.wordList:
+            for word, row in self.wordList:
                 executor.submit(_query, word, row)
 
         self.allQueryDone.emit()
@@ -127,16 +127,19 @@ class QueryWorker(QObject):
 
 class AssetDownloadWorker(QObject):
     """Asset (Image and Audio) download worker"""
+
     start = pyqtSignal()
     tick = pyqtSignal()
     done = pyqtSignal()
-    logger = logging.getLogger('dict2Anki.workers.AudioDownloadWorker')
+    logger = logging.getLogger("dict2Anki.workers.AudioDownloadWorker")
     retries = Retry(total=5, backoff_factor=3, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
-    session.mount('http://', HTTPAdapter(max_retries=retries))
-    session.mount('https://', HTTPAdapter(max_retries=retries))
+    session.mount("http://", HTTPAdapter(max_retries=retries))
+    session.mount("https://", HTTPAdapter(max_retries=retries))
 
-    def __init__(self, target_dir, images: [tuple], audios: [tuple], overwrite=False, max_retry=3):
+    def __init__(
+        self, target_dir, images: [tuple], audios: [tuple], overwrite=False, max_retry=3
+    ):
         super().__init__()
         self.target_dir = target_dir
         self.images = images
@@ -156,11 +159,13 @@ class AssetDownloadWorker(QObject):
                 if currentThread.isInterruptionRequested():
                     success = False
                     break
-                self.logger.info(f"Retrying {i+1} time...")
+                self.logger.info(f"Retrying {i + 1} time...")
             if success:
                 self.tick.emit()
             else:
-                self.logger.error(f"FAILED to download {fileName} after retrying {self.max_retry} times!")
+                self.logger.error(
+                    f"FAILED to download {fileName} after retrying {self.max_retry} times!"
+                )
                 self.logger.info("----------------------------------")
 
         def __download(fileName, url) -> bool:
@@ -169,7 +174,7 @@ class AssetDownloadWorker(QObject):
             try:
                 if currentThread.isInterruptionRequested():
                     return False
-                self.logger.info(f'Downloading {fileName}...')
+                self.logger.info(f"Downloading {fileName}...")
                 # file already exists
                 if os.path.exists(filepath):
                     if not self.overwrite:
@@ -179,15 +184,15 @@ class AssetDownloadWorker(QObject):
                         self.logger.warning(f"Overwriting file {fileName}")
 
                 r = self.session.get(url, stream=True)
-                with open(filepath, 'wb') as f:
+                with open(filepath, "wb") as f:
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
                             f.write(chunk)
-                self.logger.info(f'[OK] {fileName} 下载完成')
+                self.logger.info(f"[OK] {fileName} 下载完成")
                 self.logger.info("----------------------------------")
                 return True
             except Exception as e:
-                self.logger.warning(f'下载{fileName}:{url}异常: {e}')
+                self.logger.warning(f"下载{fileName}:{url}异常: {e}")
                 return False
 
         with ThreadPool(max_workers=3) as executor:

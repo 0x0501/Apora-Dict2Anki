@@ -20,8 +20,31 @@ from addon.constants import (
     LOG_FLUSH_INTERVAL,
     MODEL_NAME,
     WINDOW_TITLE,
+    BACKWARDS_CARD_TEMPLATE_NAME,
+    PRON_TYPES,
+    CARD_SETTINGS,
+    RELEASE_URL,
 )
-from addon.noteManager import checkModelCardCSS, resetModelCardTemplates
+from addon.noteManager import (
+    FieldGroup,
+    checkModelCardCSS,
+    resetModelCardTemplates,
+    checkModelFields,
+    mergeModelFields,
+    checkModelCardTemplates,
+    getOrCreateBackwardsCardTemplate,
+    deleteBackwardsCardTemplate,
+    addNoteToDeck,
+    getDeckList,
+    getOrCreateDeck,
+    getOrCreateModel,
+    getWordsByDeck,
+    getNoteIDsOfWords,
+    getOrCreateNormalCardTemplate,
+    default_image_filename,
+    get_pronunciation,
+    default_audio_filename,
+)
 
 from . import utils
 from .dictionary import dictionaries
@@ -45,10 +68,7 @@ try:
 except ImportError:
     from test.dummy_aqt import askUser, mw, openLink, showCritical, showInfo, tooltip
     from test.dummy_noteManager import (
-        addNoteToDeck,
         getDeckList,
-        getOrCreateDeck,
-        getOrCreateModel,
         getWordsByDeck,
     )
 
@@ -70,12 +90,12 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         super(Windows, self).__init__(parent)
         self.selectedDict = None
         self.currentConfig = dict()
-        self.localWords: [str] = []
-        self.remoteWordsDict: {str: SimpleWord} = {}
+        self.localWords: list[str] = []
+        self.remoteWordsDict: dict[str, SimpleWord] = {}
         self.selectedGroups = [list()] * len(dictionaries)
 
-        self.querySuccessDict: {int: dict} = {}  # row -> queryResult
-        self.queryFailedDict: {int: bool} = {}  # row -> bool
+        self.querySuccessDict: dict[int, dict] = {}  # row -> queryResult
+        self.queryFailedDict: dict[int, bool] = {}  # row -> bool
 
         self.added = 0
         self.deleted = 0
@@ -118,7 +138,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.devBtn.clicked.connect(on_dev)
         self.gridLayout_4.addWidget(self.devBtn, 4, 3, 1, 1)
 
-    def closeEvent(self, event):
+    def closeEvent(self, a0):
         """插件关闭时调用"""
         # cleanup
         for dictionary in dictionaries:
@@ -144,21 +164,27 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             self.assetDownloadThread.quit()
             self.assetDownloadThread.wait()
 
-        event.accept()
+        if a0 is not None:
+            a0.accept()
 
     def on_NewLogRecord(self, text):
         # append to log box, and scroll to bottom
         self.logTextBox.appendPlainText(text)
-        self.logTextBox.verticalScrollBar().setValue(
-            self.logTextBox.verticalScrollBar().maximum()
-        )
+
+        vscroll = self.logTextBox.verticalScrollBar()
+        if vscroll is not None:
+            vscroll.setValue(vscroll.maximum())
 
     def setupLogger(self):
         """初始化 Logger"""
 
         def onDestroyed():
             logger.removeHandler(self.logHandler)
-            self.logHandler.eventEmitter = None
+            # Safely remove reference to the event emitter without assigning None
+            try:
+                delattr(self.logHandler, "eventEmitter")
+            except AttributeError:
+                pass
             self.logHandler.close()
 
         self.logHandler.eventEmitter.newRecord.connect(self.on_NewLogRecord)
@@ -169,6 +195,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         config = mw.addonManager.getConfig(__name__)
         # logger.info(f"config name: {__name__}")
         # logger.info(f"config: {json.dumps(config)}")
+
+        if config is None:
+            raise Exception("Cannot read config")
 
         # basic settings
         self.deckComboBox.setCurrentText(config["deck"])
@@ -215,7 +244,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         config, _, _ = self.getAndSaveCurrentConfig_returnMetaInfo()
         return config
 
-    def getAndSaveCurrentConfig_returnMetaInfo(self) -> (dict, bool, bool):
+    def getAndSaveCurrentConfig_returnMetaInfo(self) -> tuple[dict, bool, bool]:
         """获取当前设置，并返回Meta Info"""
         """:return: (config, configChanged, cardSettingsChanged)"""
         currentConfig = dict(
@@ -246,12 +275,15 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.currentConfig = currentConfig
         return currentConfig, configChanged, cardSettingsChanged
 
-    def _saveConfig(self, config) -> (bool, bool):
+    def _saveConfig(self, config) -> tuple[bool, bool]:
         """:return: (configChanged, cardSettingsChanged)"""
         # get the config currently stored in Anki
         oldConfig = deepcopy(mw.addonManager.getConfig(__name__))
         _config = deepcopy(config)
         selectedDict = _config["selectedDict"]
+
+        if oldConfig is None:
+            raise Exception("Cannot read oldConfig.")
 
         # handle credential
         _config["credential"] = oldConfig["credential"]
@@ -323,6 +355,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             f"当前选择词典: {self.dictionaryComboBox.currentText()}"
         )
         config = mw.addonManager.getConfig(__name__)
+
+        if config is None:
+            raise Exception("Cannot read config.")
+
         self.cookieLineEdit.setText(config["credential"][index]["cookie"])
 
     @pyqtSlot()
@@ -361,13 +397,15 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         logger.info(f"filenames: {filenames}")
         self.logHandler.flush()
 
-        words: [SimpleWord] = []
+        words: list[SimpleWord] = []
         for filename in filenames:
             logger.info(f"Reading words from {filename}...")
             words_in_file = [
                 SimpleWord.from_values(values_in_line)
                 for values_in_line in utils.read_words_from_file(filename)
             ]
+            # Filter out None values returned by SimpleWord.from_values before extending
+            words_in_file = [w for w in words_in_file if w is not None]
             logger.info(
                 f"[OK] Found {len(words_in_file)} words (may including duplicates)."
             )
@@ -422,6 +460,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.progressBar.setMaximum(1)
         self.mainTab.setEnabled(True)
         self.cookieLineEdit.clear()
+        # Ensure selectedDict is initialized before accessing its attributes
+        if self.selectedDict is None:
+            idx = self.dictionaryComboBox.currentIndex()
+            self.selectedDict = dictionaries[idx]()
         self.loginDialog = LoginDialog(
             loginUrl=self.selectedDict.loginUrl,
             loginCheckCallbackFn=self.selectedDict.loginCheckCallbackFn,
@@ -434,6 +476,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def onLogSuccess(self, cookie):
         self.cookieLineEdit.setText(cookie)
         self.getAndSaveCurrentConfig()
+        # Ensure selectedDict is initialized before using it
+        if self.selectedDict is None:
+            # try to get the selected dict index from currentConfig, fallback to combobox
+            try:
+                selected_idx = int(
+                    self.currentConfig.get(
+                        "selectedDict", self.dictionaryComboBox.currentIndex()
+                    )
+                )
+            except Exception:
+                selected_idx = self.dictionaryComboBox.currentIndex()
+            self.selectedDict = dictionaries[selected_idx]()
         self.selectedDict.checkCookie(json.loads(cookie))
         groups = self.selectedDict.getGroups()
         if groups:
@@ -451,12 +505,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             if not is_popup:
                 selectedGroups = self.selectedGroups[self.currentConfig["selectedDict"]]
             else:
-                selectedGroups = [
-                    group.wordGroupListWidget.item(index).text()
-                    for index in range(group.wordGroupListWidget.count())
-                    if group.wordGroupListWidget.item(index).checkState()
-                    == Qt.CheckState.Checked
-                ]
+                selectedGroups = []
+                for index in range(group.wordGroupListWidget.count()):
+                    item = group.wordGroupListWidget.item(index)
+                    if item is not None and item.checkState() == Qt.CheckState.Checked:
+                        selectedGroups.append(item.text())
             # 保存分组记录
             self.selectedGroups[self.currentConfig["selectedDict"]] = selectedGroups
             self.progressBar.setValue(0)
@@ -511,8 +564,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         group.buttonBox.rejected.connect(onRejected)
         container.exec()
 
-    def getRemoteWordList(self, selected_groups: [str]):
+    def getRemoteWordList(self, selected_groups: list[str]):
         """根据选中到分组获取分组下到全部单词，并添加到 newWordListWidget"""
+        # Ensure selectedDict is initialized to avoid accessing attributes on None
+        if self.selectedDict is None:
+            try:
+                idx = self.dictionaryComboBox.currentIndex()
+                self.selectedDict = dictionaries[idx]()
+            except Exception as e:
+                logger.error(f"Failed to initialize selectedDict: {e}")
+                showCritical("未能初始化词典实例，无法获取远程单词列表。")
+                return
+
         group_map = dict(self.selectedDict.groups)
         self.localWords = getWordsByDeck(self.deckComboBox.currentText())
         self.remoteWordsDict = {}
@@ -539,7 +602,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.pullWorker.start.emit()
 
     @pyqtSlot(list)
-    def insertWordToListWidget(self, words: [SimpleWord]):
+    def insertWordToListWidget(self, words: list[SimpleWord]):
         """一个分组获取完毕事件"""
         for word in words:
             self.remoteWordsDict[word.term] = word
@@ -552,12 +615,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         """全部分组获取完毕事件"""
         # termList: [str]
         localTermList = set(getWordsByDeck(self.deckComboBox.currentText()))
-        remoteTermList = set(
-            [
-                self.newWordListWidget.item(row).text()
-                for row in range(self.newWordListWidget.count())
-            ]
-        )
+        remoteTermList = set()
+        for row in range(self.newWordListWidget.count()):
+            item = self.newWordListWidget.item(row)
+            if item is not None:
+                remoteTermList.add(item.text())
 
         newTerms = utils.set_sub_ignore_case(remoteTermList, localTermList)  # 新单词
         needToDeleteTerms = utils.set_sub_ignore_case(
@@ -612,18 +674,34 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.pullRemoteWordsBtn.setEnabled(False)
         self.btnSync.setEnabled(False)
 
-        wordList: [(SimpleWord, int)] = []  # [(SimpleWord, row)]
+        wordList: list[tuple[SimpleWord, int]] = []  # [(SimpleWord, row)]
         selectedTerms = self.newWordListWidget.selectedItems()
         if selectedTerms:
             # 如果选中单词则只查询选中的单词
             for termItem in selectedTerms:
+                if termItem is None:
+                    continue
                 row = self.newWordListWidget.row(termItem)
-                word = self.remoteWordsDict[termItem.text()]
+                term_text = termItem.text()
+                if term_text not in self.remoteWordsDict:
+                    logger.warning(
+                        f"Selected term '{term_text}' not found in remoteWordsDict; skipping"
+                    )
+                    continue
+                word = self.remoteWordsDict[term_text]
                 wordList.append((word, row))
         else:  # 没有选择则查询全部
             for row in range(self.newWordListWidget.count()):
                 termItem = self.newWordListWidget.item(row)
-                word = self.remoteWordsDict[termItem.text()]
+                if termItem is None:
+                    continue
+                term_text = termItem.text()
+                if term_text not in self.remoteWordsDict:
+                    logger.warning(
+                        f"Term '{term_text}' at row {row} not found in remoteWordsDict; skipping"
+                    )
+                    continue
+                word = self.remoteWordsDict[term_text]
                 wordList.append((word, row))
 
         logger.info(f"待查询单词{wordList}")
@@ -658,6 +736,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         failed = []
         for row in range(self.newWordListWidget.count()):
             wordItem = self.newWordListWidget.item(row)
+
+            if wordItem is None:
+                raise Exception("Cannot get wordItem.")
+
             if row in self.querySuccessDict:
                 wordItem.setIcon(self.doneIcon)
                 wordItem.setData(Qt.ItemDataRole.UserRole, self.querySuccessDict[row])
@@ -709,7 +791,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         logger.info("Check query results")
         self.logHandler.flush()
         failedGenerator = (
-            self.newWordListWidget.item(row).data(Qt.ItemDataRole.UserRole) is None
+            (item := self.newWordListWidget.item(row)) is None
+            or item.data(Qt.ItemDataRole.UserRole) is None
             for row in range(self.newWordListWidget.count())
         )
         if any(failedGenerator):
@@ -749,7 +832,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 self.logHandler.flush()
                 return
             # force delete the existing model
-            model = getOrCreateModel(MODEL_NAME, recreate=True)
+            model = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
 
         if newCreated:
             # create 'Normal' card template (card type)
@@ -795,6 +878,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.added = 0
         for row in range(newWordCount):
             wordItem = self.newWordListWidget.item(row)
+
+            if wordItem is None:
+                raise Exception("Cannot get wordItem")
+
             wordItemData = wordItem.data(Qt.ItemDataRole.UserRole)
             if wordItemData:
                 term = wordItemData["term"]
@@ -824,12 +911,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         self.newWordListWidget.clear()
 
-        needToDeleteWordItems = [
-            self.needDeleteWordListWidget.item(row)
-            for row in range(self.needDeleteWordListWidget.count())
-            if self.needDeleteWordListWidget.item(row).checkState()
-            == Qt.CheckState.Checked
-        ]
+        needToDeleteWordItems = []
+        for row in range(self.needDeleteWordListWidget.count()):
+            item = self.needDeleteWordListWidget.item(row)
+            if item is not None and item.checkState() == Qt.CheckState.Checked:
+                needToDeleteWordItems.append(item)
         needToDeleteWords = [i.text() for i in needToDeleteWordItems]
 
         self.deleted = 0
@@ -843,6 +929,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             needToDeleteWordNoteIds = getNoteIDsOfWords(
                 needToDeleteWords, currentConfig["deck"]
             )
+
+            if mw.col is None:
+                raise Exception("mw.col is none")
+
             mw.col.remNotes(needToDeleteWordNoteIds)
             self.deleted += len(needToDeleteWordNoteIds)
             mw.col.reset()
@@ -880,6 +970,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
             self.assetDownloadThread = QThread(self)
             self.assetDownloadThread.start()
+
+            if mw.col is None:
+                raise Exception("mw.col is none")
+
             self.assetDownloadWorker = AssetDownloadWorker(
                 mw.col.media.dir(), imagesDownloadTasks, audiosDownloadTasks
             )
@@ -900,7 +994,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.printSyncReport()
         self.logHandler.flush()
 
-    def queryWords(self, wordList: [(SimpleWord, int)], dictAPI, all_done_func):
+    def queryWords(
+        self, wordList: list[tuple[SimpleWord, int]], dictAPI, all_done_func
+    ):
         # self.progressBar.setMaximum(len(wordList))
         self.queryWorker = QueryWorker(wordList, dictAPI)
         self.queryWorker.moveToThread(self.workerThread)
@@ -919,14 +1015,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         """Download missing assets for all notes of type Dict2Anki in ALL decks"""
         self.tmp_currentConfig = self.getAndSaveCurrentConfig()
         # model = mw.col.models.by_name(MODEL_NAME)
-        noteIds = mw.col.findNotes(f"note:{MODEL_NAME}")
+
+        if mw.col is None:
+            raise Exception("mw.col is none")
+
+        noteIds = mw.col.find_notes(f"note:{MODEL_NAME}")
         logger.info(f"Found ({len(noteIds)}) notes of type '{MODEL_NAME}'")
         self.logHandler.flush()
 
         # find words that have missing assets
-        wordList: [(SimpleWord, int)] = []  # [(SimpleWord, row)]
+        wordList: list[tuple[SimpleWord, int]] = []  # [(SimpleWord, row)]
         for noteId in noteIds:
-            note = mw.col.getNote(noteId)
+            note = mw.col.get_note(noteId)
             term = note["term"]
             media_dir = mw.col.media.dir()
             # logger.info(f"Checking term {term}")
@@ -1018,7 +1118,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         This function may take some time."""
         self.tmp_noteDict = {}
         self.tmp_currentConfig = self.getAndSaveCurrentConfig()
-        noteIds = mw.col.findNotes(f"note:{MODEL_NAME}")
+        if mw.col is None:
+            raise Exception("mw.col is none")
+        noteIds = mw.col.find_notes(f"note:{MODEL_NAME}")
         logger.info(f"Found ({len(noteIds)}) notes of type '{MODEL_NAME}'")
         self.logHandler.flush()
 
@@ -1031,9 +1133,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             return
 
         # load all notes, and generate word list, as well as note dict
-        wordList: [(SimpleWord, int)] = []  # [(SimpleWord, row)]
+        wordList: list[tuple[SimpleWord, int]] = []  # [(SimpleWord, row)]
         for noteId in noteIds:
-            note = mw.col.getNote(noteId)
+            note = mw.col.get_note(noteId)
             term = note["term"]
             self.tmp_noteDict[term] = note
             word, row = SimpleWord(term), len(wordList)
@@ -1091,6 +1193,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             )
             # update note (fill missing field values)
             existing_note = self.tmp_noteDict[term]
+            # Ensure tmp_currentConfig is not None before passing to addNoteToDeck
+            if self.tmp_currentConfig is None:
+                raise Exception("tmp_currentConfig is None")
             addNoteToDeck(
                 None,
                 None,
@@ -1112,7 +1217,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     @pyqtSlot()
     def on_btnBackwardTemplate_clicked(self):
         """Add Or Delete Backwards Card Template (Card Type)"""
-        modelObject = mw.col.models.byName(MODEL_NAME)
+
+        if mw.col is None:
+            raise Exception("mw.col is none")
+
+        modelObject = mw.col.models.by_name(MODEL_NAME)
         if not modelObject:
             showInfo(
                 f"Model (Note Type) '{MODEL_NAME}' does not exist! Please Sync first!"
@@ -1150,7 +1259,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     @pyqtSlot()
     def on_btnCheckTemplates_clicked(self):
         logger.info(f"Checking Card Templates for model {MODEL_NAME}...")
-        model = mw.col.models.byName(MODEL_NAME)
+        if mw.col is None:
+            raise Exception("mw.col is none")
+        model = mw.col.models.by_name(MODEL_NAME)
         if not model:
             showInfo(
                 f"Model (Note Type) '{MODEL_NAME}' does not exist! Please Sync first!"

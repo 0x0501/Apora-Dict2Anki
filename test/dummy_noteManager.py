@@ -1,5 +1,5 @@
 def getDeckList():
-    return ['deck1', 'deck2']
+    return ["deck1", "deck2"]
 
 
 def getOrCreateDeck(deck_name):
