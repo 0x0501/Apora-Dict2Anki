@@ -1,0 +1,32 @@
+{
+  "deck": "",
+  "selectedDict": 0,
+  "selectedApi": 0,
+  "selectedGroup": null,
+
+  "credential": [
+    {
+      "username": "",
+      "password": "",
+      "cookie": ""
+    },
+    {
+      "username": "",
+      "password": "",
+      "cookie": ""
+    }
+  ],
+
+  "briefDefinition": true,
+  "syncTemplates": true,
+  "noPron": false,
+  "BrEPron": false,
+  "AmEPron": true,
+
+  "definition_en": true,
+  "image": true,
+  "pronunciation": true,
+  "phrase": true,
+  "sentence": true,
+  "exam_type": true
+}
