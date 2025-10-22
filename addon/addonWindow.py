@@ -15,7 +15,7 @@ from aqt.qt import (
     pyqtSlot,
 )
 
-from addon.constants import (
+from .constants import (
     LOG_BUFFER_CAPACITY,
     LOG_FLUSH_INTERVAL,
     MODEL_NAME,
@@ -25,7 +25,7 @@ from addon.constants import (
     CARD_SETTINGS,
     RELEASE_URL,
 )
-from addon.noteManager import (
+from .noteManager import (
     FieldGroup,
     checkModelCardCSS,
     resetModelCardTemplates,
