@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class CredentialPlatformEnum(Enum):
     """Represent credentials of different platforms"""
-
+    NONE = 0
     YOUDAO = 1
     EUDIC = 2
 
