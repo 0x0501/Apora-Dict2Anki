@@ -10,7 +10,7 @@ install:
 
 uninstall:
 	@echo "Deleting symbolic link..."
-	rm -f $(addons21)/Dict2Anki-Apora
+	rm -f $(addons21)/Apora-Dict2Anki
 
 
 install_test_addon:

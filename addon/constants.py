@@ -2,7 +2,7 @@ VERSION = "v1.0.0"
 RELEASE_URL = "https://github.com/0x0501/Apora-Dict2Anki"
 VERSION_CHECK_API = "https://api.github.com/repos/lixvbnet/Dict2Anki/releases/latest"
 WINDOW_TITLE = f"Apora Dict2Anki {VERSION}"
-MODEL_NAME = f"Apora Dict2Anki"
+MODEL_NAME = "Apora Dict2Anki"
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
 HEADERS = {"User-Agent": USER_AGENT}

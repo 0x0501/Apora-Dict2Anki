@@ -43,7 +43,7 @@ def disable_ssl_check_if_debug():
         rc = os.system(f'source {BASHRC_FILE} && test "$DICT2ANKI_SSL_VERIFY" = "0"')
         if rc == 0:
             DEBUG = True
-            showInfo("[Dict2Anki] DEBUG=True, SSL Check is DISABLED!")
+            showInfo("[Apora Dict2Anki] DEBUG=True, SSL Check is DISABLED!")
             disable_ssl_check()
         check_debug = False  # check and prompt once
     except Exception:
@@ -67,9 +67,9 @@ try:
         w = Windows()
         w.exec()
 
-    print("Add Dict2Anki-Apora to menuTools.")
+    print("Add Apora-Dict2Anki to menuTools.")
 
-    action = QAction("Dict2Anki...", mw)
+    action = QAction("Apora Dict2Anki", mw)
     qconnect(action.triggered, show_window)
     mw.form.menuTools.addAction(action)
 

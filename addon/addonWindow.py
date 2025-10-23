@@ -923,7 +923,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         if needToDeleteWords and askUser(
             f"确定要删除这些单词吗:{needToDeleteWords[:3]}...({len(needToDeleteWords)}个)",
-            title="Dict2Anki",
+            title="Apora Dict2Anki",
             parent=self,
         ):
             logger.info(f"需要删除({len(needToDeleteWords)}) - {needToDeleteWords}")
