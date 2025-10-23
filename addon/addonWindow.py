@@ -48,9 +48,17 @@ from .noteManager import (
 
 from . import utils
 from .dictionary import dictionaries
+from .dictionary.base import CredentialPlatformEnum, SimpleWord
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
-from .misc import Mask, SimpleWord
+from .misc import (
+    Mask,
+    safe_load_config,
+    safe_load_empty_config,
+    safe_convert_config_to_dict,
+    ConfigType,
+    Credential,
+)
 from .queryApi import apis
 from .UIForm import mainUI, wordGroup
 from .workers import (
@@ -90,10 +98,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def __init__(self, parent=None):
         super(Windows, self).__init__(parent)
         self.selectedDict = None
-        self.currentConfig = dict()
+        self.currentConfig = safe_load_empty_config()
         self.localWords: list[str] = []
         self.remoteWordsDict: dict[str, SimpleWord] = {}
-        self.selectedGroups = [list()] * len(dictionaries)
+        self.selectedGroups: list[list[str]] = [list()] * len(dictionaries)
 
         self.querySuccessDict: dict[int, dict] = {}  # row -> queryResult
         self.queryFailedDict: dict[int, bool] = {}  # row -> bool
@@ -130,14 +138,6 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.initCore()
         # self.checkUpdate()    # 会导致卡顿
         # self.__dev() # 以备调试时使用
-
-    def __dev(self):
-        def on_dev():
-            logger.debug("whatever")
-
-        self.devBtn = QPushButton("Magic Button", self.mainTab)
-        self.devBtn.clicked.connect(on_dev)
-        self.gridLayout_4.addWidget(self.devBtn, 4, 3, 1, 1)
 
     def closeEvent(self, a0):
         """插件关闭时调用"""
@@ -193,149 +193,230 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.logTextBox.destroyed.connect(onDestroyed)
 
     def setupGUIByConfig(self):
-        config = mw.addonManager.getConfig(__name__)
-        # logger.info(f"config name: {__name__}")
-        # logger.info(f"config: {json.dumps(config)}")
+        untypedConfig = mw.addonManager.getConfig(__name__)
 
-        if config is None:
+        if untypedConfig is None:
             raise Exception("Cannot read config")
 
+        config = safe_load_config(untypedConfig)
+
         # basic settings
-        self.deckComboBox.setCurrentText(config["deck"])
-        self.dictionaryComboBox.setCurrentIndex(config["selectedDict"])
-        self.apiComboBox.setCurrentIndex(config["selectedApi"])
-        if config["selectedGroup"]:
-            self.selectedGroups = config["selectedGroup"]
+        self.deckComboBox.setCurrentText(config.deck)
+        self.dictionaryComboBox.setCurrentIndex(config.selectedDict)
+        self.apiComboBox.setCurrentIndex(config.selectedApi)
+        if config.selectedGroup:
+            self.selectedGroups = config.selectedGroup
         else:
             self.selectedGroups = [list()] * len(dictionaries)
 
         # account settings
-        selectedDictCredential = config["credential"][config["selectedDict"]]
-        self.usernameLineEdit.setText(selectedDictCredential["username"])
-        self.passwordLineEdit.setText(selectedDictCredential["password"])
-        self.cookieLineEdit.setText(selectedDictCredential["cookie"])
+        selectedDictCredential = config.credential[config.selectedDict]
+        self.usernameLineEdit.setText(selectedDictCredential.username)
+        self.passwordLineEdit.setText(selectedDictCredential.password)
+        self.cookieLineEdit.setText(selectedDictCredential.cookie)
+
+        # Apora account settings
+        self.AporaAPITokenLineEdit.setText(config.aporaApiToken)
 
         # sync settings
-        self.briefDefinitionCheckBox.setChecked(config["briefDefinition"])
-        self.syncTemplatesCheckbox.setChecked(config["syncTemplates"])
-        self.noPronRadioButton.setChecked(config["noPron"])
-        self.BrEPronRadioButton.setChecked(config["BrEPron"])
-        self.AmEPronRadioButton.setChecked(config["AmEPron"])
+        self.briefDefinitionCheckBox.setChecked(config.briefDefinition)
+        self.syncTemplatesCheckbox.setChecked(config.syncTemplates)
 
         # card settings
-        self.definitionEnCheckBox.setChecked(config["definition_cn"])
-        self.imageCheckBox.setChecked(config["image"])
-        self.pronunciationCheckBox.setChecked(config["pronunciation"])
-        self.sentenceCheckBox.setChecked(config["context"])
+        self.termSpeakingRadioButton.setChecked(config.termSpeaking)
+        self.contextSpeakingRadioButton.setChecked(config.contextSpeaking)
+        self.enableContextCheckBox.setChecked(config.enableContext)
+        self.disableSpeakingRadioButton.setChecked(config.disableSpeaking)
+        self.GBSpeakingRadioButton.setChecked(config.GreatBritainSpeaking)
+        self.USSpeakingRadioButton.setChecked(config.USSpeaking)
 
     def initCore(self):
         self.usernameLineEdit.hide()
         self.usernameLabel.hide()
         self.passwordLabel.hide()
         self.passwordLineEdit.hide()
-        self.dictionaryComboBox.addItems([d.name for d in dictionaries])
+
+        # load dictionary into combo box
+        for d in dictionaries:
+            self.dictionaryComboBox.addItem(d.name, d.platform)
+
         self.apiComboBox.addItems([d.name for d in apis])
         self.deckComboBox.addItems(getDeckList())
         self.setupGUIByConfig()
 
-    def getAndSaveCurrentConfig(self) -> dict:
+    def getAndSaveCurrentConfig(self) -> ConfigType:
         """获取当前设置"""
         config, _, _ = self.getAndSaveCurrentConfig_returnMetaInfo()
         return config
 
-    def getAndSaveCurrentConfig_returnMetaInfo(self) -> tuple[dict, bool, bool]:
+    def getAndSaveCurrentConfig_returnMetaInfo(self) -> tuple[ConfigType, bool, bool]:
         """获取当前设置，并返回Meta Info"""
         """:return: (config, configChanged, cardSettingsChanged)"""
 
         # current config must be identical with project root `config.json`
-        currentConfig = dict(
+
+        print("invoke getAndSaveCurrentConfig_returnMetaInfo()")
+
+        # Get old credential
+        untypedOldConfig = mw.addonManager.getConfig(__name__)
+
+        if untypedOldConfig is None:
+            raise Exception("Cannot read config file.")
+
+        oldConfig = safe_load_config(untypedOldConfig)
+
+        credential = oldConfig.credential
+        # Append the current credential to the old one
+
+        currentSelectedCredentialPlatform: CredentialPlatformEnum = (
+            self.dictionaryComboBox.currentData()
+        )
+
+        credential[self.dictionaryComboBox.currentIndex()] = Credential(
+            platform=currentSelectedCredentialPlatform,
+            username=self.usernameLineEdit.text(),
+            password=self.passwordLineEdit.text(),
+            cookie=self.cookieLineEdit.text(),
+        )
+
+        currentConfig = ConfigType(
             # basic settings
             deck=self.deckComboBox.currentText(),
             selectedDict=self.dictionaryComboBox.currentIndex(),
             selectedApi=self.apiComboBox.currentIndex(),
             selectedGroup=self.selectedGroups,
             # account settings
-            username=self.usernameLineEdit.text(),
-            password=Mask(self.passwordLineEdit.text()),
-            cookie=Mask(self.cookieLineEdit.text()),
+            ##################################
+            credential=credential,
+            # Apora account settings
+            ##################################
+            aporaApiToken=self.AporaAPITokenLineEdit.text(),
             # sync settings
+            ##################################
             briefDefinition=self.briefDefinitionCheckBox.isChecked(),
             syncTemplates=self.syncTemplatesCheckbox.isChecked(),
-            noPron=self.noPronRadioButton.isChecked(),
-            BrEPron=self.BrEPronRadioButton.isChecked(),
-            AmEPron=self.AmEPronRadioButton.isChecked(),
-            # note settings
-            definition_cn=self.definitionEnCheckBox.isChecked(),  # TODO: rename definitionEn to definitionCN
-            image=self.imageCheckBox.isChecked(),  # PLAN: remove image option in the future
-            pronunciation=self.pronunciationCheckBox.isChecked(),
-            context=self.sentenceCheckBox.isChecked(),  # TODO: rename sentence checkbox to context
-            # exam_type=self.examTypeCheckBox.isChecked(),
+            # card settings
+            ##################################
+            disableSpeaking=self.disableSpeakingRadioButton.isChecked(),
+            GreatBritainSpeaking=self.GBSpeakingRadioButton.isChecked(),
+            USSpeaking=self.USSpeakingRadioButton.isChecked(),
+            enableContext=self.enableContextCheckBox.isChecked(),
+            termSpeaking=self.termSpeakingRadioButton.isChecked(),
+            contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
         )
+
+        print("current config--------------------------------->")
+        print(currentConfig)
+
+        # currentConfig = dict(
+        #     # basic settings
+        #     deck=self.deckComboBox.currentText(),
+        #     selectedDict=self.dictionaryComboBox.currentIndex(),
+        #     selectedApi=self.apiComboBox.currentIndex(),
+        #     selectedGroup=self.selectedGroups,
+        #     # account settings
+        #     ##################################
+        #     username=self.usernameLineEdit.text(),
+        #     password=Mask(self.passwordLineEdit.text()),
+        #     cookie=Mask(self.cookieLineEdit.text()),
+        #     # Apora account settings
+        #     ##################################
+        #     apora_api_token=self.AporaAPITokenLineEdit.text(),
+        #     # sync settings
+        #     ##################################
+        #     briefDefinition=self.briefDefinitionCheckBox.isChecked(),
+        #     syncTemplates=self.syncTemplatesCheckbox.isChecked(),
+        #     # card settings
+        #     ##################################
+        #     disableSpeaking=self.disableSpeakingRadioButton.isChecked(),
+        #     isGBSpeaking=self.GBSpeakingRadioButton.isChecked(),
+        #     isUSSpeaking=self.USSpeakingRadioButton.isChecked(),
+        #     enableContext=self.enableContextCheckBox.isChecked(),
+        #     isTermSpeaking=self.termSpeakingRadioButton.isChecked(),
+        #     isContextSpeaking=self.contextSpeakingRadioButton.isChecked(),
+        # )
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
         self.currentConfig = currentConfig
         return currentConfig, configChanged, cardSettingsChanged
 
-    def _saveConfig(self, config) -> tuple[bool, bool]:
+    def _saveConfig(self, config: ConfigType) -> tuple[bool, bool]:
         """:return: (configChanged, cardSettingsChanged)"""
         # get the config currently stored in Anki
-        oldConfig = deepcopy(mw.addonManager.getConfig(__name__))
-        _config = deepcopy(config)
-        selectedDict = _config["selectedDict"]
+        untypedOldConfig = deepcopy(mw.addonManager.getConfig(__name__))
 
-        if oldConfig is None:
+        print("=============untypedOldConfig===============")
+        print(untypedOldConfig)
+        print("============================")
+
+        if untypedOldConfig is None:
             raise Exception("Cannot read oldConfig.")
 
-        # handle credential
-        _config["credential"] = oldConfig["credential"]
-        _config["credential"][selectedDict] = dict(
-            username=_config.pop("username"),
-            password=str(_config.pop("password")),
-            cookie=str(_config.pop("cookie")),
-        )
+        # safely convert config into typed ConfigType
+        oldConfig = safe_load_config(untypedOldConfig)
 
-        configChanged = _config != oldConfig
-        if not configChanged:
+        # handle credential
+
+        print("=============OldConfig===============")
+        print(oldConfig)
+        print("============================")
+
+        print("=============_config===============")
+        print(config)
+        print("============================")
+
+        # we compare `ConfigType` by calling __eq__ method that dataclass generated
+        configChanged = config == oldConfig
+
+        print("=============is oldConfig equal to _config ===============")
+        print(configChanged)
+        print("============================")
+
+        if configChanged:
             logger.info("Config has no changes.")
             return False, False
 
         cardSettingsChanged = False
 
         for setting in CARD_SETTINGS:
-            if _config[setting] != oldConfig[setting]:
+            if getattr(config, setting) != getattr(oldConfig, setting):
                 cardSettingsChanged = True
 
         logger.info(
             f"configChanged: {configChanged}, cardSettingsChanged: {cardSettingsChanged}"
         )
-        logger.info(f"Saving config: {self._mask_config(_config)}")
-        mw.addonManager.writeConfig(__name__, _config)
+        logger.info(f"Saving config: {self._mask_config(config)}")
+        mw.addonManager.writeConfig(__name__, safe_convert_config_to_dict(config))
         return configChanged, cardSettingsChanged
 
-    def _mask_config(self, config) -> object:
-        """Mostly for logging purposes"""
+    def _mask_config(self, config: ConfigType) -> object:
+        """Mostly for logging purposes, mask secrets with `***********`"""
         maskedConfig = deepcopy(config)
+
+        # Only mask the nonempty fields
         maskedCredential = [
-            dict(
-                username=c["username"],
-                password=Mask(c["password"]),
-                cookie=Mask(c["cookie"]),
+            Credential(
+                platform=c.platform,
+                username=c.username,
+                password=repr(Mask(c.password)) if len(c.password) > 0 else "",
+                cookie=repr(Mask(c.cookie)) if len(c.cookie) > 0 else "",
             )
-            for c in maskedConfig["credential"]
+            for c in maskedConfig.credential
         ]
-        maskedConfig["credential"] = maskedCredential
+        maskedConfig.credential = maskedCredential
         return maskedConfig
 
-    def getFieldGroup(self, config) -> FieldGroup:
+    def getFieldGroup(self, config: ConfigType) -> FieldGroup:
         """Check current card settings and toggle off corresponding fields"""
         fg = FieldGroup()
         for field in CARD_SETTINGS:
-            if not config[field]:
+            if not hasattr(config, field):
                 logger.info(
                     f"FieldGroup: '{field}' is toggled off. Will remove it from templates."
                 )
                 fg.toggleOff(field)
         return fg
 
+    # TODO: check new version
     def checkUpdate(self):
         @pyqtSlot(str, str)
         def on_haveNewVersion(version, changeLog):
@@ -355,12 +436,20 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.currentDictionaryLabel.setText(
             f"当前选择词典: {self.dictionaryComboBox.currentText()}"
         )
-        config = mw.addonManager.getConfig(__name__)
+        untypedConfig = mw.addonManager.getConfig(__name__)
 
-        if config is None:
+        if untypedConfig is None:
             raise Exception("Cannot read config.")
 
-        self.cookieLineEdit.setText(config["credential"][index]["cookie"])
+        config = safe_load_config(untypedConfig)
+
+        # self.cookieLineEdit.setText(config["credential"][index]["cookie"])
+
+        # if no credential stored in the config.json
+        if len(config.credential) == 0:
+            self.cookieLineEdit.setText("")
+        else:
+            self.cookieLineEdit.setText(config.credential[index].cookie)
 
     @pyqtSlot()
     def on_btnImportFromFiles_clicked(self):
@@ -441,7 +530,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.progressBar.setMaximum(0)
 
         currentConfig = self.getAndSaveCurrentConfig()
-        self.selectedDict = dictionaries[currentConfig["selectedDict"]]()
+        self.selectedDict = dictionaries[currentConfig.selectedDict]()
 
         # 登陆线程
         self.loginWorker = LoginStateCheckWorker(
@@ -474,17 +563,23 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.loginDialog.show()
 
     @pyqtSlot(str)
-    def onLogSuccess(self, cookie):
+    def onLogSuccess(self, cookie: str):
+        print("onLogSuccess-------------------->")
+        print(cookie)
+
         self.cookieLineEdit.setText(cookie)
         self.getAndSaveCurrentConfig()
+
+        # TODO: is it really save?
+
         # Ensure selectedDict is initialized before using it
         if self.selectedDict is None:
             # try to get the selected dict index from currentConfig, fallback to combobox
             try:
-                selected_idx = int(
-                    self.currentConfig.get(
-                        "selectedDict", self.dictionaryComboBox.currentIndex()
-                    )
+                selected_idx = getattr(
+                    self.currentConfig,
+                    "selectedDict",
+                    self.dictionaryComboBox.currentIndex(),
                 )
             except Exception:
                 selected_idx = self.dictionaryComboBox.currentIndex()
@@ -504,7 +599,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             self.mainTab.setEnabled(False)
 
             if not is_popup:
-                selectedGroups = self.selectedGroups[self.currentConfig["selectedDict"]]
+                selectedGroups = self.selectedGroups[self.currentConfig.selectedDict]
             else:
                 selectedGroups = []
                 for index in range(group.wordGroupListWidget.count()):
@@ -512,7 +607,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                     if item is not None and item.checkState() == Qt.CheckState.Checked:
                         selectedGroups.append(item.text())
             # 保存分组记录
-            self.selectedGroups[self.currentConfig["selectedDict"]] = selectedGroups
+            self.selectedGroups[self.currentConfig.selectedDict] = selectedGroups
             self.progressBar.setValue(0)
             self.progressBar.setMaximum(1)
             logger.info(f"选中单词本{selectedGroups}")
@@ -528,7 +623,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         if len(groups) == 1:
             logger.info("Only 1 group. Select automatically and avoid popup.")
             group_name, group_index = groups[0]
-            selectedDict = self.currentConfig["selectedDict"]
+            selectedDict = self.currentConfig.selectedDict
             if not self.selectedGroups[selectedDict]:
                 self.selectedGroups[selectedDict] = list()
             self.selectedGroups[selectedDict] = [group_name]
@@ -552,7 +647,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             item.setCheckState(Qt.CheckState.Unchecked)
             group.wordGroupListWidget.addItem(item)
         # 恢复上次选择的单词本分组
-        selectedDict = self.currentConfig["selectedDict"]
+        selectedDict = self.currentConfig.selectedDict
         if not self.selectedGroups[selectedDict]:
             self.selectedGroups[selectedDict] = list()
         for groupName in self.selectedGroups[selectedDict]:
@@ -708,7 +803,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         logger.info(f"待查询单词{wordList}")
         # 查询线程
         self.progressBar.setMaximum(len(wordList))
-        self.queryWorker = QueryWorker(wordList, apis[currentConfig["selectedApi"]])
+        self.queryWorker = QueryWorker(wordList, apis[currentConfig.selectedApi])
         self.queryWorker.moveToThread(self.workerThread)
         self.queryWorker.thisRowDone.connect(self.on_thisRowDone)
         self.queryWorker.thisRowFailed.connect(self.on_thisRowFailed)
@@ -760,7 +855,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         if currentConfig["noPron"]:
             return 0
         else:
-            return 2 if self.AmEPronRadioButton.isChecked() else 1
+            return 2 if self.USSpeakingRadioButton.isChecked() else 1
 
     def get_asset_download_task(self, word: dict, preferred_pron: int):
         image_task = None
@@ -844,7 +939,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             # getOrCreateBackwardsCardTemplate(model)
         else:
             logger.info("Found existing model.")
-            if currentConfig["syncTemplates"]:
+            if currentConfig.syncTemplates:
                 logger.info(
                     "Reset card templates to default (FieldGroup settings will be respected)."
                 )
@@ -928,7 +1023,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         ):
             logger.info(f"需要删除({len(needToDeleteWords)}) - {needToDeleteWords}")
             needToDeleteWordNoteIds = getNoteIDsOfWords(
-                needToDeleteWords, currentConfig["deck"]
+                needToDeleteWords, currentConfig.deck
             )
 
             if mw.col is None:
@@ -1056,7 +1151,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryFailedDict = {}
         self.queryWords(
             wordList,
-            apis[self.tmp_currentConfig["selectedApi"]],
+            apis[self.tmp_currentConfig.selectedApi],
             self.__on_allQueryDone_DownloadMissingAssets,
         )
 
@@ -1153,7 +1248,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryFailedDict = {}
         self.queryWords(
             wordList,
-            apis[self.tmp_currentConfig["selectedApi"]],
+            apis[self.tmp_currentConfig.selectedApi],
             self.__on_allQueryDone_FillMissingValues,
         )
 
