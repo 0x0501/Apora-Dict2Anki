@@ -5,11 +5,12 @@ from copy import deepcopy
 from pathlib import Path
 
 from aqt.qt import (
+    QAction,
+    QKeySequence,
     QDialog,
     QFileDialog,
     QIcon,
     QListWidgetItem,
-    QPushButton,
     Qt,
     QThread,
     pyqtSlot,
@@ -231,6 +232,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.USSpeakingRadioButton.setChecked(config.USSpeaking)
 
     def initCore(self):
+        # Temporarily disable username/password login, use cookie is more stable
         self.usernameLineEdit.hide()
         self.usernameLabel.hide()
         self.passwordLabel.hide()
@@ -242,10 +244,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         self.apiComboBox.addItems([d.name for d in apis])
         self.deckComboBox.addItems(getDeckList())
+
+        # bind save button and shortcut (Ctrl+S)
+        saveSettingsAction = QAction(self)
+        saveSettingsAction.setShortcut(QKeySequence.StandardKey.Save)
+        saveSettingsAction.triggered.connect(self.getAndSaveCurrentConfig)
+        self.addAction(saveSettingsAction)  # add shortcut to current window
+        # connect button with action
+        self.saveSettingsButton.clicked.connect(self.getAndSaveCurrentConfig)
         self.setupGUIByConfig()
 
     def getAndSaveCurrentConfig(self) -> ConfigType:
-        """获取当前设置"""
+        """获取当前设置，并保存"""
         config, _, _ = self.getAndSaveCurrentConfig_returnMetaInfo()
         return config
 
@@ -305,9 +315,6 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
         )
 
-        print("current config--------------------------------->")
-        print(currentConfig)
-
         # currentConfig = dict(
         #     # basic settings
         #     deck=self.deckComboBox.currentText(),
@@ -344,32 +351,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # get the config currently stored in Anki
         untypedOldConfig = deepcopy(mw.addonManager.getConfig(__name__))
 
-        print("=============untypedOldConfig===============")
-        print(untypedOldConfig)
-        print("============================")
-
         if untypedOldConfig is None:
             raise Exception("Cannot read oldConfig.")
 
         # safely convert config into typed ConfigType
         oldConfig = safe_load_config(untypedOldConfig)
 
-        # handle credential
-
-        print("=============OldConfig===============")
-        print(oldConfig)
-        print("============================")
-
-        print("=============_config===============")
-        print(config)
-        print("============================")
-
         # we compare `ConfigType` by calling __eq__ method that dataclass generated
         configChanged = config == oldConfig
-
-        print("=============is oldConfig equal to _config ===============")
-        print(configChanged)
-        print("============================")
 
         if configChanged:
             logger.info("Config has no changes.")
@@ -563,10 +552,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.loginDialog.show()
 
     @pyqtSlot(str)
-    def onLogSuccess(self, cookie: str):
-        print("onLogSuccess-------------------->")
-        print(cookie)
-
+    def onLogSuccess(self, cookie: str) -> None:
         self.cookieLineEdit.setText(cookie)
         self.getAndSaveCurrentConfig()
 
