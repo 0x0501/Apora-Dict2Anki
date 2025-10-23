@@ -24,10 +24,12 @@ MODEL_FIELDS = [
 ]
 
 CARD_SETTINGS = [
-    "definition_cn",
-    "image",
-    "pronunciation",
-    "context",
+    "termSpeaking",
+    "contextSpeaking",
+    "enableContext",
+    "GreatBritainSpeaking",
+    "USSpeaking",
+    "disableSpeaking",
 ]
 
 
