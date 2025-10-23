@@ -2,6 +2,55 @@ import logging
 from queue import Queue
 from threading import Thread
 from abc import ABC, abstractmethod
+from typing import Optional
+from dataclasses import dataclass
+
+
+@dataclass
+class Credential:
+    username: str
+    password: str
+    cookie: str
+
+
+@dataclass
+class ConfigType:
+    deck: str
+    selectedDict: int
+    selectedApi: int
+    selectedGroup: Optional[list[str]]
+    credential: list[Credential]
+    briefDefinition: bool
+    syncTemplates: bool
+    termSpeaking: bool
+    contextSpeaking: bool
+    enableContext: bool
+    disableSpeaking: bool
+    GreatBritainSpeaking: bool
+    USSpeaking: bool
+    aporaApiToken: str
+
+
+def safe_load_config(data: dict) -> ConfigType:
+    creds = [Credential(**cred) for cred in data["credential"]]
+    config = ConfigType(
+        deck=data["deck"],
+        selectedDict=data["selectedDict"],
+        selectedApi=data["selectedApi"],
+        selectedGroup=data["selectedGroup"],  # 可为 None
+        credential=creds,
+        briefDefinition=data["briefDefinition"],
+        syncTemplates=data["syncTemplates"],
+        termSpeaking=data["termSpeaking"],
+        contextSpeaking=data["contextSpeaking"],
+        enableContext=data["enableContext"],
+        disableSpeaking=data["disableSpeaking"],
+        GreatBritainSpeaking=data["GreatBritainSpeaking"],
+        USSpeaking=data["USSpeaking"],
+        aporaApiToken=data["aporaApiToken"],
+    )
+    return config
+
 
 logger = logging.getLogger("dict2Anki.misc")
 
