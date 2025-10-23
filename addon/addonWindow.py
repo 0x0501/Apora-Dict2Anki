@@ -83,6 +83,7 @@ def fatal_error(exc_type, exc_value, exc_traceback):
 sys.excepthook = fatal_error
 
 
+# change UI slots in `addon/UIForm`
 class Windows(QDialog, mainUI.Ui_Dialog):
     isRunning = False
 
@@ -245,6 +246,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def getAndSaveCurrentConfig_returnMetaInfo(self) -> tuple[dict, bool, bool]:
         """获取当前设置，并返回Meta Info"""
         """:return: (config, configChanged, cardSettingsChanged)"""
+
+        # current config must be identical with project root `config.json`
         currentConfig = dict(
             # basic settings
             deck=self.deckComboBox.currentText(),
@@ -262,11 +265,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             BrEPron=self.BrEPronRadioButton.isChecked(),
             AmEPron=self.AmEPronRadioButton.isChecked(),
             # note settings
-            definition_cn=self.definitionEnCheckBox.isChecked(),
-            image=self.imageCheckBox.isChecked(),
+            definition_cn=self.definitionEnCheckBox.isChecked(),  # TODO: rename definitionEn to definitionCN
+            image=self.imageCheckBox.isChecked(),  # PLAN: remove image option in the future
             pronunciation=self.pronunciationCheckBox.isChecked(),
-            phrase=self.phraseCheckBox.isChecked(),
-            sentence=self.sentenceCheckBox.isChecked(),
+            context=self.sentenceCheckBox.isChecked(),  # TODO: rename sentence checkbox to context
             # exam_type=self.examTypeCheckBox.isChecked(),
         )
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
@@ -297,9 +299,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             return False, False
 
         cardSettingsChanged = False
-        print(_config)
+
         for setting in CARD_SETTINGS:
-            print(setting)
             if _config[setting] != oldConfig[setting]:
                 cardSettingsChanged = True
 
