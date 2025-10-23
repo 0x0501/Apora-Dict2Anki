@@ -2,8 +2,8 @@ import logging
 from queue import Queue
 from threading import Thread
 from abc import ABC, abstractmethod
-from typing import Optional
-from dataclasses import dataclass
+from typing import Optional, Any
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -18,7 +18,7 @@ class ConfigType:
     deck: str
     selectedDict: int
     selectedApi: int
-    selectedGroup: Optional[list[str]]
+    selectedGroup: Optional[list[list[str]]]
     credential: list[Credential]
     briefDefinition: bool
     syncTemplates: bool
@@ -30,6 +30,27 @@ class ConfigType:
     USSpeaking: bool
     aporaApiToken: str
 
+def safe_convert_config_to_dict(config : ConfigType) -> dict[str, Any]:
+    return asdict(config)
+
+def safe_load_empty_config() -> ConfigType:
+    config = ConfigType(
+        deck="",
+        selectedDict=0,
+        selectedApi=0,
+        selectedGroup=None,  # 可为 None
+        credential=[],
+        briefDefinition=False,
+        syncTemplates=False,
+        termSpeaking=False,
+        contextSpeaking=False,
+        enableContext=False,
+        disableSpeaking=True,
+        GreatBritainSpeaking=False,
+        USSpeaking=True,
+        aporaApiToken="",
+    )
+    return config
 
 def safe_load_config(data: dict) -> ConfigType:
     creds = [Credential(**cred) for cred in data["credential"]]
