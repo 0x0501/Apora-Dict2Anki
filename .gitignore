@@ -10,3 +10,4 @@ venv
 .venv
 .vscode
 Makefile.wsl
+.ruff_cache
