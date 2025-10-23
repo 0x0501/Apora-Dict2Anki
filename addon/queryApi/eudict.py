@@ -1,16 +1,19 @@
+# type: ignore deprecated API
 import logging
 import requests
 from urllib3 import Retry
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from .base import AbstractQueryAPI
+from .base import AbstractQueryAPI, QueryAPIReturnType, todo_empty_query_result
 from ..dictionary.base import SimpleWord
 from bs4 import BeautifulSoup
+from deprecated import deprecated
 
 logger = logging.getLogger("dict2Anki.queryApi.eudict")
 __all__ = ["API"]
 
 
+@deprecated(reason="Unstable API, the API will be removed in the future.")
 class Parser:
     def __init__(self, html, word: SimpleWord):
         self._soap = BeautifulSoup(html, "html.parser")
@@ -198,31 +201,33 @@ class Parser:
         }
 
 
+@deprecated(reason="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "欧陆词典 API"
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
-    session.headers = HEADERS
+    session.headers.update(HEADERS)
     session.mount("http://", HTTPAdapter(max_retries=retries))
     session.mount("https://", HTTPAdapter(max_retries=retries))
     url = "https://dict.eudic.net/dicts/en/{}"
     parser = Parser
 
     @classmethod
-    def query(cls, word) -> dict:
-        queryResult = None
-        try:
-            rsp = cls.session.get(cls.url.format(word.term), timeout=cls.timeout)
-            logger.debug(
-                f"code:{rsp.status_code}- word:{word.term} text:{rsp.text[:100]}"
-            )
-            queryResult = cls.parser(rsp.text, word).result
-        except Exception as e:
-            logger.exception(e)
-        finally:
-            logger.debug(queryResult)
-            return queryResult
+    def query(cls, term) -> QueryAPIReturnType:
+        # queryResult = None
+        # try:
+        #     rsp = cls.session.get(cls.url.format(word.term), timeout=cls.timeout)
+        #     logger.debug(
+        #         f"code:{rsp.status_code}- word:{word.term} text:{rsp.text[:100]}"
+        #     )
+        #     queryResult = cls.parser(rsp.text, word).result
+        # except Exception as e:
+        #     logger.exception(e)
+        # finally:
+        #     logger.debug(queryResult)
+        #     return queryResult
+        return todo_empty_query_result()
 
     @classmethod
     def close(cls):

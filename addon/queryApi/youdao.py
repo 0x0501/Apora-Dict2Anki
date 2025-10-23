@@ -1,16 +1,23 @@
+# type: ignore deprecated API
 import logging
 import requests
 from urllib3 import Retry
-from urllib.parse import urlencode
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from .base import AbstractQueryAPI, SimpleWord
+from .base import (
+    AbstractQueryAPI,
+    SimpleWord,
+    QueryAPIReturnType,
+    todo_empty_query_result,
+)
+from deprecated import deprecated
 
 logger = logging.getLogger("dict2Anki.queryApi.youdao")
 __all__ = ["API"]
 SENTENCE_SPEECH_URL_PREFIX = "http://dict.youdao.com/dictvoice?audio="
 
 
+@deprecated(reason="Unstable API, the API will be removed in the future.")
 class Parser:
     def __init__(self, json_obj, word: SimpleWord):
         self._result = json_obj
@@ -173,12 +180,13 @@ class Parser:
         }
 
 
+@deprecated(reason="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "有道 API"
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
-    session.headers = HEADERS
+    session.headers.update(HEADERS)
     session.mount("http://", HTTPAdapter(max_retries=retries))
     session.mount("https://", HTTPAdapter(max_retries=retries))
     url = "https://dict.youdao.com/jsonapi"
@@ -196,23 +204,24 @@ class API(AbstractQueryAPI):
     parser = Parser
 
     @classmethod
-    def query(cls, word: SimpleWord) -> dict:
-        queryResult = None
-        try:
-            rsp = cls.session.get(
-                cls.url,
-                params=urlencode(dict(cls.params, **{"q": word.term})),
-                timeout=cls.timeout,
-            )
-            logger.debug(f"code:{rsp.status_code} term:{word.term} text:{rsp.text}")
-            if rsp.status_code != 200:
-                logger.error(f"code:{rsp.status_code} term:{word.term} text:{rsp.text}")
-            queryResult = cls.parser(rsp.json(), word).result
-        except Exception as e:
-            logger.exception(e)
-        finally:
-            logger.debug(queryResult)
-            return queryResult
+    def query(cls, term: SimpleWord) -> QueryAPIReturnType:
+        # queryResult = None
+        # try:
+        #     rsp = cls.session.get(
+        #         cls.url,
+        #         params=urlencode(dict(cls.params, **{"q": word.term})),
+        #         timeout=cls.timeout,
+        #     )
+        #     logger.debug(f"code:{rsp.status_code} term:{word.term} text:{rsp.text}")
+        #     if rsp.status_code != 200:
+        #         logger.error(f"code:{rsp.status_code} term:{word.term} text:{rsp.text}")
+        #     queryResult = cls.parser(rsp.json(), word).result
+        # except Exception as e:
+        #     logger.exception(e)
+        # finally:
+        #     logger.debug(queryResult)
+        #     return queryResult
+        return todo_empty_query_result()
 
     @classmethod
     def close(cls):
