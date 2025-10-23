@@ -61,7 +61,7 @@ class RemoteWordFetchingWorker(QObject):
     doneThisGroup = pyqtSignal(list)
     logger = logging.getLogger("dict2Anki.workers.RemoteWordFetchingWorker")
 
-    def __init__(self, selectedDict, selectedGroups: [tuple]):
+    def __init__(self, selectedDict, selectedGroups: list[tuple]):
         super().__init__()
         self.selectedDict = selectedDict
         self.selectedGroups = selectedGroups
@@ -70,7 +70,7 @@ class RemoteWordFetchingWorker(QObject):
         currentThread = QThread.currentThread()
 
         def _pull(*args):
-            if currentThread.isInterruptionRequested():
+            if currentThread.isInterruptionRequested():  # type: ignore
                 return
             wordPerPage = self.selectedDict.getWordsByPage(*args)
             self.tick.emit()
@@ -96,7 +96,7 @@ class QueryWorker(QObject):
     allQueryDone = pyqtSignal()
     logger = logging.getLogger("dict2Anki.workers.QueryWorker")
 
-    def __init__(self, wordList: [(SimpleWord, int)], api):
+    def __init__(self, wordList: list[tuple[SimpleWord, int]], api):
         super().__init__()
         self.wordList = wordList
         self.api = api
@@ -105,7 +105,7 @@ class QueryWorker(QObject):
         currentThread = QThread.currentThread()
 
         def _query(word: SimpleWord, row):
-            if currentThread.isInterruptionRequested():
+            if currentThread.isInterruptionRequested():  # type: ignore
                 return
             queryResult = self.api.query(word)
             if queryResult:
@@ -138,7 +138,12 @@ class AssetDownloadWorker(QObject):
     session.mount("https://", HTTPAdapter(max_retries=retries))
 
     def __init__(
-        self, target_dir, images: [tuple], audios: [tuple], overwrite=False, max_retry=3
+        self,
+        target_dir,
+        images: list[tuple],
+        audios: list[tuple],
+        overwrite=False,
+        max_retry=3,
     ):
         super().__init__()
         self.target_dir = target_dir
@@ -156,7 +161,7 @@ class AssetDownloadWorker(QObject):
                 if __download(filename, url):
                     success = True
                     break
-                if currentThread.isInterruptionRequested():
+                if currentThread.isInterruptionRequested():  # type: ignore
                     success = False
                     break
                 self.logger.info(f"Retrying {i + 1} time...")
@@ -172,7 +177,7 @@ class AssetDownloadWorker(QObject):
             """Do NOT call this method directly. Use `__download_with_retry` instead."""
             filepath = os.path.join(self.target_dir, fileName)
             try:
-                if currentThread.isInterruptionRequested():
+                if currentThread.isInterruptionRequested():  # type: ignore
                     return False
                 self.logger.info(f"Downloading {fileName}...")
                 # file already exists

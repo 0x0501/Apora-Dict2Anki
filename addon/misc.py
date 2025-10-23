@@ -8,7 +8,7 @@ logger = logging.getLogger("dict2Anki.misc")
 
 class SimpleWord(ABC):
     @classmethod
-    def from_values(cls, values: [str]):
+    def from_values(cls, values: list[str]):
         n = len(values)
         if n == 0:
             return None
@@ -57,15 +57,15 @@ class SimpleWord(ABC):
 class AbstractDictionary(ABC):
     @staticmethod
     @abstractmethod
-    def loginCheckCallbackFn(cookie: dict, content: str):
+    def loginCheckCallbackFn(cookie: dict, content: str) -> bool:
         pass
 
     @abstractmethod
-    def checkCookie(self, cookie: dict):
+    def checkCookie(self, cookie: dict) -> bool:
         pass
 
     @abstractmethod
-    def getGroups(self) -> [(str, int)]:
+    def getGroups(self) -> list[tuple[str, int]]:
         pass
 
     @abstractmethod
@@ -73,7 +73,9 @@ class AbstractDictionary(ABC):
         pass
 
     @abstractmethod
-    def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> [SimpleWord]:
+    def getWordsByPage(
+        self, pageNo: int, groupName: str, groupId: str
+    ) -> list[SimpleWord]:
         pass
 
     @classmethod

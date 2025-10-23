@@ -17,7 +17,7 @@ class Youdao(AbstractDictionary):
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
-    session.headers = HEADERS
+    session.headers.update(HEADERS)
     session.mount("http://", HTTPAdapter(max_retries=retries))
     session.mount("https://", HTTPAdapter(max_retries=retries))
 
@@ -53,7 +53,7 @@ class Youdao(AbstractDictionary):
             return True
         return False
 
-    def getGroups(self) -> [(str, int)]:
+    def getGroups(self) -> list[tuple[str, int]]:
         """
         获取单词本分组
         :return: [(group_name,group_id)]
@@ -82,16 +82,18 @@ class Youdao(AbstractDictionary):
                 params={"bookId": groupId, "limit": 1, "offset": 0},
             )
             totalWords = r.json()["data"]["total"]
-            totalPages = ceil(totalWords / 15)  # 这里按网页默认每页取15个
+            totalPages: int = ceil(totalWords / 15)  # 这里按网页默认每页取15个
 
         except Exception as error:
             logger.exception(f"网络异常{error}")
-
+            return 0
         else:
             logger.info(f"该分组({groupName}-{groupId})下共有{totalPages}页")
             return totalPages
 
-    def getWordsByPage(self, pageNo: int, groupName: str, groupId: str) -> [SimpleWord]:
+    def getWordsByPage(
+        self, pageNo: int, groupName: str, groupId: str
+    ) -> list[SimpleWord]:
         """
         获取分组下每一页的单词
         :param pageNo: 页数

@@ -28,7 +28,9 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
 
     def _reload(self):
         logger.debug("Reload page")
-        self.page.cookieStore.deleteAllCookies()
+
+        if self.page.cookieStore:
+            self.page.cookieStore.deleteAllCookies()
         self.page.load(QUrl(self.address.text()))
 
     def checkLoginState(self):
@@ -36,11 +38,15 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
             logger.debug(f"Cookie:{self.page.cookie}")
             logger.debug(f"Content{content}")
             if self.loginCheckCallbackFn(cookie=self.page.cookie, content=content):
-                logger.info(f"Login Success!")
+                logger.info("Login Success!")
                 self.onLoginSucceed()
-            logger.info(f"Login Fail!")
+            logger.info("Login Fail!")
 
-        self.page.page().toHtml(contentLoaded)
+        page = self.page.page()
+        if page:
+            page.toHtml(contentLoaded)
+        else:
+            print("self.page.page() is none")
 
     def onLoginSucceed(self):
         logger.info("Destruct login dialog")
@@ -54,9 +60,9 @@ class LoginWebEngineView(QWebEngineView):
         super().__init__(*args, **kwargs)
         # 绑定cookie被添加的信号槽
         self.profile = QWebEngineProfile.defaultProfile()
-        self.profile.setHttpUserAgent(USER_AGENT)
-        self.cookieStore = self.profile.cookieStore()
-        self.cookieStore.cookieAdded.connect(self.onCookieAdd)
+        self.profile.setHttpUserAgent(USER_AGENT)  # type: ignore
+        self.cookieStore = self.profile.cookieStore()  # type: ignore
+        self.cookieStore.cookieAdded.connect(self.onCookieAdd)  # type: ignore
         self._cookies = {}
         self.show()
 

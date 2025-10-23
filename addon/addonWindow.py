@@ -24,6 +24,7 @@ from .constants import (
     PRON_TYPES,
     CARD_SETTINGS,
     RELEASE_URL,
+    get_pronunciation,
 )
 from .noteManager import (
     FieldGroup,
@@ -42,7 +43,6 @@ from .noteManager import (
     getNoteIDsOfWords,
     getOrCreateNormalCardTemplate,
     default_image_filename,
-    get_pronunciation,
     default_audio_filename,
 )
 
@@ -222,12 +222,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.AmEPronRadioButton.setChecked(config["AmEPron"])
 
         # card settings
-        self.definitionEnCheckBox.setChecked(config["definition_en"])
+        self.definitionEnCheckBox.setChecked(config["definition_cn"])
         self.imageCheckBox.setChecked(config["image"])
         self.pronunciationCheckBox.setChecked(config["pronunciation"])
-        self.phraseCheckBox.setChecked(config["phrase"])
-        self.sentenceCheckBox.setChecked(config["sentence"])
-        self.examTypeCheckBox.setChecked(config["exam_type"])
+        self.sentenceCheckBox.setChecked(config["context"])
 
     def initCore(self):
         self.usernameLineEdit.hide()
@@ -264,12 +262,12 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             BrEPron=self.BrEPronRadioButton.isChecked(),
             AmEPron=self.AmEPronRadioButton.isChecked(),
             # note settings
-            definition_en=self.definitionEnCheckBox.isChecked(),
+            definition_cn=self.definitionEnCheckBox.isChecked(),
             image=self.imageCheckBox.isChecked(),
             pronunciation=self.pronunciationCheckBox.isChecked(),
             phrase=self.phraseCheckBox.isChecked(),
             sentence=self.sentenceCheckBox.isChecked(),
-            exam_type=self.examTypeCheckBox.isChecked(),
+            # exam_type=self.examTypeCheckBox.isChecked(),
         )
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
         self.currentConfig = currentConfig
@@ -299,7 +297,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             return False, False
 
         cardSettingsChanged = False
+        print(_config)
         for setting in CARD_SETTINGS:
+            print(setting)
             if _config[setting] != oldConfig[setting]:
                 cardSettingsChanged = True
 
@@ -832,7 +832,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 self.logHandler.flush()
                 return
             # force delete the existing model
-            model = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
+            (model, _, _) = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
 
         if newCreated:
             # create 'Normal' card template (card type)

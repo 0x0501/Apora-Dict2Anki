@@ -185,7 +185,7 @@ class Parser:
             "modifiedTime": self.word.modifiedTime,
             "definition_brief": self.word.trans,
             "definition": self.definition,
-            "definition_en": self.definition_en,
+            "definition_": self.definition_en,
             "phrase": self.phrase,
             "sentence": self.sentence,
             "image": self.image,

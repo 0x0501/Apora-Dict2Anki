@@ -1,6 +1,5 @@
 import os
 import re
-from pathlib import Path
 
 from bs4 import BeautifulSoup
 
@@ -43,7 +42,7 @@ def is_media_file_missing(fieldValue: str, media_dir: str, f_get) -> bool:
     return not os.path.exists(filepath)
 
 
-def read_words_from_file(filename: str) -> [[str]]:
+def read_words_from_file(filename: str) -> list[list[str]]:
     lines = []
     with open(filename, "r", encoding="utf8") as f:
         for line in f:

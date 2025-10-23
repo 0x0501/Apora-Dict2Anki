@@ -19,7 +19,7 @@ class Eudict(AbstractDictionary):
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
-    session.headers = HEADERS
+    session.headers.update(HEADERS)
     session.mount("http://", HTTPAdapter(max_retries=retries))
     session.mount("https://", HTTPAdapter(max_retries=retries))
 
@@ -53,17 +53,22 @@ class Eudict(AbstractDictionary):
             return True
         return False
 
-    def getGroups(self) -> [(str, int)]:
+    def getGroups(self) -> list[tuple[str, int]]:
         """
         获取单词本分组
         :return: [(group_name,group_id)]
         """
+        if self.indexSoup is None:
+            return []
         elements = self.indexSoup.find_all(
             "a", class_="media_heading_a new_cateitem_click"
         )
         groups = []
         if elements:
-            groups = [(el.string, el["data-id"]) for el in elements]
+            groups = [
+                (str(el.string) if el.string else "", int(str(el["data-id"])))
+                for el in elements
+            ]
 
         logger.info(f"单词本分组:{groups}")
         self.groups = groups
@@ -90,13 +95,15 @@ class Eudict(AbstractDictionary):
             logger.exception(f"网络异常{error}")
             return 0
 
-    def getWordsByPage(self, pageNo: int, groupName: str, groupId: int) -> [SimpleWord]:
+    def getWordsByPage(
+        self, pageNo: int, groupName: str, groupId: str
+    ) -> list[SimpleWord]:
         wordList = []
         data = {
             "columns[2][data]": "word",
             "start": pageNo * 100,
             "length": 100,
-            "categoryid": groupId,
+            "categoryid": int(groupId),
             "_": int(time.time()) * 1000,
         }
         try:

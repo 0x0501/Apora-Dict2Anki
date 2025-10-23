@@ -82,7 +82,7 @@ def getOrCreateDeck(deckName, model: NotetypeDict):
     return deck
 
 
-def getOrCreateModel(modelName, recreate=False) -> tuple[object, bool, bool]:
+def getOrCreateModel(modelName, recreate=False) -> tuple[NotetypeDict, bool, bool]:
     """Create Note Model (Note Type). return: (model, newCreated, fieldsUpdated)"""
 
     if mw.col is None:
