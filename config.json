@@ -23,10 +23,8 @@
   "BrEPron": false,
   "AmEPron": true,
 
-  "definition_en": true,
+  "definition_cn": true,
   "image": true,
   "pronunciation": true,
-  "phrase": true,
-  "sentence": true,
-  "exam_type": true
+  "context": true
 }
