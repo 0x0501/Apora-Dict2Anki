@@ -1,10 +1,13 @@
 import os
 import sys
+import logging
 from importlib import import_module
 
 dep_dir_name = "lib"
 src_dir_name = "addon"
 
+logger = logging.getLogger("Apora dict2Anki.setup.py")
+logger.setLevel(logging.DEBUG)
 
 def auto_import_modules():
     current_dir = os.path.dirname(__file__)
@@ -29,4 +32,4 @@ def auto_import_modules():
 
 auto_import_modules()
 
-print("__setup__.py")
+logger.debug("setup.py execution end.")

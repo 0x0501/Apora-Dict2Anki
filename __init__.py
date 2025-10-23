@@ -12,11 +12,17 @@ from aqt.utils import showInfo
 # import all of Qt GUI library
 from aqt.qt import QAction
 from .addon.addonWindow import Windows
+import logging
 
 HOME = os.path.expanduser("~")
 BASHRC_FILE = HOME + "/.bashrc"
 
-print("__init__.py")
+# set logger level
+
+logger = logging.getLogger("Apora dict2Anki.__init__.py")
+
+logger.setLevel(logging.DEBUG)
+logger.debug("Executing __init__.py")
 
 
 def disable_ssl_check():
@@ -50,8 +56,6 @@ def disable_ssl_check_if_debug():
         pass
 
 
-print("__try__")
-
 try:
     from aqt import mw, qconnect
 
@@ -62,12 +66,14 @@ try:
     from aqt.qt import QAction
     from .addon.addonWindow import Windows
 
+    logger.debug("Successfully imported aqt and addon.")
+
     def show_window():
         disable_ssl_check_if_debug()
         w = Windows()
         w.exec()
 
-    print("Add Apora-Dict2Anki to menuTools.")
+    logger.debug("Successfully imported aqt and addon.")
 
     action = QAction("Apora Dict2Anki", mw)
     qconnect(action.triggered, show_window)
@@ -90,4 +96,4 @@ except Exception as ex:
         window.exec()
         sys.exit(app.exec())
 
-print("__END__")
+logger.debug("__init__.py execution end.")

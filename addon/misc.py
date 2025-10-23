@@ -89,7 +89,7 @@ def safe_load_config(data: dict) -> ConfigType:
     return config
 
 
-logger = logging.getLogger("dict2Anki.misc")
+logger = logging.getLogger("Apora dict2Anki.misc")
 
 
 class Mask:
