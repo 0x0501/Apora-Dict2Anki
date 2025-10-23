@@ -1,3 +1,5 @@
+# TODO: fix all the config type issue
+
 from .constants import (
     BACKWARDS_CARD_TEMPLATE_NAME,
     CARD_TEMPLATE_CSS,
@@ -15,6 +17,7 @@ import logging
 from aqt import mw
 from anki.notes import Note
 from anki.models import NotetypeDict
+from .misc import ConfigType
 
 logger = logging.getLogger("dict2Anki.noteManager")
 
@@ -277,7 +280,7 @@ def setNoteFieldValue(
 def addNoteToDeck(
     deck,
     model,
-    config: dict,
+    config: ConfigType,
     word: dict,
     whichPron: str,
     existing_note=None,
@@ -352,7 +355,7 @@ def addNoteToDeck(
     elif word["definition_brief"] and word["definition"]:  # both non-empty
         definitions = (
             [word["definition_brief"]]
-            if config["briefDefinition"]
+            if config.briefDefinition
             else word["definition"]
         )
     else:  # one is empty and the other is non-empty
