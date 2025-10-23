@@ -6,12 +6,13 @@ from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from ..misc import AbstractDictionary, SimpleWord
+from .base import CredentialPlatformEnum, AbstractDictionary, SimpleWord
 
 logger = logging.getLogger("dict2Anki.dictionary.youdao")
 
 
 class Youdao(AbstractDictionary):
+    platform = CredentialPlatformEnum.YOUDAO
     name = "有道词典"
     loginUrl = "http://account.youdao.com/login?service=dict&back_url=http://dict.youdao.com/wordbook/wordlist%3Fkeyfrom%3Dnull"
     timeout = 10

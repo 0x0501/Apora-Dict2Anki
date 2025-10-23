@@ -4,3 +4,4 @@ dictionaries = (
     youdao.Youdao,
     eudict.Eudict,
 )
+

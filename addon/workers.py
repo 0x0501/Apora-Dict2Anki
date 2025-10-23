@@ -5,7 +5,8 @@ import os
 import requests
 from urllib3 import Retry
 from itertools import chain
-from .misc import ThreadPool, SimpleWord
+from .misc import ThreadPool
+from .dictionary.base import SimpleWord
 from requests.adapters import HTTPAdapter
 from .constants import VERSION, VERSION_CHECK_API
 from aqt.qt import QObject, pyqtSignal, QThread

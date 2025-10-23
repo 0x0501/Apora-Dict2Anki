@@ -1,13 +1,14 @@
 import logging
 from queue import Queue
 from threading import Thread
-from abc import ABC, abstractmethod
 from typing import Optional, Any
 from dataclasses import dataclass, asdict
+from .dictionary.base import CredentialPlatformEnum
 
 
 @dataclass
 class Credential:
+    platform: CredentialPlatformEnum
     username: str
     password: str
     cookie: str
@@ -30,8 +31,10 @@ class ConfigType:
     USSpeaking: bool
     aporaApiToken: str
 
-def safe_convert_config_to_dict(config : ConfigType) -> dict[str, Any]:
+
+def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
     return asdict(config)
+
 
 def safe_load_empty_config() -> ConfigType:
     config = ConfigType(
@@ -51,6 +54,7 @@ def safe_load_empty_config() -> ConfigType:
         aporaApiToken="",
     )
     return config
+
 
 def safe_load_config(data: dict) -> ConfigType:
     creds = [Credential(**cred) for cred in data["credential"]]
@@ -74,101 +78,6 @@ def safe_load_config(data: dict) -> ConfigType:
 
 
 logger = logging.getLogger("dict2Anki.misc")
-
-
-class SimpleWord(ABC):
-    @classmethod
-    def from_values(cls, values: list[str]):
-        n = len(values)
-        if n == 0:
-            return None
-        term = values[0]
-        trans = ""
-        modifiedTime = 0
-        bookId = 0
-        bookName = ""
-        if n > 1:
-            trans = values[1]
-        if n > 2:
-            modifiedTime = int(values[2])
-        if n > 3:
-            bookId = int(values[3])
-        if n > 4:
-            bookName = values[4]
-        return SimpleWord(
-            term=term,
-            trans=trans,
-            modifiedTime=modifiedTime,
-            bookId=bookId,
-            bookName=bookName,
-        )
-
-    """A SimpleWord includes the term and a brief translation, as well as other metadata."""
-
-    def __init__(self, term: str, trans="", modifiedTime=0, bookId=0, bookName=""):
-        self.term = term
-        self.trans = trans
-        self.modifiedTime = modifiedTime
-        self.bookId = bookId
-        self.bookName = bookName
-
-    def toString(self) -> str:
-        return f"{self.term} {self.trans} modifiedTime={self.modifiedTime}, bookId={self.bookId}, bookName={self.bookName}"
-
-    def __str__(self) -> str:
-        # return self.toString()
-        return self.term
-
-    def __repr__(self) -> str:
-        # return f'SimpleWord({self.__str__()})'
-        return self.term
-
-
-class AbstractDictionary(ABC):
-    @staticmethod
-    @abstractmethod
-    def loginCheckCallbackFn(cookie: dict, content: str) -> bool:
-        pass
-
-    @abstractmethod
-    def checkCookie(self, cookie: dict) -> bool:
-        pass
-
-    @abstractmethod
-    def getGroups(self) -> list[tuple[str, int]]:
-        pass
-
-    @abstractmethod
-    def getTotalPage(self, groupName: str, groupId: int) -> int:
-        pass
-
-    @abstractmethod
-    def getWordsByPage(
-        self, pageNo: int, groupName: str, groupId: str
-    ) -> list[SimpleWord]:
-        pass
-
-    @classmethod
-    @abstractmethod
-    def close(cls):
-        pass
-
-
-class AbstractQueryAPI(ABC):
-    @classmethod
-    @abstractmethod
-    def query(cls, word: SimpleWord) -> dict:
-        """
-        查询
-        :param word: 单词
-        :return: 查询结果 dict(term, definition, phrase, image, sentence, BrEPhonetic, AmEPhonetic, BrEPron, AmEPron)
-        """
-        pass
-
-    @classmethod
-    @abstractmethod
-    def close(cls):
-        pass
 
 
 class Mask:

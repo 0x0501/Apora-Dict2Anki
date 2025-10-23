@@ -8,12 +8,13 @@ from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 
 from ..constants import HEADERS
-from ..misc import AbstractDictionary, SimpleWord
+from .base import CredentialPlatformEnum, AbstractDictionary, SimpleWord
 
 logger = logging.getLogger("dict2Anki.dictionary.eudict")
 
 
 class Eudict(AbstractDictionary):
+    platform = CredentialPlatformEnum.EUDIC
     name = "欧陆词典"
     loginUrl = "https://dict.eudic.net/account/login"
     timeout = 10

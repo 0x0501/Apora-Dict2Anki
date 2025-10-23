@@ -3,7 +3,8 @@ import requests
 from urllib3 import Retry
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from ..misc import AbstractQueryAPI, SimpleWord
+from .base import AbstractQueryAPI
+from ..dictionary.base import SimpleWord
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger("dict2Anki.queryApi.eudict")
