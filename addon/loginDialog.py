@@ -12,7 +12,6 @@ logger = logging.getLogger("dict2Anki")
 class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
     loginSucceed = pyqtSignal(str)
 
-    
     def __init__(self, loginUrl, loginCheckCallbackFn, parent=None):
         """Initialize a login dialog window.
 

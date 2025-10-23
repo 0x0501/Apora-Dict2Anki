@@ -6,6 +6,7 @@ from dataclasses import dataclass, asdict
 from .dictionary.base import CredentialPlatformEnum
 from enum import Enum
 
+
 @dataclass
 class Credential:
     platform: CredentialPlatformEnum
@@ -31,6 +32,7 @@ class ConfigType:
     USSpeaking: bool
     aporaApiToken: str
 
+
 def asdict_with_enum(obj) -> Any:
     def _convert(value):
         if isinstance(value, Enum):
@@ -43,6 +45,7 @@ def asdict_with_enum(obj) -> Any:
             return value
 
     return _convert(asdict(obj))
+
 
 def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
     return asdict_with_enum(config)

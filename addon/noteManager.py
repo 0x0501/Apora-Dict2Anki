@@ -354,9 +354,7 @@ def addNoteToDeck(
         logger.warning(f"NO DEFINITION FOR WORD {word['term']}!!!")
     elif word["definition_brief"] and word["definition"]:  # both non-empty
         definitions = (
-            [word["definition_brief"]]
-            if config.briefDefinition
-            else word["definition"]
+            [word["definition_brief"]] if config.briefDefinition else word["definition"]
         )
     else:  # one is empty and the other is non-empty
         definitions = (

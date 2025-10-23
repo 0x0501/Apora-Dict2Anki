@@ -9,6 +9,7 @@ src_dir_name = "addon"
 logger = logging.getLogger("Apora dict2Anki.setup.py")
 logger.setLevel(logging.DEBUG)
 
+
 def auto_import_modules():
     current_dir = os.path.dirname(__file__)
 

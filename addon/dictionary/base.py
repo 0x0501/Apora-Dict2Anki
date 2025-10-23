@@ -1,12 +1,13 @@
 from enum import Enum
 from abc import ABC, abstractmethod
 
+
 class CredentialPlatformEnum(Enum):
     """Represent credentials of different platforms"""
+
     NONE = 0
     YOUDAO = 1
     EUDIC = 2
-
 
 
 class SimpleWord(ABC):
