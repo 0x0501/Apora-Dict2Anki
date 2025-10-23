@@ -92,12 +92,17 @@ def publish(zip_dir, zip_filename, title, tags, desc):
     URL = "https://ankiweb.net/account/login"
     rsp = s.get(URL)
     soup = BeautifulSoup(rsp.text, features="html.parser")
-    csrf_token = soup.find("input", {"name": "csrf_token"}).get("value")
+    csrf_token = soup.find("input", {"name": "csrf_token"})
+
+    if csrf_token is None:
+        raise Exception("Cannot get csrf_token")
+
+    csrf_token_value = csrf_token.get("value")
     s.post(
         URL,
         data={
             "submit": 1,
-            "csrf_token": csrf_token,
+            "csrf_token": csrf_token_value,
             "username": username,
             "password": password,
         },
