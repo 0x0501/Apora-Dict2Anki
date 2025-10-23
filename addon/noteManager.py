@@ -1,37 +1,53 @@
-from .constants import *
+from .constants import (
+    BACKWARDS_CARD_TEMPLATE_NAME,
+    CARD_TEMPLATE_CSS,
+    MODEL_FIELDS,
+    NORMAL_CARD_TEMPLATE_NAME,
+    FieldGroup,
+    backwards_card_template_afmt,
+    backwards_card_template_qfmt,
+    default_audio_filename,
+    default_image_filename,
+    normal_card_template_afmt,
+    normal_card_template_qfmt,
+)
 import logging
+from aqt import mw
+from anki.notes import Note
+from anki.models import NotetypeDict
 
 logger = logging.getLogger("dict2Anki.noteManager")
-try:
-    from aqt import mw
-    import anki
-    from anki.models import NotetypeDict
-except ImportError:
-    from test.dummy_aqt import mw
-    from test import dummy_anki as anki
 
 
 def getDeckList():
+    if mw.col is None:
+        raise Exception("Collection is not available")
     return [deck["name"] for deck in mw.col.decks.all()]
 
 
-def getWordsByDeck(deckName) -> [str]:
-    notes = mw.col.findNotes(f'deck:"{deckName}"')
+def getWordsByDeck(deckName) -> list[str]:
+    if mw.col is None:
+        raise Exception("Collection is not available")
+    notes = mw.col.find_notes(f'deck:"{deckName}"')
     words = []
     for nid in notes:
-        note = mw.col.getNote(nid)
-        if (
-            note.model().get("name", "").lower().startswith("dict2anki")
-            and note["term"]
-        ):
+        note = mw.col.get_note(nid)
+        note_type = note.note_type()
+
+        if note_type is None:
+            raise Exception("note_type is none")
+
+        if note_type.get("name", "").lower().startswith("dict2anki") and note["term"]:
             words.append(note["term"])
     return words
 
 
 def getNoteIDsOfWords(wordList, deckName) -> list:
+    if mw.col is None:
+        raise Exception("mw.col is none")
     notes = []
     for word in wordList:
-        note = mw.col.findNotes(f'deck:"{deckName}" term:"{word}"')
+        note = mw.col.find_notes(f'deck:"{deckName}" term:"{word}"')
         if note:
             notes.append(note[0])
     return notes
@@ -39,7 +55,7 @@ def getNoteIDsOfWords(wordList, deckName) -> list:
 
 def getOrCreateDeck(deckName, model: NotetypeDict):
     if mw.col is None:
-        raise Exception("Cannot get mw.col")
+        raise Exception("mw.col is none")
 
     deck_id = mw.col.decks.id(deckName)
 
@@ -68,7 +84,11 @@ def getOrCreateDeck(deckName, model: NotetypeDict):
 
 def getOrCreateModel(modelName, recreate=False) -> tuple[object, bool, bool]:
     """Create Note Model (Note Type). return: (model, newCreated, fieldsUpdated)"""
-    model = mw.col.models.byName(modelName)
+
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
+    model = mw.col.models.by_name(modelName)
     if model:
         if not recreate:
             updated = mergeModelFields(model)
@@ -80,7 +100,7 @@ def getOrCreateModel(modelName, recreate=False) -> tuple[object, bool, bool]:
     logger.info(f"Creating model {modelName}")
     newModel = mw.col.models.new(modelName)
     for field in MODEL_FIELDS:
-        mw.col.models.addField(newModel, mw.col.models.newField(field))
+        mw.col.models.addField(newModel, mw.col.models.new_field(field))
     return newModel, True, True
 
 
@@ -88,10 +108,14 @@ def getOrCreateCardTemplate(modelObject, cardTemplateName, qfmt, afmt, css, add=
     """Create Card Template (Card Type)"""
     logger.info(f"Add card template {cardTemplateName}")
     existingCardTemplate = modelObject["tmpls"]
+
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
     if cardTemplateName in [t.get("name") for t in existingCardTemplate]:
         logger.info(f"[Skip] Card Type '{cardTemplateName}' already exists.")
         return
-    cardTemplate = mw.col.models.newTemplate(cardTemplateName)
+    cardTemplate = mw.col.models.new_template(cardTemplateName)
     cardTemplate["qfmt"] = qfmt
     cardTemplate["afmt"] = afmt
     modelObject["css"] = css
@@ -127,11 +151,15 @@ def getOrCreateBackwardsCardTemplate(modelObject, fg: FieldGroup):
 
 def deleteBackwardsCardTemplate(modelObject, backwardsTemplateObject):
     """Delete Backwards Card Template (Card Type) from existing Dict2Anki Note Type"""
+
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
     mw.col.models.remove_template(modelObject, backwardsTemplateObject)
     mw.col.models.save(modelObject)
 
 
-def checkModelFields(modelObject) -> (bool, set, set):
+def checkModelFields(modelObject) -> tuple[bool, set, set]:
     """Check if model fields are as expected. :return: (ok, unknown_fields, missing_fields)"""
     current_fields = [f["name"] for f in modelObject["flds"]]
     expected_fields = MODEL_FIELDS
@@ -151,9 +179,13 @@ def mergeModelFields(modelObject) -> bool:
     ok, unknown_fields, missing_fields = checkModelFields(modelObject)
     if ok or (not missing_fields):
         return False
+
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
     logger.warning(f"unknown fields: {unknown_fields}")
     logger.warning(f"missing fields: {missing_fields}")
-    logger.info(f"Merge model fields...")
+    logger.info("Merge model fields...")
     fields = modelObject["flds"]
     # field_map = {f["name"]: (f["ord"], f) for f in fields}
     field_map = mw.col.models.field_map(modelObject)
@@ -164,7 +196,7 @@ def mergeModelFields(modelObject) -> bool:
         if f_name in field_map:
             index, field = field_map[f_name]
         else:
-            field = mw.col.models.newField(f_name)
+            field = mw.col.models.new_field(f_name)
         fields.append(field)
     logger.info(f"step 2. add unknown_fields: {unknown_fields}")
     for f_name in unknown_fields:
@@ -201,7 +233,7 @@ def checkModelCardCSS(modelObject) -> bool:
     if current_css == expected_css:
         return True
     else:
-        logger.warning(f"Changes detected in card CSS")
+        logger.warning("Changes detected in card CSS")
         return False
 
 
@@ -217,9 +249,13 @@ def resetModelCardTemplates(modelObject, fg):
             logger.info(f"Reset card template '{BACKWARDS_CARD_TEMPLATE_NAME}'")
             tmpl["qfmt"] = backwards_card_template_qfmt(fg)
             tmpl["afmt"] = backwards_card_template_afmt(fg)
-    logger.info(f"Reset CSS")
+    logger.info("Reset CSS")
     modelObject["css"] = CARD_TEMPLATE_CSS
-    logger.info(f"Save changes")
+    logger.info("Save changes")
+
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
     mw.col.models.save(modelObject)
 
 
@@ -263,10 +299,13 @@ def addNoteToDeck(
         logger.warning(f"查询结果{word} 异常，忽略")
         return
 
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
     isNewNote = existing_note is None
     if isNewNote:
         model["did"] = deck["id"]
-        note = anki.notes.Note(mw.col, model)  # create new note
+        note = Note(mw.col, model)  # create new note
     else:
         note = existing_note  # existing note
 
@@ -332,11 +371,10 @@ def addNoteToDeck(
     # 2. Always add to note if it has a value
     # 3. Toggle visibility by dynamically updating card template
 
-    # definition_en
-    if word["definition_en"]:
-        key, value = "definition_en", "<br>\n".join(word["definition_en"])
+    # definition_cn
+    if word["definition_cn"]:
+        key, value = "definition_cn", "<br>\n".join(word["definition_cn"])
         setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['definition_en'] = '<br>\n'.join(word['definition_en'])
 
     # image
     if word["image"]:
@@ -361,8 +399,6 @@ def addNoteToDeck(
             setNoteFieldValue(note, key, value, isNewNote, overwrite)
             key, value = f"pplaceHolder{i}", "Tap To View"
             setNoteFieldValue(note, key, value, isNewNote, overwrite)
-            # note[f'phrase{i}'], note[f'phrase_explain{i}'] = phrase_tuple
-            # note[f'pplaceHolder{i}'] = "Tap To View"
 
     # sentence
     if word["sentence"]:
@@ -385,8 +421,6 @@ def addNoteToDeck(
             setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
             key, value = f"sentence_speech{i}", sentence_tuple[2]
             setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
-            # note[f'sentence{i}'], note[f'sentence_explain{i}'] = sentence_tuple
-            # note[f'splaceHolder{i}'] = "Tap To View"
 
     if isNewNote:
         mw.col.addNote(note)
