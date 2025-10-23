@@ -4,7 +4,7 @@ from threading import Thread
 from typing import Optional, Any
 from dataclasses import dataclass, asdict
 from .dictionary.base import CredentialPlatformEnum
-
+from enum import Enum
 
 @dataclass
 class Credential:
@@ -31,9 +31,21 @@ class ConfigType:
     USSpeaking: bool
     aporaApiToken: str
 
+def asdict_with_enum(obj) -> Any:
+    def _convert(value):
+        if isinstance(value, Enum):
+            return value.value  # 或 value.name
+        elif isinstance(value, list):
+            return [_convert(v) for v in value]
+        elif isinstance(value, dict):
+            return {k: _convert(v) for k, v in value.items()}
+        else:
+            return value
+
+    return _convert(asdict(obj))
 
 def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
-    return asdict(config)
+    return asdict_with_enum(config)
 
 
 def safe_load_empty_config() -> ConfigType:

@@ -3,28 +3,27 @@
   "selectedDict": 0,
   "selectedApi": 0,
   "selectedGroup": null,
-
   "credential": [
     {
+      "platform": 0,
       "username": "",
       "password": "",
       "cookie": ""
     },
     {
+      "platform": 0,
       "username": "",
       "password": "",
       "cookie": ""
     }
   ],
-
   "briefDefinition": true,
   "syncTemplates": true,
-  "noPron": false,
-  "BrEPron": false,
-  "AmEPron": true,
-
-  "definition_cn": true,
-  "image": true,
-  "pronunciation": true,
-  "context": true
+  "termSpeaking": false,
+  "contextSpeaking": false,
+  "enableContext": false,
+  "disableSpeaking": true,
+  "GreatBritainSpeaking": false,
+  "USSpeaking": false,
+  "aporaApiToken": ""
 }
