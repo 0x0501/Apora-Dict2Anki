@@ -12,7 +12,25 @@ logger = logging.getLogger("dict2Anki")
 class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
     loginSucceed = pyqtSignal(str)
 
+    
     def __init__(self, loginUrl, loginCheckCallbackFn, parent=None):
+        """Initialize a login dialog window.
+
+        This dialog creates a web view for user authentication through a specified login URL.
+
+        Args:
+            loginUrl (str): The URL of the login page to load.
+            loginCheckCallbackFn (callable): Callback function to verify login status.
+            parent (QWidget, optional): Parent widget. Defaults to None.
+
+        Attributes:
+            url (QUrl): QUrl object containing the login URL.
+            loginCheckCallbackFn (callable): Stored callback function for login verification.
+            page (LoginWebEngineView): Web view widget for displaying login page.
+
+        Note:
+            The dialog uses QWebEngineView to render the login page and handle authentication.
+        """
         super().__init__(parent)
         self.url = QUrl(loginUrl)
         self.loginCheckCallbackFn = loginCheckCallbackFn
@@ -52,6 +70,8 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
         logger.info("Destruct login dialog")
         self.close()
         logger.debug("emit cookie")
+        print("onLoginSucceed inside loginDialog ------------------>")
+        print(self.page.cookie)
         self.loginSucceed.emit(json.dumps(self.page.cookie))
 
 
