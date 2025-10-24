@@ -19,6 +19,8 @@ from .misc import ConfigType
 from .dictionary.base import PronunciationVariantEnum
 from .queryApi.base import QueryAPIReturnType
 from typing import Optional, Union
+from pathlib import Path
+
 
 logger = logging.getLogger("dict2Anki.noteManager")
 
@@ -287,6 +289,21 @@ def appendTagToNote(note: Note, tag: Union[str, list[str]]):
             note.add_tag(tag)
         else:
             note.set_tags_from_str(" ".join(tag))
+
+
+def loadAssetsIntoCollectionMedia():
+    if mw.col is None:
+        raise Exception("mw.col is none")
+
+    current_path = Path(__file__).absolute().parent
+
+    assets_path = current_path.joinpath("assets")
+
+    media = mw.col.media
+
+    for p in assets_path.iterdir():
+        media.add_file(p.as_posix())
+    pass
 
 
 def addNoteToDeck(
