@@ -59,6 +59,23 @@ class SimpleWord(ABC):
 
 
 class AbstractDictionary(ABC):
+    name: str
+    """
+    Dictionary name, must be unique.
+    """
+
+    platform: CredentialPlatformEnum
+    """
+    A unique code associate the dictionary, used to distinguish different dictionaries.
+    """
+
+    groups: list[tuple[str, int]]
+    """
+    group name which represent a set of words/phrases in the dictionary.
+    """
+
+    loginUrl: str
+
     @staticmethod
     @abstractmethod
     def loginCheckCallbackFn(cookie: dict, content: str) -> bool:
@@ -86,3 +103,14 @@ class AbstractDictionary(ABC):
     @abstractmethod
     def close(cls):
         pass
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, "name"):
+            raise TypeError(
+                f"Subclass {cls.__name__} must define 'name' class attribute."
+            )
+        if not hasattr(cls, "platform"):
+            raise TypeError(
+                f"Subclass {cls.__name__} must define 'name' class attribute."
+            )

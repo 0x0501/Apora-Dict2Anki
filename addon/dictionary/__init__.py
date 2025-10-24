@@ -1,6 +1,8 @@
 from . import youdao, eudict
+from .base import AbstractDictionary
+from typing import Type
 
-dictionaries = (
+DICTIONARIES: tuple[Type[AbstractDictionary], ...] = (
     youdao.Youdao,
     eudict.Eudict,
 )

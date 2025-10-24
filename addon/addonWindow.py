@@ -48,7 +48,7 @@ from .noteManager import (
 )
 
 from . import utils
-from .dictionary import dictionaries
+from .dictionary import DICTIONARIES
 from .dictionary.base import CredentialPlatformEnum, SimpleWord
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
@@ -102,7 +102,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.currentConfig = safe_load_empty_config()
         self.localWords: list[str] = []
         self.remoteWordsDict: dict[str, SimpleWord] = {}
-        self.selectedGroups: list[list[str]] = [list()] * len(dictionaries)
+        self.selectedGroups: list[list[str]] = [list()] * len(DICTIONARIES)
 
         self.querySuccessDict: dict[int, dict] = {}  # row -> queryResult
         self.queryFailedDict: dict[int, bool] = {}  # row -> bool
@@ -143,7 +143,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def closeEvent(self, a0):
         """插件关闭时调用"""
         # cleanup
-        for dictionary in dictionaries:
+        for dictionary in DICTIONARIES:
             dictionary.close()
         for api in QUERY_APIS:
             api.close()
@@ -208,7 +208,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         if config.selectedGroup:
             self.selectedGroups = config.selectedGroup
         else:
-            self.selectedGroups = [list()] * len(dictionaries)
+            self.selectedGroups = [list()] * len(DICTIONARIES)
 
         # account settings
         selectedDictCredential = config.credential[config.selectedDict]
@@ -239,7 +239,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.passwordLineEdit.hide()
 
         # load dictionary into combo box
-        for d in dictionaries:
+        for d in DICTIONARIES:
             self.dictionaryComboBox.addItem(d.name, d.platform)
 
         self.apiComboBox.addItems([d.name for d in QUERY_APIS])
@@ -519,7 +519,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.progressBar.setMaximum(0)
 
         currentConfig = self.getAndSaveCurrentConfig()
-        self.selectedDict = dictionaries[currentConfig.selectedDict]()
+        self.selectedDict = DICTIONARIES[currentConfig.selectedDict]()
 
         # 登陆线程
         self.loginWorker = LoginStateCheckWorker(
@@ -542,7 +542,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # Ensure selectedDict is initialized before accessing its attributes
         if self.selectedDict is None:
             idx = self.dictionaryComboBox.currentIndex()
-            self.selectedDict = dictionaries[idx]()
+            self.selectedDict = DICTIONARIES[idx]()
         self.loginDialog = LoginDialog(
             loginUrl=self.selectedDict.loginUrl,
             loginCheckCallbackFn=self.selectedDict.loginCheckCallbackFn,
@@ -569,7 +569,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 )
             except Exception:
                 selected_idx = self.dictionaryComboBox.currentIndex()
-            self.selectedDict = dictionaries[selected_idx]()
+            self.selectedDict = DICTIONARIES[selected_idx]()
         self.selectedDict.checkCookie(json.loads(cookie))
         groups = self.selectedDict.getGroups()
         if groups:
@@ -652,7 +652,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         if self.selectedDict is None:
             try:
                 idx = self.dictionaryComboBox.currentIndex()
-                self.selectedDict = dictionaries[idx]()
+                self.selectedDict = DICTIONARIES[idx]()
             except Exception as e:
                 logger.error(f"Failed to initialize selectedDict: {e}")
                 showCritical("未能初始化词典实例，无法获取远程单词列表。")
