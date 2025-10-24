@@ -92,6 +92,22 @@ def safe_load_config(data: dict) -> ConfigType:
     return config
 
 
+def safe_load_config_from_mw() -> ConfigType:
+    try:
+        from aqt import mw
+    except ImportError:
+        raise Exception("Cannot import apt.mw")
+
+    untypedConfig = mw.addonManager.getConfig(__name__)
+
+    if untypedConfig is None:
+        raise Exception("Cannot load Apora dict2anki config.")
+
+    config = safe_load_config(untypedConfig)
+
+    return config
+
+
 logger = logging.getLogger("Apora dict2Anki.misc")
 
 
