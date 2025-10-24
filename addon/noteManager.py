@@ -1,5 +1,3 @@
-# TODO: fix all the config type issue
-
 from .constants import (
     BACKWARDS_CARD_TEMPLATE_NAME,
     CARD_TEMPLATE_CSS,

@@ -14,7 +14,7 @@ logger = logging.getLogger("dict2Anki.dictionary.youdao")
 class Youdao(AbstractDictionary):
     platform = CredentialPlatformEnum.YOUDAO
     name = "有道词典"
-    loginUrl = "http://account.youdao.com/login?service=dict&back_url=http://dict.youdao.com/wordbook/wordlist%3Fkeyfrom%3Dnull"
+    loginUrl = "https://c.youdao.com/common-login-web/index.html?redirect_url=https://youdao.com/webwordbook/wordlist"
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
