@@ -15,9 +15,12 @@ from .constants import (
 )
 import logging
 from aqt import mw
+from anki.decks import DeckDict
 from anki.notes import Note
 from anki.models import NotetypeDict
 from .misc import ConfigType
+from .dictionary.base import PronunciationVariantEnum
+from typing import Optional
 
 logger = logging.getLogger("dict2Anki.noteManager")
 
@@ -79,7 +82,6 @@ def getOrCreateDeck(deckName, model: NotetypeDict):
     mw.col.models.set_current(model)
     model["did"] = deck["id"]
     mw.col.models.save(model)
-    mw.col.reset()
     mw.reset()
 
     return deck
@@ -263,9 +265,10 @@ def resetModelCardTemplates(modelObject, fg):
 
 
 def setNoteFieldValue(
-    note, key: str, value: str, isNewNote: bool, overwrite: bool
+    note: Note, key: str, value: str, isNewNote: bool, overwrite: bool
 ) -> bool:
     """set note field value. :return isWritten"""
+
     if not value:
         return False
     if isNewNote or overwrite:
@@ -278,12 +281,12 @@ def setNoteFieldValue(
 
 
 def addNoteToDeck(
-    deck,
-    model,
+    deck: Optional[DeckDict],
+    model: Optional[NotetypeDict],
     config: ConfigType,
     word: dict,
-    whichPron: str,
-    existing_note=None,
+    pronunciationVariant: PronunciationVariantEnum,
+    existing_note: Optional[Note],
     overwrite=False,
 ):
     """
@@ -307,6 +310,9 @@ def addNoteToDeck(
 
     isNewNote = existing_note is None
     if isNewNote:
+        if not model or not deck:
+            logger.error("Cannot create new note: model or deck is missing")
+            return
         model["did"] = deck["id"]
         note = Note(mw.col, model)  # create new note
     else:
@@ -385,7 +391,7 @@ def addNoteToDeck(
         # note['image'] = f'<div><img src="{imageFilename}" /></div>'
 
     # pronunciation
-    if whichPron and whichPron != "noPron" and word[whichPron]:
+    if pronunciationVariant is not PronunciationVariantEnum.NONE:
         pronFilename = default_audio_filename(term)
         key, value = "pronunciation", f"[sound:{pronFilename}]"
         setNoteFieldValue(note, key, value, isNewNote, overwrite)
@@ -429,4 +435,3 @@ def addNoteToDeck(
     else:
         mw.col.update_note(note)
         logger.info(f"更新笔记{term}")
-    mw.col.reset()

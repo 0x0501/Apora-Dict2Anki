@@ -22,10 +22,8 @@ from .constants import (
     MODEL_NAME,
     WINDOW_TITLE,
     BACKWARDS_CARD_TEMPLATE_NAME,
-    PRON_TYPES,
     CARD_SETTINGS,
     RELEASE_URL,
-    get_pronunciation,
 )
 from .noteManager import (
     FieldGroup,
@@ -49,7 +47,11 @@ from .noteManager import (
 
 from . import utils
 from .dictionary import DICTIONARIES
-from .dictionary.base import CredentialPlatformEnum, SimpleWord
+from .dictionary.base import (
+    CredentialPlatformEnum,
+    SimpleWord,
+    PronunciationVariantEnum,
+)
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
 from .misc import (
@@ -57,6 +59,7 @@ from .misc import (
     safe_load_config,
     safe_load_empty_config,
     safe_convert_config_to_dict,
+    get_pronunciation,
     ConfigType,
     Credential,
 )
@@ -70,7 +73,7 @@ from .workers import (
     RemoteWordFetchingWorker,
     VersionCheckWorker,
 )
-from typing import Callable
+from typing import Callable, Optional
 
 try:
     from aqt import mw
@@ -698,15 +701,17 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def on_allPullWork_done(self):
         """全部分组获取完毕事件"""
         # termList: [str]
-        localTermList = set(getWordsByDeck(self.deckComboBox.currentText()))
-        remoteTermList = set()
+        localTermList: set[str] = set(getWordsByDeck(self.deckComboBox.currentText()))
+        remoteTermList: set[str] = set()
         for row in range(self.newWordListWidget.count()):
             item = self.newWordListWidget.item(row)
             if item is not None:
                 remoteTermList.add(item.text())
 
-        newTerms = utils.set_sub_ignore_case(remoteTermList, localTermList)  # 新单词
-        needToDeleteTerms = utils.set_sub_ignore_case(
+        newTerms: set[str] = utils.set_sub_ignore_case(
+            remoteTermList, localTermList
+        )  # 新单词
+        needToDeleteTerms: set[str] = utils.set_sub_ignore_case(
             localTermList, remoteTermList
         )  # 需要删除的单词
         logger.info(f"本地({len(localTermList)}): {localTermList}")
@@ -852,13 +857,21 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.btnSync.setEnabled(True)
         self.logHandler.flush()
 
-    def get_preferred_pron(self, currentConfig):
-        if currentConfig["noPron"]:
-            return 0
+    def get_preferred_pronunciation_variant(
+        self, currentConfig: Optional[ConfigType]
+    ) -> PronunciationVariantEnum:
+        if currentConfig is not None and currentConfig.disableSpeaking:
+            return PronunciationVariantEnum.NONE  # No speaking
         else:
-            return 2 if self.USSpeakingRadioButton.isChecked() else 1
+            return (
+                PronunciationVariantEnum.US
+                if self.USSpeakingRadioButton.isChecked()
+                else PronunciationVariantEnum.UK
+            )
 
-    def get_asset_download_task(self, word: dict, preferred_pron: int):
+    def get_asset_download_task(
+        self, word: dict, preferred_pron: PronunciationVariantEnum
+    ):
         image_task = None
         term = word["term"]
         if word["image"]:
@@ -868,18 +881,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             logger.info(f"No image for word {term}")
 
         pron_type, is_fallback = get_pronunciation(word, preferred_pron)
-        if pron_type == 0:
+        if pron_type == PronunciationVariantEnum.NONE:
             if is_fallback:
                 logger.warning(f"No audio for word {term}!")
-            return image_task, None, 0, False
+            return image_task, None, PronunciationVariantEnum.NONE, False
 
         if is_fallback:
             logger.warning(
-                f"{PRON_TYPES[preferred_pron]} is missing for word {term}. Downloading {PRON_TYPES[pron_type]} instead."
+                f"Pronunciation: {preferred_pron.name} is missing for word {term}. Downloading {pron_type.name} instead."
             )
 
         pronFilename = default_audio_filename(term)
-        audio_task = (pronFilename, word[PRON_TYPES[pron_type]])
+        audio_task = (pronFilename, pron_type)
         return image_task, audio_task, pron_type, is_fallback
 
     @pyqtSlot()
@@ -966,11 +979,13 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         newWordCount = self.newWordListWidget.count()
 
         # 判断是否需要下载发音
-        preferred_pron = self.get_preferred_pron(currentConfig)
-        if preferred_pron == 0:
+        preferred_pron = self.get_preferred_pronunciation_variant(currentConfig)
+        if preferred_pron == PronunciationVariantEnum.NONE:
             logger.info("不下载发音")
         else:
-            logger.info(f"Preferred Pronunciation: {PRON_TYPES[preferred_pron]}")
+            logger.info(
+                f"Preferred Pronunciation: {preferred_pron.name}"
+            )  # print enum name
 
         self.added = 0
         for row in range(newWordCount):
@@ -980,6 +995,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 raise Exception("Cannot get wordItem")
 
             wordItemData = wordItem.data(Qt.ItemDataRole.UserRole)
+            print("WordItemData")
+            print(wordItemData)
             if wordItemData:
                 term = wordItemData["term"]
                 logger.debug(f"wordItemData ({term}): {wordItemData}")
@@ -994,7 +1011,13 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
                 # add note
                 addNoteToDeck(
-                    deck, model, currentConfig, wordItemData, PRON_TYPES[pron_type]
+                    deck=deck,
+                    model=model,
+                    config=currentConfig,
+                    word=wordItemData,
+                    pronunciationVariant=pron_type,
+                    existing_note=None,
+                    overwrite=False,
                 )
                 self.added += 1
         mw.reset()
@@ -1176,11 +1199,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         logger.info("------------------------------------------")
         logger.info("Iterate over query results: download missing assets")
         self.logHandler.flush()
-        preferred_pron = self.get_preferred_pron(self.tmp_currentConfig)
-        if preferred_pron == 0:
+
+        preferred_pron = self.get_preferred_pronunciation_variant(
+            self.tmp_currentConfig
+        )
+        if preferred_pron == PronunciationVariantEnum.NONE:
             logger.info("不下载发音")
         else:
-            logger.info(f"Preferred Pronunciation: {PRON_TYPES[preferred_pron]}")
+            logger.info(f"Preferred Pronunciation: {preferred_pron.name}")
 
         imagesDownloadTasks = []
         audiosDownloadTasks = []
@@ -1277,11 +1303,13 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             "Iterate over query results: update notes (fill missing field values)"
         )
         self.logHandler.flush()
-        preferred_pron = self.get_preferred_pron(self.tmp_currentConfig)
-        if preferred_pron == 0:
+        preferred_pron = self.get_preferred_pronunciation_variant(
+            self.tmp_currentConfig
+        )
+        if preferred_pron == PronunciationVariantEnum.NONE:
             logger.info("不下载发音")
         else:
-            logger.info(f"Preferred Pronunciation: {PRON_TYPES[preferred_pron]}")
+            logger.info(f"Preferred Pronunciation: {preferred_pron}")
 
         self.logHandler.flush()
         for row, word in self.querySuccessDict.items():
@@ -1296,14 +1324,16 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             # Ensure tmp_currentConfig is not None before passing to addNoteToDeck
             if self.tmp_currentConfig is None:
                 raise Exception("tmp_currentConfig is None")
+
+            # Downloading missing assets don't need model and deck
             addNoteToDeck(
-                None,
-                None,
-                self.tmp_currentConfig,
-                word,
-                PRON_TYPES[pron_type],
-                existing_note,
-                False,
+                deck=None,
+                model=None,
+                config=self.tmp_currentConfig,
+                word=word,
+                pronunciationVariant=pron_type,
+                existing_note=existing_note,
+                overwrite=False,
             )
         mw.reset()
         self.logHandler.flush()

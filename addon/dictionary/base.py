@@ -10,6 +10,12 @@ class CredentialPlatformEnum(Enum):
     EUDIC = 2
 
 
+class PronunciationVariantEnum(Enum):
+    NONE = 0
+    US = 1
+    UK = 2
+
+
 class SimpleWord(ABC):
     @classmethod
     def from_values(cls, values: list[str]):

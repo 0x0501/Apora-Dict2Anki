@@ -180,21 +180,6 @@ tr {
 """
 
 
-PRON_TYPES = ["noPron", "BrEPron", "AmEPron"]
-
-
-def get_pronunciation(word: dict, preferred_pron: int) -> tuple[int, bool]:
-    """:return: pron_type: int, is_fallback: bool"""
-    if preferred_pron == 0:
-        return 0, False
-    if word[PRON_TYPES[preferred_pron]]:
-        return preferred_pron, False
-    fallback_pron = 2 if preferred_pron == 1 else 1
-    if word[PRON_TYPES[fallback_pron]]:
-        return fallback_pron, True
-    return 0, True
-
-
 def default_image_filename(term: str) -> str:
     return f"{ASSET_FILENAME_PREFIX}-{term}.jpg"
 
