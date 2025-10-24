@@ -7,13 +7,13 @@ from ..constants import HEADERS
 from .base import AbstractQueryAPI, QueryAPIReturnType, todo_empty_query_result
 from ..dictionary.base import SimpleWord
 from bs4 import BeautifulSoup
-from deprecated import deprecated
+from ..deprecated import deprecated
 
 logger = logging.getLogger("dict2Anki.queryApi.eudict")
 __all__ = ["API"]
 
 
-@deprecated(reason="Unstable API, the API will be removed in the future.")
+@deprecated(message="Unstable API, the API will be removed in the future.")
 class Parser:
     def __init__(self, html, word: SimpleWord):
         self._soap = BeautifulSoup(html, "html.parser")
@@ -201,7 +201,7 @@ class Parser:
         }
 
 
-@deprecated(reason="Unstable API, the API will be removed in the future.")
+@deprecated(message="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "欧陆词典 API"
     timeout = 10

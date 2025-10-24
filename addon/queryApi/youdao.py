@@ -10,14 +10,14 @@ from .base import (
     QueryAPIReturnType,
     todo_empty_query_result,
 )
-from deprecated import deprecated
+from ..deprecated import deprecated
 
 logger = logging.getLogger("dict2Anki.queryApi.youdao")
 __all__ = ["API"]
 SENTENCE_SPEECH_URL_PREFIX = "http://dict.youdao.com/dictvoice?audio="
 
 
-@deprecated(reason="Unstable API, the API will be removed in the future.")
+@deprecated(message="Unstable API, the API will be removed in the future.")
 class Parser:
     def __init__(self, json_obj, word: SimpleWord):
         self._result = json_obj
@@ -180,7 +180,7 @@ class Parser:
         }
 
 
-@deprecated(reason="Unstable API, the API will be removed in the future.")
+@deprecated(message="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "有道 API"
     timeout = 10
