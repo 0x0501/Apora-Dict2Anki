@@ -107,6 +107,7 @@ def safe_load_config_from_mw() -> ConfigType:
 
     return config
 
+
 logger = logging.getLogger("Apora dict2Anki.misc")
 
 

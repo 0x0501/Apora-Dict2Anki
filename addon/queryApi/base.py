@@ -55,6 +55,21 @@ def todo_empty_query_result() -> QueryAPIReturnType:
     )
 
 
+def mock_query_result() -> QueryAPIReturnType:
+    return QueryAPIReturnType(
+        term="liability",
+        definition="Things that you owe or are responsible for, especially money you have to pay.",
+        part_of_speech="noun",
+        ipa="ˌlaɪəˈbɪləti",
+        original="liability",
+        chinese_definition="负债；债务",
+        context="Keep expenses low, reduce liabilities, and diligently build a base of solid assets.",
+        collocation=["liability for", "liability to do"],
+        term_audio_url=None,
+        context_audio_url=None,
+    )
+
+
 class AbstractQueryAPI(ABC):
     name: str
     """
