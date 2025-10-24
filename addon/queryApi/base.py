@@ -49,6 +49,11 @@ def todo_empty_query_result() -> QueryAPIReturnType:
 
 
 class AbstractQueryAPI(ABC):
+    name: str
+    """
+    Query API name, must be unique.
+    """
+
     @classmethod
     @abstractmethod
     def query(cls, term: SimpleWord) -> QueryAPIReturnType:
@@ -63,3 +68,10 @@ class AbstractQueryAPI(ABC):
     @abstractmethod
     def close(cls):
         pass
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        if not hasattr(cls, "name"):
+            raise TypeError(
+                f"Subclass {cls.__name__} must define 'name' class attribute."
+            )

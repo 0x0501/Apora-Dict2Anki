@@ -1,3 +1,5 @@
 from . import youdao, eudict
+from .base import AbstractQueryAPI
+from typing import Type
 
-apis = [youdao.API, eudict.API]
+QUERY_APIS: list[Type[AbstractQueryAPI]] = [youdao.API, eudict.API]

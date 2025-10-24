@@ -60,7 +60,7 @@ from .misc import (
     ConfigType,
     Credential,
 )
-from .queryApi import apis
+from .queryApi import QUERY_APIS
 from .UIForm import mainUI, wordGroup
 from .workers import (
     AssetDownloadWorker,
@@ -145,7 +145,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # cleanup
         for dictionary in dictionaries:
             dictionary.close()
-        for api in apis:
+        for api in QUERY_APIS:
             api.close()
 
         if self.assetDownloadWorker:
@@ -242,7 +242,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         for d in dictionaries:
             self.dictionaryComboBox.addItem(d.name, d.platform)
 
-        self.apiComboBox.addItems([d.name for d in apis])
+        self.apiComboBox.addItems([d.name for d in QUERY_APIS])
         self.deckComboBox.addItems(getDeckList())
 
         # bind save button and shortcut (Ctrl+S)
@@ -789,7 +789,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         logger.info(f"待查询单词{wordList}")
         # 查询线程
         self.progressBar.setMaximum(len(wordList))
-        self.queryWorker = QueryWorker(wordList, apis[currentConfig.selectedApi])
+        self.queryWorker = QueryWorker(wordList, QUERY_APIS[currentConfig.selectedApi])
         self.queryWorker.moveToThread(self.workerThread)
         self.queryWorker.thisRowDone.connect(self.on_thisRowDone)
         self.queryWorker.thisRowFailed.connect(self.on_thisRowFailed)
@@ -1137,7 +1137,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryFailedDict = {}
         self.queryWords(
             wordList,
-            apis[self.tmp_currentConfig.selectedApi],
+            QUERY_APIS[self.tmp_currentConfig.selectedApi],
             self.__on_allQueryDone_DownloadMissingAssets,
         )
 
@@ -1234,7 +1234,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryFailedDict = {}
         self.queryWords(
             wordList,
-            apis[self.tmp_currentConfig.selectedApi],
+            QUERY_APIS[self.tmp_currentConfig.selectedApi],
             self.__on_allQueryDone_FillMissingValues,
         )
 
