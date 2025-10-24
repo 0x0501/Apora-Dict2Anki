@@ -2,6 +2,13 @@ from abc import ABC, abstractmethod
 from ..dictionary.base import SimpleWord
 from dataclasses import dataclass
 from typing import Optional
+from enum import Enum
+
+
+class QueryAPIPlatformEnum(Enum):
+    APORA = 1
+    YOUDAO = 2
+    EUDIC = 3
 
 
 @dataclass
@@ -54,6 +61,11 @@ class AbstractQueryAPI(ABC):
     Query API name, must be unique.
     """
 
+    platform: QueryAPIPlatformEnum
+    """
+    Query API platform enum, used to distinguish different platforms
+    """
+
     @classmethod
     @abstractmethod
     def query(cls, term: SimpleWord) -> QueryAPIReturnType:
@@ -72,6 +84,10 @@ class AbstractQueryAPI(ABC):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         if not hasattr(cls, "name"):
+            raise TypeError(
+                f"Subclass {cls.__name__} must define 'name' class attribute."
+            )
+        if not hasattr(cls, "platform"):
             raise TypeError(
                 f"Subclass {cls.__name__} must define 'name' class attribute."
             )

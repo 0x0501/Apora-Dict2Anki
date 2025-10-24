@@ -4,7 +4,12 @@ import requests
 from urllib3 import Retry
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from .base import AbstractQueryAPI, QueryAPIReturnType, todo_empty_query_result
+from .base import (
+    AbstractQueryAPI,
+    QueryAPIReturnType,
+    todo_empty_query_result,
+    QueryAPIPlatformEnum,
+)
 from ..dictionary.base import SimpleWord
 from bs4 import BeautifulSoup
 from ..deprecated import deprecated
@@ -204,6 +209,7 @@ class Parser:
 @deprecated(message="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "欧陆词典 API"
+    platform = QueryAPIPlatformEnum.EUDIC
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()

@@ -49,7 +49,7 @@ from .noteManager import (
 
 from . import utils
 from .dictionary import DICTIONARIES
-from .dictionary.base import CredentialPlatformEnum, SimpleWord
+from .dictionary.base import CredentialPlatformEnum, SimpleWord, AbstractDictionary
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
 from .misc import (
@@ -61,6 +61,7 @@ from .misc import (
     Credential,
 )
 from .queryApi import QUERY_APIS
+from .queryApi.base import QueryAPIPlatformEnum
 from .UIForm import mainUI, wordGroup
 from .workers import (
     AssetDownloadWorker,
@@ -755,6 +756,19 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryBtn.setEnabled(False)
         self.pullRemoteWordsBtn.setEnabled(False)
         self.btnSync.setEnabled(False)
+
+        # if the query api is Apora, make sure API token is set before querying terms
+        selectedQueryAPI = QUERY_APIS[currentConfig.selectedApi]
+
+        if (
+            selectedQueryAPI.platform == QueryAPIPlatformEnum.APORA
+            and len(currentConfig.aporaApiToken) == 0
+        ):
+            showInfo("必须填写Apora API Token")
+            self.queryBtn.setEnabled(True)
+            self.pullRemoteWordsBtn.setEnabled(True)
+            self.btnSync.setEnabled(True)
+            return
 
         wordList: list[tuple[SimpleWord, int]] = []  # [(SimpleWord, row)]
         selectedTerms = self.newWordListWidget.selectedItems()

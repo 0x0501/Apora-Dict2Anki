@@ -9,6 +9,7 @@ from .base import (
     SimpleWord,
     QueryAPIReturnType,
     todo_empty_query_result,
+    QueryAPIPlatformEnum,
 )
 from ..deprecated import deprecated
 
@@ -183,6 +184,7 @@ class Parser:
 @deprecated(message="Unstable API, the API will be removed in the future.")
 class API(AbstractQueryAPI):
     name = "有道 API"
+    platform = QueryAPIPlatformEnum.YOUDAO
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
