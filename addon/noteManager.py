@@ -9,7 +9,6 @@ from .constants import (
     backwards_card_template_afmt,
     backwards_card_template_qfmt,
     default_audio_filename,
-    default_image_filename,
     normal_card_template_afmt,
     normal_card_template_qfmt,
 )
@@ -20,6 +19,7 @@ from anki.notes import Note
 from anki.models import NotetypeDict
 from .misc import ConfigType
 from .dictionary.base import PronunciationVariantEnum
+from .queryApi.base import QueryAPIReturnType
 from typing import Optional
 
 logger = logging.getLogger("dict2Anki.noteManager")
@@ -284,7 +284,7 @@ def addNoteToDeck(
     deck: Optional[DeckDict],
     model: Optional[NotetypeDict],
     config: ConfigType,
-    word: dict,
+    word: QueryAPIReturnType,
     pronunciationVariant: PronunciationVariantEnum,
     existing_note: Optional[Note],
     overwrite=False,
@@ -318,7 +318,7 @@ def addNoteToDeck(
     else:
         note = existing_note  # existing note
 
-    term = word["term"]
+    term = word.term
     setNoteFieldValue(note, "term", term, isNewNote, overwrite)
     # note['term'] = term
 
@@ -327,51 +327,41 @@ def addNoteToDeck(
     # 2. Always add to note if it has a value
 
     # group (bookName)
-    if word["bookName"]:
-        key, value = "group", word["bookName"]
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['group'] = word['bookName']
+    #!TODO: For now disable group info, we'll consider this in the future
+    # if word["bookName"]:
+    #     key, value = "group", word["bookName"]
+    #     setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    #     # note['group'] = word['bookName']
 
     # exam_type
-    if word["exam_type"]:  # [str]
-        key, value = "exam_type", " / ".join(word["exam_type"])
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['exam_type'] = " / ".join(word['exam_type'])
+    #!TODO: For now disable exam_type info, we'll consider this in the future
+    # if word["exam_type"]:  # [str]
+    #     key, value = "exam_type", " / ".join(word["exam_type"])
+    #     setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    #     # note['exam_type'] = " / ".join(word['exam_type'])
 
-    # modifiedTime
-    if word["modifiedTime"]:  # int
-        key, value = "modifiedTime", str(word["modifiedTime"])
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['modifiedTime'] = str(word['modifiedTime'])
-
-    # phonetic
-    if word["BrEPhonetic"]:
-        key, value = "uk", word["BrEPhonetic"]
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['uk'] = word['BrEPhonetic']
-    if word["AmEPhonetic"]:
-        key, value = "us", word["AmEPhonetic"]
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    # International Phonetic Alphabet (IPA)
+    if word.ipa:
+        setNoteFieldValue(note, "ipa", word.ipa, isNewNote, overwrite)
         # note['us'] = word['AmEPhonetic']
 
     # definition
-    definitions = []
-    if not word["definition_brief"] and not word["definition"]:  # both empty
-        logger.warning(f"NO DEFINITION FOR WORD {word['term']}!!!")
-    elif word["definition_brief"] and word["definition"]:  # both non-empty
-        definitions = (
-            [word["definition_brief"]] if config.briefDefinition else word["definition"]
-        )
-    else:  # one is empty and the other is non-empty
-        definitions = (
-            [word["definition_brief"]]
-            if word["definition_brief"]
-            else word["definition"]
-        )
+    # definitions = []
+    # if not word["definition_brief"] and not word["definition"]:  # both empty
+    #     logger.warning(f"NO DEFINITION FOR WORD {word['term']}!!!")
+    # elif word["definition_brief"] and word["definition"]:  # both non-empty
+    #     definitions = (
+    #         [word["definition_brief"]] if config.briefDefinition else word["definition"]
+    #     )
+    # else:  # one is empty and the other is non-empty
+    #     definitions = (
+    #         [word["definition_brief"]]
+    #         if word["definition_brief"]
+    #         else word["definition"]
+    #     )
 
-    key, value = "definition", "<br>\n".join(definitions)
-    setNoteFieldValue(note, key, value, isNewNote, overwrite)
-    # note['definition'] = '<br>\n'.join(definitions)
+    if word.definition:
+        setNoteFieldValue(note, "definition", word.definition, isNewNote, overwrite)
 
     # ================================== Optional fields ==================================
     # 1. Ignore "query settings"
@@ -379,16 +369,18 @@ def addNoteToDeck(
     # 3. Toggle visibility by dynamically updating card template
 
     # definition_cn
-    if word["definition_cn"]:
-        key, value = "definition_cn", "<br>\n".join(word["definition_cn"])
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    if word.chinese_definition:
+        setNoteFieldValue(
+            note, "definition_cn", word.chinese_definition, isNewNote, overwrite
+        )
 
     # image
-    if word["image"]:
-        imageFilename = default_image_filename(term)
-        key, value = "image", f'<div><img src="{imageFilename}" /></div>'
-        setNoteFieldValue(note, key, value, isNewNote, overwrite)
-        # note['image'] = f'<div><img src="{imageFilename}" /></div>'
+    #!TODO: For now disable image, we'll consider this in the future
+    # if word["image"]:
+    #     imageFilename = default_image_filename(term)
+    #     key, value = "image", f'<div><img src="{imageFilename}" /></div>'
+    #     setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    # note['image'] = f'<div><img src="{imageFilename}" /></div>'
 
     # pronunciation
     if pronunciationVariant is not PronunciationVariantEnum.NONE:
@@ -398,36 +390,19 @@ def addNoteToDeck(
         # note['pronunciation'] = f"[sound:{pronFilename}]"
 
     # phrase
-    if word["phrase"]:
-        for i, phrase_tuple in enumerate(word["phrase"][:3]):  # at most 3 phrases
-            key, value = f"phrase{i}", phrase_tuple[0]
-            setNoteFieldValue(note, key, value, isNewNote, overwrite)
-            key, value = f"phrase_explain{i}", phrase_tuple[1]
-            setNoteFieldValue(note, key, value, isNewNote, overwrite)
-            key, value = f"pplaceHolder{i}", "Tap To View"
-            setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    #!TODO: For now disable collocation, we'll consider this in the future
+    # if word.collocation:
+    #     for i, phrase_tuple in enumerate(word["phrase"][:3]):  # at most 3 phrases
+    #         key, value = f"phrase{i}", phrase_tuple[0]
+    #         setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    #         key, value = f"phrase_explain{i}", phrase_tuple[1]
+    #         setNoteFieldValue(note, key, value, isNewNote, overwrite)
+    #         key, value = f"pplaceHolder{i}", "Tap To View"
+    #         setNoteFieldValue(note, key, value, isNewNote, overwrite)
 
     # sentence
-    if word["sentence"]:
-        for i, sentence_tuple in enumerate(word["sentence"][:3]):  # at most 3 sentences
-            s_overwrite = overwrite
-            # Sentence may have changed over time.
-            # To avoid sentence-speech mismatch, overwrite sentence info if sentence_speech is missing.
-            # Also overwrite sentence info if term is not highlighted.
-            if (
-                not note[f"sentence_speech{i}"]
-                or f"<b>{term}</b>" not in note[f"sentence{i}"]
-            ):
-                s_overwrite = True
-
-            key, value = f"sentence{i}", sentence_tuple[0]
-            setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
-            key, value = f"sentence_explain{i}", sentence_tuple[1]
-            setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
-            key, value = f"splaceHolder{i}", "Tap To View"
-            setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
-            key, value = f"sentence_speech{i}", sentence_tuple[2]
-            setNoteFieldValue(note, key, value, isNewNote, s_overwrite)
+    if word.context:
+        setNoteFieldValue(note, "context", word.context, isNewNote, overwrite)
 
     if isNewNote:
         mw.col.addNote(note)

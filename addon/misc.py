@@ -3,7 +3,7 @@ from queue import Queue
 from threading import Thread
 from typing import Optional, Any
 from dataclasses import dataclass, asdict
-from .dictionary.base import CredentialPlatformEnum, PronunciationVariantEnum
+from .dictionary.base import CredentialPlatformEnum
 from enum import Enum
 
 
@@ -106,14 +106,6 @@ def safe_load_config_from_mw() -> ConfigType:
     config = safe_load_config(untypedConfig)
 
     return config
-
-
-def get_pronunciation(
-    word: dict, preferred_pron: PronunciationVariantEnum
-) -> tuple[PronunciationVariantEnum, bool]:
-    """:return: pron_type: int, is_fallback: bool"""
-    return preferred_pron, False
-
 
 logger = logging.getLogger("Apora dict2Anki.misc")
 

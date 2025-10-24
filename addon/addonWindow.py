@@ -41,7 +41,6 @@ from .noteManager import (
     getWordsByDeck,
     getNoteIDsOfWords,
     getOrCreateNormalCardTemplate,
-    default_image_filename,
     default_audio_filename,
 )
 
@@ -59,12 +58,12 @@ from .misc import (
     safe_load_config,
     safe_load_empty_config,
     safe_convert_config_to_dict,
-    get_pronunciation,
     ConfigType,
     Credential,
 )
 from .queryApi import QUERY_APIS
-from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI
+from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI, QueryAPIReturnType
+from .queryApi.utils import get_pronunciation
 from .UIForm import mainUI, wordGroup
 from .workers import (
     AssetDownloadWorker,
@@ -109,7 +108,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.remoteWordsDict: dict[str, SimpleWord] = {}
         self.selectedGroups: list[list[str]] = [list()] * len(DICTIONARIES)
 
-        self.querySuccessDict: dict[int, dict] = {}  # row -> queryResult
+        self.querySuccessDict: dict[int, QueryAPIReturnType] = {}  # row -> queryResult
         self.queryFailedDict: dict[int, bool] = {}  # row -> bool
 
         self.added = 0
@@ -820,8 +819,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.queryWorker.start.connect(self.queryWorker.run)
         self.queryWorker.start.emit()
 
-    @pyqtSlot(int, dict)
-    def on_thisRowDone(self, row, result):
+    @pyqtSlot(int, QueryAPIReturnType)
+    def on_thisRowDone(self, row, result: QueryAPIReturnType):
         """该行单词查询完毕"""
         self.querySuccessDict[row] = result
 
@@ -870,15 +869,15 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             )
 
     def get_asset_download_task(
-        self, word: dict, preferred_pron: PronunciationVariantEnum
+        self, word: QueryAPIReturnType, preferred_pron: PronunciationVariantEnum
     ):
         image_task = None
-        term = word["term"]
-        if word["image"]:
-            imageFilename = default_image_filename(term)
-            image_task = (imageFilename, word["image"])
-        else:
-            logger.info(f"No image for word {term}")
+        term = word.term
+        # if word["image"]:
+        #     imageFilename = default_image_filename(term)
+        #     image_task = (imageFilename, word["image"])
+        # else:
+        # logger.info(f"No image for word {term}")
 
         pron_type, is_fallback = get_pronunciation(word, preferred_pron)
         if pron_type == PronunciationVariantEnum.NONE:
@@ -994,11 +993,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             if wordItem is None:
                 raise Exception("Cannot get wordItem")
 
-            wordItemData = wordItem.data(Qt.ItemDataRole.UserRole)
+            wordItemData: QueryAPIReturnType = wordItem.data(Qt.ItemDataRole.UserRole)
             print("WordItemData")
             print(wordItemData)
             if wordItemData:
-                term = wordItemData["term"]
+                term = wordItemData.term
                 logger.debug(f"wordItemData ({term}): {wordItemData}")
                 # Add asset download task (image and audio)
                 image_task, audio_task, pron_type, is_fallback = (
@@ -1211,7 +1210,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         imagesDownloadTasks = []
         audiosDownloadTasks = []
         for row, word in self.querySuccessDict.items():
-            term = word["term"]
+            term = word.term
             logger.debug(f"word ({term}): {word}")
             # Add asset download task (image and audio)
             image_task, audio_task, pron_type, is_fallback = (
@@ -1313,7 +1312,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         self.logHandler.flush()
         for row, word in self.querySuccessDict.items():
-            term = word["term"]
+            term = word.term
             logger.debug(f"word ({term}): {word}")
             # resolve image and audio information (for use in field values)
             image_task, audio_task, pron_type, is_fallback = (
