@@ -18,18 +18,18 @@ from anki.models import NotetypeDict
 from .misc import ConfigType
 from .dictionary.base import PronunciationVariantEnum
 from .queryApi.base import QueryAPIReturnType
-from typing import Optional
+from typing import Optional, Union
 
 logger = logging.getLogger("dict2Anki.noteManager")
 
 
-def getDeckList():
+def getDeckList() -> list[str]:
     if mw.col is None:
         raise Exception("Collection is not available")
     return [deck["name"] for deck in mw.col.decks.all()]
 
 
-def getWordsByDeck(deckName) -> list[str]:
+def getWordsByDeck(deckName: str) -> list[str]:
     if mw.col is None:
         raise Exception("Collection is not available")
     notes = mw.col.find_notes(f'deck:"{deckName}"')
@@ -46,7 +46,7 @@ def getWordsByDeck(deckName) -> list[str]:
     return words
 
 
-def getNoteIDsOfWords(wordList, deckName) -> list:
+def getNoteIDsOfWords(wordList: list[str], deckName: str) -> list:
     if mw.col is None:
         raise Exception("mw.col is none")
     notes = []
@@ -57,7 +57,7 @@ def getNoteIDsOfWords(wordList, deckName) -> list:
     return notes
 
 
-def getOrCreateDeck(deckName, model: NotetypeDict):
+def getOrCreateDeck(deckName: str, model: NotetypeDict):
     if mw.col is None:
         raise Exception("mw.col is none")
 
@@ -85,7 +85,7 @@ def getOrCreateDeck(deckName, model: NotetypeDict):
     return deck
 
 
-def getOrCreateModel(modelName, recreate=False) -> tuple[NotetypeDict, bool, bool]:
+def getOrCreateModel(modelName: str, recreate=False) -> tuple[NotetypeDict, bool, bool]:
     """Create Note Model (Note Type). return: (model, newCreated, fieldsUpdated)"""
 
     if mw.col is None:
@@ -107,7 +107,9 @@ def getOrCreateModel(modelName, recreate=False) -> tuple[NotetypeDict, bool, boo
     return newModel, True, True
 
 
-def getOrCreateCardTemplate(modelObject, cardTemplateName, qfmt, afmt, css, add=True):
+def getOrCreateCardTemplate(
+    modelObject: NotetypeDict, cardTemplateName, qfmt, afmt, css, add=True
+):
     """Create Card Template (Card Type)"""
     logger.info(f"Add card template {cardTemplateName}")
     existingCardTemplate = modelObject["tmpls"]
@@ -129,7 +131,7 @@ def getOrCreateCardTemplate(modelObject, cardTemplateName, qfmt, afmt, css, add=
         mw.col.models.save(modelObject)
 
 
-def getOrCreateNormalCardTemplate(modelObject, fg: FieldGroup):
+def getOrCreateNormalCardTemplate(modelObject: NotetypeDict, fg: FieldGroup):
     """Create Normal Card Template (Card Type)"""
     qfmt = normal_card_template_qfmt(fg)
     afmt = normal_card_template_afmt(fg)
@@ -138,7 +140,7 @@ def getOrCreateNormalCardTemplate(modelObject, fg: FieldGroup):
     )
 
 
-def getOrCreateBackwardsCardTemplate(modelObject, fg: FieldGroup):
+def getOrCreateBackwardsCardTemplate(modelObject: NotetypeDict, fg: FieldGroup):
     """Create Backwards Card Template (Card Type) to existing Dict2Anki Note Type"""
     qfmt = backwards_card_template_qfmt(fg)
     afmt = backwards_card_template_afmt(fg)
@@ -152,7 +154,7 @@ def getOrCreateBackwardsCardTemplate(modelObject, fg: FieldGroup):
     )
 
 
-def deleteBackwardsCardTemplate(modelObject, backwardsTemplateObject):
+def deleteBackwardsCardTemplate(modelObject: NotetypeDict, backwardsTemplateObject):
     """Delete Backwards Card Template (Card Type) from existing Dict2Anki Note Type"""
 
     if mw.col is None:
@@ -162,7 +164,7 @@ def deleteBackwardsCardTemplate(modelObject, backwardsTemplateObject):
     mw.col.models.save(modelObject)
 
 
-def checkModelFields(modelObject) -> tuple[bool, set, set]:
+def checkModelFields(modelObject: NotetypeDict) -> tuple[bool, set, set]:
     """Check if model fields are as expected. :return: (ok, unknown_fields, missing_fields)"""
     current_fields = [f["name"] for f in modelObject["flds"]]
     expected_fields = MODEL_FIELDS
@@ -177,7 +179,7 @@ def checkModelFields(modelObject) -> tuple[bool, set, set]:
         return False, unknown_fields, missing_fields
 
 
-def mergeModelFields(modelObject) -> bool:
+def mergeModelFields(modelObject: NotetypeDict) -> bool:
     """Merge model fields. Only need to do updates when there are missing fields. return: updated"""
     ok, unknown_fields, missing_fields = checkModelFields(modelObject)
     if ok or (not missing_fields):
@@ -209,7 +211,7 @@ def mergeModelFields(modelObject) -> bool:
     return True
 
 
-def checkModelCardTemplates(modelObject, fg) -> bool:
+def checkModelCardTemplates(modelObject: NotetypeDict, fg: FieldGroup) -> bool:
     """Check if model card templates are as expected"""
     for tmpl in modelObject["tmpls"]:
         tmpl_name = tmpl["name"]
@@ -229,7 +231,7 @@ def checkModelCardTemplates(modelObject, fg) -> bool:
     return True
 
 
-def checkModelCardCSS(modelObject) -> bool:
+def checkModelCardCSS(modelObject: NotetypeDict) -> bool:
     """Check if model CSS are as expected"""
     current_css = modelObject["css"]
     expected_css = CARD_TEMPLATE_CSS
@@ -240,7 +242,7 @@ def checkModelCardCSS(modelObject) -> bool:
         return False
 
 
-def resetModelCardTemplates(modelObject, fg):
+def resetModelCardTemplates(modelObject: NotetypeDict, fg: FieldGroup):
     """Reset Card Templates to default"""
     for tmpl in modelObject["tmpls"]:
         tmpl_name = tmpl["name"]
@@ -276,6 +278,15 @@ def setNoteFieldValue(
         note[key] = value
         return True
     return False
+
+
+def appendTagToNote(note: Note, tag: Union[str, list[str]]):
+    """Append tag into note"""
+    if len(tag) > 0:
+        if isinstance(tag, str):
+            note.add_tag(tag)
+        else:
+            note.set_tags_from_str(" ".join(tag))
 
 
 def addNoteToDeck(
@@ -342,6 +353,9 @@ def addNoteToDeck(
     if word.ipa:
         setNoteFieldValue(note, "ipa", word.ipa, isNewNote, overwrite)
         # note['us'] = word['AmEPhonetic']
+
+    if word.part_of_speech:
+        setNoteFieldValue(note, "part_of_speech", word.ipa, isNewNote, overwrite)
 
     # definition
     # definitions = []

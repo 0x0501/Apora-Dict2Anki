@@ -54,8 +54,9 @@ def todo_empty_query_result() -> QueryAPIReturnType:
         context_audio_url=None,
     )
 
+
 def mock_query_result() -> QueryAPIReturnType:
-        return QueryAPIReturnType(
+    return QueryAPIReturnType(
         term="liability",
         definition="Things that you owe or are responsible for, especially money you have to pay.",
         part_of_speech="noun",
@@ -67,6 +68,8 @@ def mock_query_result() -> QueryAPIReturnType:
         term_audio_url=None,
         context_audio_url=None,
     )
+
+
 class AbstractQueryAPI(ABC):
     name: str
     """

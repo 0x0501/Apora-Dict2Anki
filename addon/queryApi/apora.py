@@ -38,7 +38,7 @@ class API(AbstractQueryAPI):
         cls.session.headers["Authorization"] = f"Bearer {config.aporaApiToken}"
 
         queryResult = mock_query_result()
-        
+
         return queryResult
         # payload = {
         #     "inquire": "liabilities",
