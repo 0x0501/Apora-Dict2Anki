@@ -6,10 +6,9 @@ from ..constants import HEADERS
 from .base import (
     AbstractQueryAPI,
     QueryAPIReturnType,
-    todo_empty_query_result,
+    mock_query_result,
     QueryAPIPlatformEnum,
 )
-from ..dictionary.base import SimpleWord
 from ..misc import safe_load_config_from_mw
 
 
@@ -38,9 +37,54 @@ class API(AbstractQueryAPI):
 
         cls.session.headers["Authorization"] = f"Bearer {config.aporaApiToken}"
 
-        # TODO: request dict
+        queryResult = mock_query_result()
+        
+        return queryResult
+        # payload = {
+        #     "inquire": "liabilities",
+        #     "fullText": "Keep expenses low, reduce liabilities, and diligently build a base of solid assets.",
+        # }
 
-        return todo_empty_query_result()
+        # try:
+        #     response = cls.session.post(cls.url, json=payload, timeout=cls.timeout)
+        #     logger.debug(
+        #         f"code:{response.status_code}- word:{term.term} text:{response.text}"
+        #     )
+
+        #     response_json = response.json()
+
+        #     print(response_json)
+
+        #     response_data_json = response_json["data"]
+
+        #     if (
+        #         response.status_code == 200
+        #         and response_json["success"]
+        #         and response_data_json
+        #     ):
+        #         # successfully get dict data from Apora
+        #         queryResult = QueryAPIReturnType(
+        #             term=term.term,
+        #             definition=response_data_json["meaning"],
+        #             part_of_speech=response_data_json["partOfSpeech"],
+        #             original=response_data_json["original"],
+        #             chinese_definition=response_data_json["chineseMeaning"],
+        #             ipa=response_data_json["ipa"],
+        #             context=None,
+        #             collocation=None,
+        #             context_audio_url=None,
+        #             term_audio_url=None,
+        #         )
+        #     else:
+        #         raise Exception(
+        #             f"Get dict data for word: {term.term} failed, reason: {response_json['message']}"
+        #         )
+
+        # except Exception as e:
+        #     logger.exception(e)
+        # finally:
+        #     logger.debug(queryResult)
+        #     return queryResult
 
     @classmethod
     def close(cls):

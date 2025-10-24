@@ -994,8 +994,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 raise Exception("Cannot get wordItem")
 
             wordItemData: QueryAPIReturnType = wordItem.data(Qt.ItemDataRole.UserRole)
-            print("WordItemData")
-            print(wordItemData)
+            # print("WordItemData")
+            # print(wordItemData)
             if wordItemData:
                 term = wordItemData.term
                 logger.debug(f"wordItemData ({term}): {wordItemData}")
