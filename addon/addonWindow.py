@@ -49,7 +49,7 @@ from .noteManager import (
 
 from . import utils
 from .dictionary import DICTIONARIES
-from .dictionary.base import CredentialPlatformEnum, SimpleWord, AbstractDictionary
+from .dictionary.base import CredentialPlatformEnum, SimpleWord
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
 from .misc import (
@@ -61,7 +61,7 @@ from .misc import (
     Credential,
 )
 from .queryApi import QUERY_APIS
-from .queryApi.base import QueryAPIPlatformEnum
+from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI
 from .UIForm import mainUI, wordGroup
 from .workers import (
     AssetDownloadWorker,
@@ -70,6 +70,7 @@ from .workers import (
     RemoteWordFetchingWorker,
     VersionCheckWorker,
 )
+from typing import Callable
 
 try:
     from aqt import mw
@@ -1091,7 +1092,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.logHandler.flush()
 
     def queryWords(
-        self, wordList: list[tuple[SimpleWord, int]], dictAPI, all_done_func
+        self,
+        wordList: list[tuple[SimpleWord, int]],
+        dictAPI: type[AbstractQueryAPI],
+        all_done_func: Callable[[], None],
     ):
         # self.progressBar.setMaximum(len(wordList))
         self.queryWorker = QueryWorker(wordList, dictAPI)

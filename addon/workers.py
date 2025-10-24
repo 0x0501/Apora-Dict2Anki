@@ -9,7 +9,9 @@ from .misc import ThreadPool
 from .dictionary.base import SimpleWord
 from requests.adapters import HTTPAdapter
 from .constants import VERSION, VERSION_CHECK_API
+from .queryApi.base import AbstractQueryAPI, QueryAPIReturnType
 from aqt.qt import QObject, pyqtSignal, QThread
+from typing import Type, Optional
 
 
 class VersionCheckWorker(QObject):
@@ -92,12 +94,14 @@ class RemoteWordFetchingWorker(QObject):
 class QueryWorker(QObject):
     start = pyqtSignal()
     tick = pyqtSignal()
-    thisRowDone = pyqtSignal(int, dict)
+    thisRowDone = pyqtSignal(int, QueryAPIReturnType)
     thisRowFailed = pyqtSignal(int)
     allQueryDone = pyqtSignal()
     logger = logging.getLogger("dict2Anki.workers.QueryWorker")
 
-    def __init__(self, wordList: list[tuple[SimpleWord, int]], api):
+    def __init__(
+        self, wordList: list[tuple[SimpleWord, int]], api: Type[AbstractQueryAPI]
+    ):
         super().__init__()
         self.wordList = wordList
         self.api = api
@@ -105,7 +109,7 @@ class QueryWorker(QObject):
     def run(self):
         currentThread = QThread.currentThread()
 
-        def _query(word: SimpleWord, row):
+        def _query(word: SimpleWord, row) -> Optional[QueryAPIReturnType]:
             if currentThread.isInterruptionRequested():  # type: ignore
                 return
             queryResult = self.api.query(word)
