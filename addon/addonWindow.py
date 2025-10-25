@@ -258,6 +258,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         saveSettingsAction.setShortcut(QKeySequence.StandardKey.Save)
         saveSettingsAction.triggered.connect(self.getAndSaveCurrentConfig)
         self.addAction(saveSettingsAction)  # add shortcut to current window
+        
         # connect button with action
         self.saveSettingsButton.clicked.connect(self.getAndSaveCurrentConfig)
         self.setupGUIByConfig()
@@ -272,6 +273,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def getAndSaveCurrentConfig(self) -> ConfigType:
         """获取当前设置，并保存"""
         config, _, _ = self.getAndSaveCurrentConfig_returnMetaInfo()
+        tooltip("已保存设置")
         return config
 
     def getAndSaveCurrentConfig_returnMetaInfo(self) -> tuple[ConfigType, bool, bool]:
