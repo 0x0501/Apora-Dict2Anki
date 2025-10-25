@@ -372,7 +372,9 @@ def addNoteToDeck(
         # note['us'] = word['AmEPhonetic']
 
     if word.part_of_speech:
-        setNoteFieldValue(note, "part_of_speech", word.ipa, isNewNote, overwrite)
+        setNoteFieldValue(note, "part_of_speech", word.part_of_speech, isNewNote, overwrite)
+        if config.enableAddPartOfSpeechToTag:
+            appendTagToNote(note, word.part_of_speech)
 
     # definition
     
@@ -385,7 +387,7 @@ def addNoteToDeck(
     # 3. Toggle visibility by dynamically updating card template
 
     # definition_cn
-    if word.chinese_definition:
+    if word.chinese_definition and config.enableChineseDefinition:
         setNoteFieldValue(
             note, "definition_cn", word.chinese_definition, isNewNote, overwrite
         )
