@@ -185,14 +185,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def setupLogger(self):
         """初始化 Logger"""
 
-        def onDestroyed():
-            logger.removeHandler(self.logHandler)
+        def onDestroyed(_self=self):
+            logger.removeHandler(_self.logHandler)
             # Safely remove reference to the event emitter without assigning None
             try:
-                delattr(self.logHandler, "eventEmitter")
+                delattr(_self.logHandler, "eventEmitter")
             except AttributeError:
                 pass
-            self.logHandler.close()
+            _self.logHandler.close()
 
         self.logHandler.eventEmitter.newRecord.connect(self.on_NewLogRecord)
         # 日志Widget销毁时移除 Handlers
