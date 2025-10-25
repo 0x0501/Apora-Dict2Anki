@@ -25,6 +25,9 @@ def create_zip(target_dir=TARGET_DIR, target_filename=TARGET_FILENAME):
         ".pytest_cache",
         "screenshots",
         "venv",
+        ".venv",
+        ".ruff_cache",
+        ".vscode"
     ]
     exclude_files = [
         "README.md",
