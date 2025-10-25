@@ -3,6 +3,25 @@ import re
 
 from bs4 import BeautifulSoup
 
+# 使用 list 表示 swap：列表中每个子列表是交换对，如 [['context', 'term']]
+def swap_positions_with_list(fields: list[str], swap_list: list[list[str]]):
+    """
+    根据 list 表示的交换对，交换列表中元素的顺序。
+    - swap_list: 如 [['ipa', 'term']] 表示交换 'ipa' 和 'term' 的位置。
+    支持多个非重叠交换对。
+    """
+    fields_copy = fields[:]  # 复制列表以避免修改原列表
+    for pair in swap_list:
+        if len(pair) != 2:
+            raise ValueError("每个交换对必须包含 Exactly 两个元素")
+        elem1, elem2 = pair
+        if elem1 not in fields_copy or elem2 not in fields_copy:
+            raise ValueError(f"元素 {elem1} 或 {elem2} 不存在于列表中")
+        idx1 = fields_copy.index(elem1)
+        idx2 = fields_copy.index(elem2)
+        # 交换位置
+        fields_copy[idx1], fields_copy[idx2] = fields_copy[idx2], fields_copy[idx1]
+    return fields_copy
 
 def set_sub_ignore_case(a, b: set) -> set:
     b_lower = {v.lower() for v in b}

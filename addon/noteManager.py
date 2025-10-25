@@ -19,6 +19,7 @@ from .misc import ConfigType
 from .dictionary.base import PronunciationVariantEnum
 from .queryApi.base import QueryAPIReturnType
 from typing import Optional, Union
+from .utils import swap_positions_with_list
 from pathlib import Path
 
 
@@ -87,8 +88,14 @@ def getOrCreateDeck(deckName: str, model: NotetypeDict):
     return deck
 
 
-def getOrCreateModel(modelName: str, recreate=False) -> tuple[NotetypeDict, bool, bool]:
-    """Create Note Model (Note Type). return: (model, newCreated, fieldsUpdated)"""
+def getOrCreateModel(modelName: str, disableContext=False, recreate=False) -> tuple[NotetypeDict, bool, bool]:
+    """
+    Create Note Model (Note Type). 
+    
+    :param remapping: Swap (map) fields order.
+    
+    :return tuple[NotetypeDict, bool, bool]: (model, newCreated, fieldsUpdated)
+    """
 
     if mw.col is None:
         raise Exception("mw.col is none")
@@ -104,7 +111,14 @@ def getOrCreateModel(modelName: str, recreate=False) -> tuple[NotetypeDict, bool
 
     logger.info(f"Creating model {modelName}")
     newModel = mw.col.models.new(modelName)
-    for field in MODEL_FIELDS:
+    
+    fields = MODEL_FIELDS
+    
+    if disableContext:
+        # swap fields order
+        fields = swap_positions_with_list(MODEL_FIELDS, [['context', 'term']])
+        
+    for field in fields:
         mw.col.models.addField(newModel, mw.col.models.new_field(field))
     return newModel, True, True
 
@@ -419,7 +433,7 @@ def addNoteToDeck(
     #         setNoteFieldValue(note, key, value, isNewNote, overwrite)
 
     # sentence
-    if word.context:
+    if word.context and config.enableContext:
         setNoteFieldValue(note, "context", word.context, isNewNote, overwrite)
 
     if isNewNote:

@@ -20,6 +20,7 @@ from .constants import (
     LOG_BUFFER_CAPACITY,
     LOG_FLUSH_INTERVAL,
     MODEL_NAME,
+    MODEL_NAME_DISABLED_CONTEXT,
     WINDOW_TITLE,
     BACKWARDS_CARD_TEMPLATE_NAME,
     CARD_SETTINGS,
@@ -900,7 +901,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.logHandler.flush()
         newCreated, fieldsUpdated = True, True
         try:
-            model, newCreated, fieldsUpdated = getOrCreateModel(MODEL_NAME)
+            if currentConfig.enableContext:
+                model, newCreated, fieldsUpdated = getOrCreateModel(MODEL_NAME)
+            else:
+                model, newCreated, fieldsUpdated = getOrCreateModel(MODEL_NAME_DISABLED_CONTEXT, disableContext=True)
         except Exception as err:
             logger.warning(err)
             if not askUser(
@@ -918,7 +922,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 self.logHandler.flush()
                 return
             # force delete the existing model
-            (model, _, _) = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
+            if currentConfig.enableContext:
+                (model, _, _) = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
+            else:
+                (model, _, _) = getOrCreateModel(modelName=MODEL_NAME_DISABLED_CONTEXT, recreate=True)
 
         if newCreated:
             # create 'Normal' card template (card type)
@@ -1117,7 +1124,6 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def on_btnDownloadMissingAssets_clicked(self):
         """Download missing assets for all notes of type Dict2Anki in ALL decks"""
         self.tmp_currentConfig = self.getAndSaveCurrentConfig()
-        # model = mw.col.models.by_name(MODEL_NAME)
 
         if mw.col is None:
             raise Exception("mw.col is none")
