@@ -1,7 +1,18 @@
 import os
 import re
-
+import hashlib
 from bs4 import BeautifulSoup
+from .constants import ASSET_FILENAME_PREFIX
+
+
+def default_image_filename(term: str) -> str:
+    return f"{ASSET_FILENAME_PREFIX}-{term}.jpg"
+
+
+def default_audio_filename(term: str, format: str = "mp3") -> str:
+    hashed_term = hashlib.sha256(term.encode("utf-8")).hexdigest()
+    return f"{ASSET_FILENAME_PREFIX}-{term}-{hashed_term}.{format}"
+
 
 # 使用 list 表示 swap：列表中每个子列表是交换对，如 [['context', 'term']]
 def swap_positions_with_list(fields: list[str], swap_list: list[list[str]]):
@@ -22,6 +33,7 @@ def swap_positions_with_list(fields: list[str], swap_list: list[list[str]]):
         # 交换位置
         fields_copy[idx1], fields_copy[idx2] = fields_copy[idx2], fields_copy[idx1]
     return fields_copy
+
 
 def set_sub_ignore_case(a, b: set) -> set:
     b_lower = {v.lower() for v in b}

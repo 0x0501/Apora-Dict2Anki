@@ -6,7 +6,6 @@ from .constants import (
     FieldGroup,
     backwards_card_template_afmt,
     backwards_card_template_qfmt,
-    default_audio_filename,
     normal_card_template_afmt,
     normal_card_template_qfmt,
 )
@@ -19,7 +18,7 @@ from .misc import ConfigType
 from .dictionary.base import PronunciationVariantEnum
 from .queryApi.base import QueryAPIReturnType
 from typing import Optional, Union
-from .utils import swap_positions_with_list
+from .utils import swap_positions_with_list, default_audio_filename
 from pathlib import Path
 
 
@@ -416,7 +415,7 @@ def addNoteToDeck(
 
     # pronunciation
     if pronunciationVariant is not PronunciationVariantEnum.NONE:
-        pronFilename = default_audio_filename(term)
+        pronFilename = default_audio_filename(term, "wav") # For now, use `.wav` as default, this should be flexible
         key, value = "pronunciation", f"[sound:{pronFilename}]"
         setNoteFieldValue(note, key, value, isNewNote, overwrite)
         # note['pronunciation'] = f"[sound:{pronFilename}]"

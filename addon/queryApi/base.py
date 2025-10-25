@@ -83,7 +83,7 @@ class AbstractQueryAPI(ABC):
 
     @classmethod
     @abstractmethod
-    def query(cls, term: SimpleWord) -> QueryAPIReturnType:
+    def query(cls, term: SimpleWord) -> Optional[QueryAPIReturnType]:
         """
         查询
         :param word: 单词

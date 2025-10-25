@@ -610,11 +610,3 @@ hr#answer {
 	padding-bottom: 10px;
 }
 """
-
-
-def default_image_filename(term: str) -> str:
-    return f"{ASSET_FILENAME_PREFIX}-{term}.jpg"
-
-
-def default_audio_filename(term: str) -> str:
-    return f"{ASSET_FILENAME_PREFIX}-{term}.mp3"

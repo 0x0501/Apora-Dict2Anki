@@ -42,7 +42,6 @@ from .noteManager import (
     getWordsByDeck,
     getNoteIDsOfWords,
     getOrCreateNormalCardTemplate,
-    default_audio_filename,
     loadAssetsIntoCollectionMedia,
 )
 
@@ -856,6 +855,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         #     image_task = (imageFilename, word["image"])
         # else:
         # logger.info(f"No image for word {term}")
+        
+        if word.context_audio_url is None or word.term_audio_url is None:
+            logger.warning(f"No audio download link was founded for word {term}!")
+            return image_task, None, PronunciationVariantEnum.NONE, False
 
         pron_type, is_fallback = get_pronunciation(word, preferred_pron)
         if pron_type == PronunciationVariantEnum.NONE:
@@ -868,8 +871,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 f"Pronunciation: {preferred_pron.name} is missing for word {term}. Downloading {pron_type.name} instead."
             )
 
-        pronFilename = default_audio_filename(term)
-        audio_task = (pronFilename, pron_type)
+        pronFilename = utils.default_audio_filename(term=term, format="wav")
+        logger.info(f"Audio file for: ${term}: ${pronFilename}")
+        if word.context_audio_url:
+            audio_task = (pronFilename, word.context_audio_url) # (filename, download file url)
+        elif word.term_audio_url:
+            audio_task = (pronFilename, word.term_audio_url)
+        else:
+            audio_task = None
         return image_task, audio_task, pron_type, is_fallback
 
     @pyqtSlot()
@@ -962,7 +971,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         deck = getOrCreateDeck(self.deckComboBox.currentText(), model=model)
 
         imagesDownloadTasks = []
-        audiosDownloadTasks = []
+        audiosDownloadTasks : list[tuple[str, str]]= []
         newWordCount = self.newWordListWidget.count()
 
         # 判断是否需要下载发音
@@ -994,6 +1003,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 if image_task:
                     imagesDownloadTasks.append(image_task)
                 if audio_task:
+                    logger.info(f"添加Audio Task: {audio_task}")
                     audiosDownloadTasks.append(audio_task)
 
                 # add note
@@ -1010,11 +1020,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         mw.reset()
 
         # download assets
-        if imagesDownloadTasks or audiosDownloadTasks:
+        if len(imagesDownloadTasks) > 0 or len(audiosDownloadTasks) > 0:
             self.btnSync.setEnabled(False)
-        self.downloadAssets(
-            imagesDownloadTasks, audiosDownloadTasks, self.on_assetsDownloadDone
-        )
+            self.downloadAssets(
+                imagesDownloadTasks, audiosDownloadTasks, self.on_assetsDownloadDone
+            )
 
         self.newWordListWidget.clear()
 
@@ -1058,7 +1068,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def printSyncReport(self):
         logger.info(f"Added: {self.added}, Deleted: {self.deleted}")
 
-    def downloadAssets(self, imagesDownloadTasks, audiosDownloadTasks, done_func):
+    def downloadAssets(self, imagesDownloadTasks, audiosDownloadTasks: list[tuple[str, str]], done_func: Callable):
         logger.info(
             f"Image download tasks({len(imagesDownloadTasks)}): {imagesDownloadTasks}"
         )

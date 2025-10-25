@@ -6,7 +6,7 @@ import requests
 from urllib3 import Retry
 from itertools import chain
 from .misc import ThreadPool
-from .dictionary.base import SimpleWord
+from .dictionary.base import SimpleWord, PronunciationVariantEnum
 from requests.adapters import HTTPAdapter
 from .constants import VERSION, VERSION_CHECK_API
 from .queryApi.base import AbstractQueryAPI, QueryAPIReturnType
@@ -145,8 +145,8 @@ class AssetDownloadWorker(QObject):
     def __init__(
         self,
         target_dir,
-        images: list[tuple],
-        audios: list[tuple],
+        images: list[tuple[str, str]], # list[tuple[filename, file download url]]
+        audios: list[tuple[str, str]], # list[tuple[filename, file download url]]
         overwrite=False,
         max_retry=3,
     ):
