@@ -24,6 +24,7 @@ class ConfigType:
     credential: list[Credential]
     enableAddPartOfSpeechToTag: bool
     enableChineseDefinition: bool
+    enableTermHighlight: bool
     syncTemplates: bool
     termSpeaking: bool
     contextSpeaking: bool
@@ -61,6 +62,7 @@ def safe_load_empty_config() -> ConfigType:
         credential=[],
         enableAddPartOfSpeechToTag=False,
         enableChineseDefinition=False,
+        enableTermHighlight=True,
         syncTemplates=False,
         termSpeaking=False,
         contextSpeaking=False,
@@ -83,6 +85,7 @@ def safe_load_config(data: dict) -> ConfigType:
         credential=creds,
         enableChineseDefinition=data["enableChineseDefinition"],
         enableAddPartOfSpeechToTag=data["enableAddPartOfSpeechToTag"],
+        enableTermHighlight=data["enableTermHighlight"],
         syncTemplates=data["syncTemplates"],
         termSpeaking=data["termSpeaking"],
         contextSpeaking=data["contextSpeaking"],

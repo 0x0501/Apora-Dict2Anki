@@ -433,7 +433,22 @@ def addNoteToDeck(
 
     # sentence
     if word.context and config.enableContext:
-        setNoteFieldValue(note, "context", word.context, isNewNote, overwrite)
+        if config.enableTermHighlight:
+            # highlight term in the context
+            highlighted_context = ""
+            if word.context.find(word.term) > -1:
+                # if context include the term, replace it with span
+                highlighted_context = word.context.replace(word.term, f'<span style="font-weight: bold; color: #4096ff;">{word.term}</span>')
+            elif word.context.find(word.original) > -1:
+                # if context include the original form, replace it
+                highlighted_context = word.context.replace(word.original, f'<span style="font-weight: bold; color: #4096ff;">{word.original}</span>')
+            else:
+                # if none of them was founded, well, do nothing
+                highlighted_context = word.context
+                
+            setNoteFieldValue(note, "context", highlighted_context, isNewNote, overwrite)
+        else:
+            setNoteFieldValue(note, "context", word.context, isNewNote, overwrite)
 
     if isNewNote:
         mw.col.addNote(note)

@@ -7,7 +7,6 @@
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
-
 from . import icons_rc
 from PyQt6.QtCore import (
     QCoreApplication,
@@ -338,22 +337,6 @@ class Ui_Dialog(object):
 
         self.gridLayout_6.addWidget(self.enableContextCheckBox, 0, 0, 1, 1)
 
-        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
-        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
-        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
-        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
-        self.disableSpeakingRadioButton.setEnabled(True)
-
-        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 1, 0, 1, 1)
-
-        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
-        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
-        self.contextSpeakingRadioButton.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 1, 3, 1, 1)
-
         self.USSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
         self.SpeakingVariantRadioButtonGroup = QButtonGroup(Dialog)
         self.SpeakingVariantRadioButtonGroup.setObjectName(
@@ -375,19 +358,40 @@ class Ui_Dialog(object):
 
         self.gridLayout_6.addWidget(self.enableAddPartOfSpeechToTag, 0, 3, 1, 1)
 
-        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
-        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
-        self.termSpeakingRadioButton.setChecked(False)
-
-        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 1, 1, 1, 1)
-
         self.GBSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
         self.SpeakingVariantRadioButtonGroup.addButton(self.GBSpeakingRadioButton)
         self.GBSpeakingRadioButton.setObjectName("GBSpeakingRadioButton")
         self.GBSpeakingRadioButton.setChecked(False)
 
         self.gridLayout_6.addWidget(self.GBSpeakingRadioButton, 2, 1, 1, 1)
+
+        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
+        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
+        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
+        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
+        self.contextSpeakingRadioButton.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 2, 3, 1, 1)
+
+        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
+        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
+        self.termSpeakingRadioButton.setChecked(False)
+
+        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 1, 3, 1, 1)
+
+        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
+        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
+        self.disableSpeakingRadioButton.setEnabled(True)
+
+        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 1, 1, 1, 1)
+
+        self.enableTermHighlight = QCheckBox(self.cardConfigGroupBox)
+        self.enableTermHighlight.setObjectName("enableTermHighlight")
+
+        self.gridLayout_6.addWidget(self.enableTermHighlight, 1, 0, 1, 1)
 
         self.gridLayout_2.addWidget(self.cardConfigGroupBox, 4, 0, 1, 2)
 
@@ -595,12 +599,6 @@ class Ui_Dialog(object):
                 "Dialog", "\u5355\u8bcd\u4e0a\u4e0b\u6587\uff08Context\uff09", None
             )
         )
-        self.disableSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u65e0\u53d1\u97f3", None)
-        )
-        self.contextSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u53e5\u5b50\u53d1\u97f3", None)
-        )
         self.USSpeakingRadioButton.setText(
             QCoreApplication.translate(
                 "Dialog", "\u7f8e\u5f0f\u53d1\u97f3\uff08US\uff09", None
@@ -614,12 +612,23 @@ class Ui_Dialog(object):
                 "Dialog", "\u6dfb\u52a0\u8bcd\u6027\u5230Anki\u6807\u7b7e", None
             )
         )
-        self.termSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u5355\u8bcd\u53d1\u97f3", None)
-        )
         self.GBSpeakingRadioButton.setText(
             QCoreApplication.translate(
                 "Dialog", "\u82f1\u5f0f\u53d1\u97f3\uff08GB\uff09", None
+            )
+        )
+        self.contextSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u53e5\u5b50\u53d1\u97f3", None)
+        )
+        self.termSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u5355\u8bcd\u53d1\u97f3", None)
+        )
+        self.disableSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u65e0\u53d1\u97f3", None)
+        )
+        self.enableTermHighlight.setText(
+            QCoreApplication.translate(
+                "Dialog", "Context\u4e2d\u9ad8\u4eae\u5355\u8bcd/\u77ed\u8bed", None
             )
         )
         self.tabWidget.setTabText(

@@ -19,6 +19,7 @@
   ],
   "enableChineseDefinition": false,
   "enableAddPartOfSpeechToTag": true,
+  "enableTermHighlight": true,
   "syncTemplates": true,
   "termSpeaking": false,
   "contextSpeaking": false,

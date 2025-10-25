@@ -237,6 +237,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.USSpeakingRadioButton.setChecked(config.USSpeaking)
         self.enableAddPartOfSpeechToTag.setChecked(config.enableAddPartOfSpeechToTag)
         self.enableChineseCheckBox.setChecked(config.enableChineseDefinition)
+        self.enableTermHighlight.setChecked(config.enableTermHighlight)
 
     def initCore(self):
         # Temporarily disable username/password login, use cookie is more stable
@@ -260,6 +261,13 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # connect button with action
         self.saveSettingsButton.clicked.connect(self.getAndSaveCurrentConfig)
         self.setupGUIByConfig()
+        
+        # connect enableTermHighlight and enableContextCheckBox
+        self.enableTermHighlight.setEnabled(self.enableContextCheckBox.isChecked())
+        self.enableContextCheckBox.toggled.connect(self.on_enable_context_checkbox_change)
+        
+    def on_enable_context_checkbox_change(self, checked):
+        self.enableTermHighlight.setEnabled(checked)
 
     def getAndSaveCurrentConfig(self) -> ConfigType:
         """获取当前设置，并保存"""
@@ -321,6 +329,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             enableContext=self.enableContextCheckBox.isChecked(),
             termSpeaking=self.termSpeakingRadioButton.isChecked(),
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
+            enableTermHighlight=self.enableTermHighlight.isChecked()
         )
 
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)

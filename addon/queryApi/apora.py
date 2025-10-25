@@ -59,6 +59,8 @@ class API(AbstractQueryAPI):
             )
 
             response_json = response.json()
+            
+            logger.info(response_json)
 
             response_data_json = response_json["data"]
 

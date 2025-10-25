@@ -394,32 +394,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="disableSpeakingRadioButton">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="text">
-             <string>无发音</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">SpeakingRadioButtonGroup</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QRadioButton" name="contextSpeakingRadioButton">
-            <property name="text">
-             <string>句子发音</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">SpeakingRadioButtonGroup</string>
-            </attribute>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QRadioButton" name="USSpeakingRadioButton">
             <property name="text">
@@ -447,7 +421,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="1">
+           <widget class="QRadioButton" name="GBSpeakingRadioButton">
+            <property name="text">
+             <string>英式发音（GB）</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">SpeakingVariantRadioButtonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QRadioButton" name="contextSpeakingRadioButton">
+            <property name="text">
+             <string>句子发音</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">SpeakingRadioButtonGroup</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="1" column="3">
            <widget class="QRadioButton" name="termSpeakingRadioButton">
             <property name="text">
              <string>单词发音</string>
@@ -460,17 +460,24 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </attribute>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QRadioButton" name="GBSpeakingRadioButton">
-            <property name="text">
-             <string>英式发音（GB）</string>
+          <item row="1" column="1">
+           <widget class="QRadioButton" name="disableSpeakingRadioButton">
+            <property name="enabled">
+             <bool>true</bool>
             </property>
-            <property name="checked">
-             <bool>false</bool>
+            <property name="text">
+             <string>无发音</string>
             </property>
             <attribute name="buttonGroup">
-             <string notr="true">SpeakingVariantRadioButtonGroup</string>
+             <string notr="true">SpeakingRadioButtonGroup</string>
             </attribute>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="enableTermHighlight">
+            <property name="text">
+             <string>Context中高亮单词/短语</string>
+            </property>
            </widget>
           </item>
          </layout>
