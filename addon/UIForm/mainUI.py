@@ -74,7 +74,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName("Dialog")
-        Dialog.resize(595, 614)
+        Dialog.resize(595, 640)
         self.main_layout = QVBoxLayout(Dialog)
         self.main_layout.setObjectName("main_layout")
         self.tabWidget = QTabWidget(Dialog)
@@ -222,80 +222,15 @@ class Ui_Dialog(object):
         self.settingTab.setObjectName("settingTab")
         self.gridLayout_2 = QGridLayout(self.settingTab)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.cardConfigGroupBox = QGroupBox(self.settingTab)
-        self.cardConfigGroupBox.setObjectName("cardConfigGroupBox")
-        self.gridLayout_6 = QGridLayout(self.cardConfigGroupBox)
-        self.gridLayout_6.setObjectName("gridLayout_6")
-        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
-        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
-        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
-        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
-        self.disableSpeakingRadioButton.setEnabled(True)
-
-        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 4, 2, 1, 1)
-
-        self.GBSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingVariantRadioButtonGroup = QButtonGroup(Dialog)
-        self.SpeakingVariantRadioButtonGroup.setObjectName(
-            "SpeakingVariantRadioButtonGroup"
-        )
-        self.SpeakingVariantRadioButtonGroup.addButton(self.GBSpeakingRadioButton)
-        self.GBSpeakingRadioButton.setObjectName("GBSpeakingRadioButton")
-        self.GBSpeakingRadioButton.setChecked(False)
-
-        self.gridLayout_6.addWidget(self.GBSpeakingRadioButton, 4, 0, 1, 1)
-
-        self.USSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingVariantRadioButtonGroup.addButton(self.USSpeakingRadioButton)
-        self.USSpeakingRadioButton.setObjectName("USSpeakingRadioButton")
-        self.USSpeakingRadioButton.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.USSpeakingRadioButton, 4, 1, 1, 1)
-
-        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
-        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
-        self.termSpeakingRadioButton.setChecked(False)
-
-        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 0, 1, 1, 1)
-
-        self.enableContextCheckBox = QCheckBox(self.cardConfigGroupBox)
-        self.enableContextCheckBox.setObjectName("enableContextCheckBox")
-        self.enableContextCheckBox.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.enableContextCheckBox, 0, 0, 1, 1)
-
-        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
-        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
-        self.contextSpeakingRadioButton.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 0, 2, 1, 1)
-
-        self.cardSettingDescription = QTextBrowser(self.cardConfigGroupBox)
-        self.cardSettingDescription.setObjectName("cardSettingDescription")
-        self.cardSettingDescription.setMaximumSize(QSize(16777215, 30))
-
-        self.gridLayout_6.addWidget(self.cardSettingDescription, 5, 0, 1, 3)
-
-        self.gridLayout_2.addWidget(self.cardConfigGroupBox, 4, 0, 1, 2)
-
         self.defaultConfigGroupBox = QGroupBox(self.settingTab)
         self.defaultConfigGroupBox.setObjectName("defaultConfigGroupBox")
         self.gridLayout = QGridLayout(self.defaultConfigGroupBox)
         self.gridLayout.setObjectName("gridLayout")
-        self.briefDefinitionCheckBox = QCheckBox(self.defaultConfigGroupBox)
-        self.briefDefinitionCheckBox.setObjectName("briefDefinitionCheckBox")
-        self.briefDefinitionCheckBox.setChecked(True)
-
-        self.gridLayout.addWidget(self.briefDefinitionCheckBox, 0, 0, 1, 1)
-
         self.syncTemplatesCheckbox = QCheckBox(self.defaultConfigGroupBox)
         self.syncTemplatesCheckbox.setObjectName("syncTemplatesCheckbox")
         self.syncTemplatesCheckbox.setChecked(True)
 
-        self.gridLayout.addWidget(self.syncTemplatesCheckbox, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.syncTemplatesCheckbox, 0, 0, 1, 1)
 
         self.gridLayout_2.addWidget(self.defaultConfigGroupBox, 3, 0, 1, 2)
 
@@ -387,6 +322,75 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.credentialGroupBox, 0, 0, 1, 2)
 
+        self.cardConfigGroupBox = QGroupBox(self.settingTab)
+        self.cardConfigGroupBox.setObjectName("cardConfigGroupBox")
+        self.gridLayout_6 = QGridLayout(self.cardConfigGroupBox)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.cardSettingDescription = QTextBrowser(self.cardConfigGroupBox)
+        self.cardSettingDescription.setObjectName("cardSettingDescription")
+        self.cardSettingDescription.setMaximumSize(QSize(16777215, 30))
+
+        self.gridLayout_6.addWidget(self.cardSettingDescription, 7, 0, 1, 5)
+
+        self.enableContextCheckBox = QCheckBox(self.cardConfigGroupBox)
+        self.enableContextCheckBox.setObjectName("enableContextCheckBox")
+        self.enableContextCheckBox.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.enableContextCheckBox, 0, 0, 1, 1)
+
+        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
+        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
+        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
+        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
+        self.disableSpeakingRadioButton.setEnabled(True)
+
+        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 1, 0, 1, 1)
+
+        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
+        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
+        self.contextSpeakingRadioButton.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 1, 3, 1, 1)
+
+        self.USSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingVariantRadioButtonGroup = QButtonGroup(Dialog)
+        self.SpeakingVariantRadioButtonGroup.setObjectName(
+            "SpeakingVariantRadioButtonGroup"
+        )
+        self.SpeakingVariantRadioButtonGroup.addButton(self.USSpeakingRadioButton)
+        self.USSpeakingRadioButton.setObjectName("USSpeakingRadioButton")
+        self.USSpeakingRadioButton.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.USSpeakingRadioButton, 2, 0, 1, 1)
+
+        self.enableChineseCheckBox = QCheckBox(self.cardConfigGroupBox)
+        self.enableChineseCheckBox.setObjectName("enableChineseCheckBox")
+
+        self.gridLayout_6.addWidget(self.enableChineseCheckBox, 0, 1, 1, 1)
+
+        self.enableAddPartOfSpeechToTag = QCheckBox(self.cardConfigGroupBox)
+        self.enableAddPartOfSpeechToTag.setObjectName("enableAddPartOfSpeechToTag")
+
+        self.gridLayout_6.addWidget(self.enableAddPartOfSpeechToTag, 0, 3, 1, 1)
+
+        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
+        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
+        self.termSpeakingRadioButton.setChecked(False)
+
+        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 1, 1, 1, 1)
+
+        self.GBSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingVariantRadioButtonGroup.addButton(self.GBSpeakingRadioButton)
+        self.GBSpeakingRadioButton.setObjectName("GBSpeakingRadioButton")
+        self.GBSpeakingRadioButton.setChecked(False)
+
+        self.gridLayout_6.addWidget(self.GBSpeakingRadioButton, 2, 1, 1, 1)
+
+        self.gridLayout_2.addWidget(self.cardConfigGroupBox, 4, 0, 1, 2)
+
         self.tabWidget.addTab(self.settingTab, "")
         self.utilitiesTab = QWidget()
         self.utilitiesTab.setObjectName("utilitiesTab")
@@ -471,7 +475,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
 
         QMetaObject.connectSlotsByName(Dialog)
 
@@ -519,59 +523,8 @@ class Ui_Dialog(object):
             self.tabWidget.indexOf(self.mainTab),
             QCoreApplication.translate("Dialog", "\u540c\u6b65", None),
         )
-        self.cardConfigGroupBox.setTitle(
-            QCoreApplication.translate("Dialog", "\u5361\u7247\u8bbe\u7f6e", None)
-        )
-        self.disableSpeakingRadioButton.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u65e0\u53d1\u97f3\uff08Disable Speaking\uff09", None
-            )
-        )
-        self.GBSpeakingRadioButton.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u82f1\u5f0f\u53d1\u97f3\uff08GB\uff09", None
-            )
-        )
-        self.USSpeakingRadioButton.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u7f8e\u5f0f\u53d1\u97f3\uff08US\uff09", None
-            )
-        )
-        self.termSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u5355\u8bcd\u53d1\u97f3", None)
-        )
-        self.enableContextCheckBox.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u5355\u8bcd\u4e0a\u4e0b\u6587\uff08Context\uff09", None
-            )
-        )
-        self.contextSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u53e5\u5b50\u53d1\u97f3", None)
-        )
-        self.cardSettingDescription.setHtml(
-            QCoreApplication.translate(
-                "Dialog",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><meta charset="utf-8" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "hr { height: 1px; border-width: 0; }\n"
-                'li.unchecked::marker { content: "\\2610"; }\n'
-                'li.checked::marker { content: "\\2612"; }\n'
-                "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-                '<p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">\u6ce8\u610f\uff1a\u5355\u8bcd\u53d1\u97f3\uff08Term Speaking\uff09\u548c\u53e5\u5b50\u53d1\u97f3\uff08Context Speaking\uff09\u4e0d\u80fd\u540c\u65f6\u5f00\u542f\u3002</p></body></html>',
-                None,
-            )
-        )
         self.defaultConfigGroupBox.setTitle(
             QCoreApplication.translate("Dialog", "\u540c\u6b65\u8bbe\u7f6e", None)
-        )
-        # if QT_CONFIG(tooltip)
-        self.briefDefinitionCheckBox.setToolTip(
-            QCoreApplication.translate("Dialog", "Prefer Brief Definitions", None)
-        )
-        # endif // QT_CONFIG(tooltip)
-        self.briefDefinitionCheckBox.setText(
-            QCoreApplication.translate("Dialog", "\u7cbe\u7b80\u91ca\u4e49", None)
         )
         self.syncTemplatesCheckbox.setText(
             QCoreApplication.translate("Dialog", "\u540c\u6b65\u6a21\u7248", None)
@@ -619,6 +572,55 @@ class Ui_Dialog(object):
         self.cookieLabel.setText(QCoreApplication.translate("Dialog", "Cookie", None))
         self.cookieLineEdit.setPlaceholderText(
             QCoreApplication.translate("Dialog", "\u9009\u586b", None)
+        )
+        self.cardConfigGroupBox.setTitle(
+            QCoreApplication.translate("Dialog", "\u5361\u7247\u8bbe\u7f6e", None)
+        )
+        self.cardSettingDescription.setHtml(
+            QCoreApplication.translate(
+                "Dialog",
+                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
+                '<html><head><meta name="qrichtext" content="1" /><meta charset="utf-8" /><style type="text/css">\n'
+                "p, li { white-space: pre-wrap; }\n"
+                "hr { height: 1px; border-width: 0; }\n"
+                'li.unchecked::marker { content: "\\2610"; }\n'
+                'li.checked::marker { content: "\\2612"; }\n'
+                "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+                '<p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">\u6ce8\u610f\uff1a\u5355\u8bcd\u53d1\u97f3\uff08Term Speaking\uff09\u548c\u53e5\u5b50\u53d1\u97f3\uff08Context Speaking\uff09\u4e0d\u80fd\u540c\u65f6\u5f00\u542f\u3002</p></body></html>',
+                None,
+            )
+        )
+        self.enableContextCheckBox.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u5355\u8bcd\u4e0a\u4e0b\u6587\uff08Context\uff09", None
+            )
+        )
+        self.disableSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u65e0\u53d1\u97f3", None)
+        )
+        self.contextSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u53e5\u5b50\u53d1\u97f3", None)
+        )
+        self.USSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u7f8e\u5f0f\u53d1\u97f3\uff08US\uff09", None
+            )
+        )
+        self.enableChineseCheckBox.setText(
+            QCoreApplication.translate("Dialog", "\u4e2d\u6587\u91ca\u4e49", None)
+        )
+        self.enableAddPartOfSpeechToTag.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u6dfb\u52a0\u8bcd\u6027\u5230Anki\u6807\u7b7e", None
+            )
+        )
+        self.termSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u5355\u8bcd\u53d1\u97f3", None)
+        )
+        self.GBSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u82f1\u5f0f\u53d1\u97f3\uff08GB\uff09", None
+            )
         )
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.settingTab),

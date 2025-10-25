@@ -22,7 +22,8 @@ class ConfigType:
     selectedApi: int
     selectedGroup: Optional[list[list[str]]]
     credential: list[Credential]
-    briefDefinition: bool
+    enableAddPartOfSpeechToTag: bool
+    enableChineseDefinition: bool
     syncTemplates: bool
     termSpeaking: bool
     contextSpeaking: bool
@@ -58,7 +59,8 @@ def safe_load_empty_config() -> ConfigType:
         selectedApi=0,
         selectedGroup=None,  # 可为 None
         credential=[],
-        briefDefinition=False,
+        enableAddPartOfSpeechToTag=False,
+        enableChineseDefinition=False,
         syncTemplates=False,
         termSpeaking=False,
         contextSpeaking=False,
@@ -79,7 +81,8 @@ def safe_load_config(data: dict) -> ConfigType:
         selectedApi=data["selectedApi"],
         selectedGroup=data["selectedGroup"],  # 可为 None
         credential=creds,
-        briefDefinition=data["briefDefinition"],
+        enableChineseDefinition=data["enableChineseDefinition"],
+        enableAddPartOfSpeechToTag=data["enableAddPartOfSpeechToTag"],
         syncTemplates=data["syncTemplates"],
         termSpeaking=data["termSpeaking"],
         contextSpeaking=data["contextSpeaking"],

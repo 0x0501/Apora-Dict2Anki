@@ -199,6 +199,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.logTextBox.destroyed.connect(onDestroyed)
 
     def setupGUIByConfig(self):
+        """Setting GUI Widget by reading config file"""
         untypedConfig = mw.addonManager.getConfig(__name__)
 
         if untypedConfig is None:
@@ -225,7 +226,6 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.AporaAPITokenLineEdit.setText(config.aporaApiToken)
 
         # sync settings
-        self.briefDefinitionCheckBox.setChecked(config.briefDefinition)
         self.syncTemplatesCheckbox.setChecked(config.syncTemplates)
 
         # card settings
@@ -235,6 +235,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.disableSpeakingRadioButton.setChecked(config.disableSpeaking)
         self.GBSpeakingRadioButton.setChecked(config.GreatBritainSpeaking)
         self.USSpeakingRadioButton.setChecked(config.USSpeaking)
+        self.enableAddPartOfSpeechToTag.setChecked(config.enableAddPartOfSpeechToTag)
+        self.enableChineseCheckBox.setChecked(config.enableChineseDefinition)
 
     def initCore(self):
         # Temporarily disable username/password login, use cookie is more stable
@@ -308,10 +310,11 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             aporaApiToken=self.AporaAPITokenLineEdit.text(),
             # sync settings
             ##################################
-            briefDefinition=self.briefDefinitionCheckBox.isChecked(),
             syncTemplates=self.syncTemplatesCheckbox.isChecked(),
             # card settings
             ##################################
+            enableChineseDefinition=self.enableChineseCheckBox.isChecked(),
+            enableAddPartOfSpeechToTag=self.enableAddPartOfSpeechToTag.isChecked(),
             disableSpeaking=self.disableSpeakingRadioButton.isChecked(),
             GreatBritainSpeaking=self.GBSpeakingRadioButton.isChecked(),
             USSpeaking=self.USSpeakingRadioButton.isChecked(),
@@ -320,33 +323,6 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
         )
 
-        # currentConfig = dict(
-        #     # basic settings
-        #     deck=self.deckComboBox.currentText(),
-        #     selectedDict=self.dictionaryComboBox.currentIndex(),
-        #     selectedApi=self.apiComboBox.currentIndex(),
-        #     selectedGroup=self.selectedGroups,
-        #     # account settings
-        #     ##################################
-        #     username=self.usernameLineEdit.text(),
-        #     password=Mask(self.passwordLineEdit.text()),
-        #     cookie=Mask(self.cookieLineEdit.text()),
-        #     # Apora account settings
-        #     ##################################
-        #     apora_api_token=self.AporaAPITokenLineEdit.text(),
-        #     # sync settings
-        #     ##################################
-        #     briefDefinition=self.briefDefinitionCheckBox.isChecked(),
-        #     syncTemplates=self.syncTemplatesCheckbox.isChecked(),
-        #     # card settings
-        #     ##################################
-        #     disableSpeaking=self.disableSpeakingRadioButton.isChecked(),
-        #     isGBSpeaking=self.GBSpeakingRadioButton.isChecked(),
-        #     isUSSpeaking=self.USSpeakingRadioButton.isChecked(),
-        #     enableContext=self.enableContextCheckBox.isChecked(),
-        #     isTermSpeaking=self.termSpeakingRadioButton.isChecked(),
-        #     isContextSpeaking=self.contextSpeakingRadioButton.isChecked(),
-        # )
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
         self.currentConfig = currentConfig
         return currentConfig, configChanged, cardSettingsChanged

@@ -375,20 +375,7 @@ def addNoteToDeck(
         setNoteFieldValue(note, "part_of_speech", word.ipa, isNewNote, overwrite)
 
     # definition
-    # definitions = []
-    # if not word["definition_brief"] and not word["definition"]:  # both empty
-    #     logger.warning(f"NO DEFINITION FOR WORD {word['term']}!!!")
-    # elif word["definition_brief"] and word["definition"]:  # both non-empty
-    #     definitions = (
-    #         [word["definition_brief"]] if config.briefDefinition else word["definition"]
-    #     )
-    # else:  # one is empty and the other is non-empty
-    #     definitions = (
-    #         [word["definition_brief"]]
-    #         if word["definition_brief"]
-    #         else word["definition"]
-    #     )
-
+    
     if word.definition:
         setNoteFieldValue(note, "definition", word.definition, isNewNote, overwrite)
 

@@ -17,11 +17,12 @@
       "cookie": ""
     }
   ],
-  "briefDefinition": true,
+  "enableChineseDefinition": false,
+  "enableAddPartOfSpeechToTag": true,
   "syncTemplates": true,
   "termSpeaking": false,
   "contextSpeaking": false,
-  "enableContext": false,
+  "enableContext": true,
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
   "USSpeaking": false,
