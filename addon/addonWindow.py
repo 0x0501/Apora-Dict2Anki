@@ -110,6 +110,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.selectedGroups: list[list[str]] = [list()] * len(DICTIONARIES)
 
         self.querySuccessDict: dict[int, QueryAPIReturnType] = {}  # row -> queryResult
+        self.querySuccessSet: set[str] = (
+            set()
+        )  # used for filter succeeded query from select word list
         self.queryFailedDict: dict[int, bool] = {}  # row -> bool
 
         self.added = 0
@@ -767,6 +770,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         wordList: list[tuple[SimpleWord, int]] = []  # [(SimpleWord, row)]
         selectedTerms = self.newWordListWidget.selectedItems()
+
         if selectedTerms:
             # 如果选中单词则只查询选中的单词
             for termItem in selectedTerms:
@@ -774,13 +778,16 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                     continue
                 row = self.newWordListWidget.row(termItem)
                 term_text = termItem.text()
+
                 if term_text not in self.remoteWordsDict:
                     logger.warning(
                         f"Selected term '{term_text}' not found in remoteWordsDict; skipping"
                     )
                     continue
                 word = self.remoteWordsDict[term_text]
-                wordList.append((word, row))
+                # 我们将已选中的单词和已完成查询的单词做差值运算（difference）, 已查询的单词不用再次查询
+                if word.term not in self.querySuccessSet:
+                    wordList.append((word, row))
         else:  # 没有选择则查询全部
             for row in range(self.newWordListWidget.count()):
                 termItem = self.newWordListWidget.item(row)
@@ -793,7 +800,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                     )
                     continue
                 word = self.remoteWordsDict[term_text]
-                wordList.append((word, row))
+                if word.term not in self.querySuccessSet:
+                    wordList.append((word, row))
 
         logger.info(f"待查询单词{wordList}")
         # 查询线程
@@ -813,6 +821,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def on_thisRowDone(self, row, result: QueryAPIReturnType):
         """该行单词查询完毕"""
         self.querySuccessDict[row] = result
+        self.querySuccessSet.add(result.term)  # add succeed term into set
 
     @pyqtSlot(int)
     def on_thisRowFailed(self, row):
