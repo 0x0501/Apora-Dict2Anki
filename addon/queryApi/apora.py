@@ -38,19 +38,19 @@ class API(AbstractQueryAPI):
         cls.session.headers["Authorization"] = f"Bearer {config.aporaApiToken}"
 
         queryResult = None
-        
+
         payload = {
             "inquire": term.term,
         }
-        
+
         if config.contextSpeaking:
-            payload['speech'] = 'tts_sentence'
+            payload["speech"] = "tts_sentence"
         if config.termSpeaking:
-            payload['speech'] = 'tts_words'
+            payload["speech"] = "tts_words"
         if config.USSpeaking:
-            payload['variant'] = "US"
+            payload["variant"] = "US"
         if config.GreatBritainSpeaking:
-            payload['variant'] = "GB"
+            payload["variant"] = "GB"
 
         try:
             response = cls.session.post(cls.url, json=payload, timeout=cls.timeout)
@@ -59,7 +59,7 @@ class API(AbstractQueryAPI):
             )
 
             response_json = response.json()
-            
+
             logger.info(response_json)
 
             response_data_json = response_json["data"]
@@ -69,13 +69,18 @@ class API(AbstractQueryAPI):
                 and response_json["success"]
                 and response_data_json
             ):
-                
                 audio_download_link = None
+                # for highlight term in context
+                replacing = None
+
                 if config.contextSpeaking or config.termSpeaking:
                     # we need to create audio download link
                     filename_tag = response_data_json["fileNameTag"]
                     audio_download_link = f"https://apora.sumku.cc/api/audio/{config.aporaApiToken}/{filename_tag}.wav"
-                
+
+                if config.enableContext:
+                    replacing = response_data_json["replacing"]
+
                 # successfully get dict data from Apora
                 queryResult = QueryAPIReturnType(
                     term=term.term,
@@ -84,10 +89,11 @@ class API(AbstractQueryAPI):
                     original=response_data_json["original"],
                     chinese_definition=response_data_json["chineseMeaning"],
                     ipa=response_data_json["ipa"],
-                    context=response_data_json['context'],
+                    context=response_data_json["context"],
                     collocation=None,
                     context_audio_url=audio_download_link,
                     term_audio_url=audio_download_link,
+                    replacing=replacing,
                 )
             else:
                 raise Exception(

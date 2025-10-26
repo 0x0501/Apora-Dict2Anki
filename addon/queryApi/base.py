@@ -26,6 +26,7 @@ class QueryAPIReturnType:
         collocation (Optional[list[str]]): Collections where the term is used, if available.
         term_audio_url (Optional[str]): URL to audio file of the term pronunciation, if available.
         context_audio_url (Optional[str]): URL to audio file of the context sentence, if available.
+        replacing (Optional[str]): A text represent the variant of the inquiring term in context field which is used for highlighting, if available.
     """
 
     term: str
@@ -38,6 +39,7 @@ class QueryAPIReturnType:
     collocation: Optional[list[str]]
     term_audio_url: Optional[str]
     context_audio_url: Optional[str]
+    replacing: Optional[str]
 
 
 def todo_empty_query_result() -> QueryAPIReturnType:
@@ -52,6 +54,7 @@ def todo_empty_query_result() -> QueryAPIReturnType:
         collocation=None,
         term_audio_url=None,
         context_audio_url=None,
+        replacing=None,
     )
 
 
@@ -67,6 +70,7 @@ def mock_query_result() -> QueryAPIReturnType:
         collocation=["liability for", "liability to do"],
         term_audio_url=None,
         context_audio_url=None,
+        replacing="liability",
     )
 
 
