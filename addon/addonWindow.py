@@ -258,15 +258,17 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         saveSettingsAction.setShortcut(QKeySequence.StandardKey.Save)
         saveSettingsAction.triggered.connect(self.getAndSaveCurrentConfig)
         self.addAction(saveSettingsAction)  # add shortcut to current window
-        
+
         # connect button with action
         self.saveSettingsButton.clicked.connect(self.getAndSaveCurrentConfig)
         self.setupGUIByConfig()
-        
+
         # connect enableTermHighlight and enableContextCheckBox
         self.enableTermHighlight.setEnabled(self.enableContextCheckBox.isChecked())
-        self.enableContextCheckBox.toggled.connect(self.on_enable_context_checkbox_change)
-        
+        self.enableContextCheckBox.toggled.connect(
+            self.on_enable_context_checkbox_change
+        )
+
     def on_enable_context_checkbox_change(self, checked):
         self.enableTermHighlight.setEnabled(checked)
 
@@ -331,7 +333,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             enableContext=self.enableContextCheckBox.isChecked(),
             termSpeaking=self.termSpeakingRadioButton.isChecked(),
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
-            enableTermHighlight=self.enableTermHighlight.isChecked()
+            enableTermHighlight=self.enableTermHighlight.isChecked(),
         )
 
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
@@ -866,7 +868,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         #     image_task = (imageFilename, word["image"])
         # else:
         # logger.info(f"No image for word {term}")
-        
+
         if word.context_audio_url is None or word.term_audio_url is None:
             logger.warning(f"No audio download link was founded for word {term}!")
             return image_task, None, PronunciationVariantEnum.NONE, False
@@ -885,7 +887,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         pronFilename = utils.default_audio_filename(term=term, format="wav")
         logger.info(f"Audio file for: ${term}: ${pronFilename}")
         if word.context_audio_url:
-            audio_task = (pronFilename, word.context_audio_url) # (filename, download file url)
+            audio_task = (
+                pronFilename,
+                word.context_audio_url,
+            )  # (filename, download file url)
         elif word.term_audio_url:
             audio_task = (pronFilename, word.term_audio_url)
         else:
@@ -924,7 +929,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             if currentConfig.enableContext:
                 model, newCreated, fieldsUpdated = getOrCreateModel(MODEL_NAME)
             else:
-                model, newCreated, fieldsUpdated = getOrCreateModel(MODEL_NAME_DISABLED_CONTEXT, disableContext=True)
+                model, newCreated, fieldsUpdated = getOrCreateModel(
+                    MODEL_NAME_DISABLED_CONTEXT, disableContext=True
+                )
         except Exception as err:
             logger.warning(err)
             if not askUser(
@@ -945,7 +952,9 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             if currentConfig.enableContext:
                 (model, _, _) = getOrCreateModel(modelName=MODEL_NAME, recreate=True)  # type: ignore
             else:
-                (model, _, _) = getOrCreateModel(modelName=MODEL_NAME_DISABLED_CONTEXT, recreate=True)
+                (model, _, _) = getOrCreateModel(
+                    modelName=MODEL_NAME_DISABLED_CONTEXT, recreate=True
+                )
 
         if newCreated:
             # create 'Normal' card template (card type)
@@ -982,7 +991,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         deck = getOrCreateDeck(self.deckComboBox.currentText(), model=model)
 
         imagesDownloadTasks = []
-        audiosDownloadTasks : list[tuple[str, str]]= []
+        audiosDownloadTasks: list[tuple[str, str]] = []
         newWordCount = self.newWordListWidget.count()
 
         # 判断是否需要下载发音
@@ -1079,7 +1088,12 @@ class Windows(QDialog, mainUI.Ui_Dialog):
     def printSyncReport(self):
         logger.info(f"Added: {self.added}, Deleted: {self.deleted}")
 
-    def downloadAssets(self, imagesDownloadTasks, audiosDownloadTasks: list[tuple[str, str]], done_func: Callable):
+    def downloadAssets(
+        self,
+        imagesDownloadTasks,
+        audiosDownloadTasks: list[tuple[str, str]],
+        done_func: Callable,
+    ):
         logger.info(
             f"Image download tasks({len(imagesDownloadTasks)}): {imagesDownloadTasks}"
         )

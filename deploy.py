@@ -27,7 +27,7 @@ def create_zip(target_dir=TARGET_DIR, target_filename=TARGET_FILENAME):
         "venv",
         ".venv",
         ".ruff_cache",
-        ".vscode"
+        ".vscode",
     ]
     exclude_files = [
         "README.md",

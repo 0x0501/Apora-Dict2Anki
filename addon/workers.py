@@ -145,8 +145,8 @@ class AssetDownloadWorker(QObject):
     def __init__(
         self,
         target_dir,
-        images: list[tuple[str, str]], # list[tuple[filename, file download url]]
-        audios: list[tuple[str, str]], # list[tuple[filename, file download url]]
+        images: list[tuple[str, str]],  # list[tuple[filename, file download url]]
+        audios: list[tuple[str, str]],  # list[tuple[filename, file download url]]
         overwrite=False,
         max_retry=3,
     ):
