@@ -32,6 +32,49 @@ wheels = [
 ]
 
 [[package]]
+name = "apora-dict2anki"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "anki" },
+    { name = "aqt" },
+    { name = "beautifulsoup4" },
+    { name = "mypy" },
+    { name = "protobuf" },
+    { name = "pytest" },
+    { name = "pytest-mock" },
+    { name = "pytest-qt" },
+    { name = "requests" },
+    { name = "urllib3" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pyside6" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "anki", specifier = ">=25.9.2" },
+    { name = "aqt", specifier = ">=25.9.2" },
+    { name = "beautifulsoup4", specifier = ">=4.14.2" },
+    { name = "mypy", specifier = ">=1.18.2" },
+    { name = "protobuf", specifier = ">=6.33.0" },
+    { name = "pytest", specifier = ">=8.4.2" },
+    { name = "pytest-mock", specifier = ">=3.15.1" },
+    { name = "pytest-qt", specifier = ">=4.5.0" },
+    { name = "requests", specifier = ">=2.32.5" },
+    { name = "urllib3", specifier = ">=2.5.0" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pyside6", specifier = ">=6.10.0" },
+    { name = "ruff", specifier = ">=0.14.1" },
+]
+
+[[package]]
 name = "aqt"
 version = "25.9.2"
 source = { registry = "https://pypi.org/simple" }
@@ -179,49 +222,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/43/fa/6d96a0978d19e17b68d634497769987b16c8f4cd0a7a05048bec693caa6b/decorator-5.2.1.tar.gz", hash = "sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360", size = 56711, upload-time = "2025-02-24T04:41:34.073Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4e/8c/f3147f5c4b73e7550fe5f9352eaa956ae838d5c51eb58e7a25b9f3e2643b/decorator-5.2.1-py3-none-any.whl", hash = "sha256:d316bb415a2d9e2d2b3abcc4084c6502fc09240e292cd76a76afc106a1c8e04a", size = 9190, upload-time = "2025-02-24T04:41:32.565Z" },
-]
-
-[[package]]
-name = "dict2anki-apora"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "anki" },
-    { name = "aqt" },
-    { name = "beautifulsoup4" },
-    { name = "mypy" },
-    { name = "protobuf" },
-    { name = "pytest" },
-    { name = "pytest-mock" },
-    { name = "pytest-qt" },
-    { name = "requests" },
-    { name = "urllib3" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pyside6" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "anki", specifier = ">=25.9.2" },
-    { name = "aqt", specifier = ">=25.9.2" },
-    { name = "beautifulsoup4", specifier = ">=4.14.2" },
-    { name = "mypy", specifier = ">=1.18.2" },
-    { name = "protobuf", specifier = ">=6.33.0" },
-    { name = "pytest", specifier = ">=8.4.2" },
-    { name = "pytest-mock", specifier = ">=3.15.1" },
-    { name = "pytest-qt", specifier = ">=4.5.0" },
-    { name = "requests", specifier = ">=2.32.5" },
-    { name = "urllib3", specifier = ">=2.5.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pyside6", specifier = ">=6.10.0" },
-    { name = "ruff", specifier = ">=0.14.1" },
 ]
 
 [[package]]
