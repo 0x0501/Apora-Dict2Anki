@@ -11,7 +11,9 @@ TARGET_DIR = "."
 TARGET_FILENAME = f"{WINDOW_TITLE}.zip"
 
 
-def create_zip(target_dir=TARGET_DIR, target_filename=TARGET_FILENAME):
+def create_zip(
+    target_dir=TARGET_DIR, target_filename=TARGET_FILENAME, share_outside=False
+):
     file_paths = []
     exclude_dirs = [
         "build",
@@ -49,24 +51,37 @@ def create_zip(target_dir=TARGET_DIR, target_filename=TARGET_FILENAME):
         "requirements.txt",
         ".DS_Store",
         "meta.json",
+        "manifest.json",
     ]
-    exclude_ext = [".png", ".ui", ".qrc", ".log", ".zip", ".tpl", ".sh"]
+
+    if share_outside:
+        exclude_files.remove("manifest.json")
+
+    exclude_ext = {".png", ".ui", ".qrc", ".log", ".zip", ".tpl", ".sh"}
     for dirname, sub_dirs, files in os.walk("."):
-        for d in exclude_dirs:
-            if d in sub_dirs:
-                sub_dirs.remove(d)
-        for f in exclude_files:
-            if f in files:
-                files.remove(f)
-        for ext in exclude_ext:
-            for f in files[:]:
-                if f.endswith(ext):
-                    files.remove(f)
-        for filename in files:
-            file_paths.append(os.path.join(dirname, filename))
+        # 跳过排除的目录
+        sub_dirs[:] = [d for d in sub_dirs if d not in exclude_dirs]
+
+        # 判断当前是否在 assets 目录下（支持 assets/subfolder）
+        in_assets = (
+            dirname.startswith(os.path.join(".", "assets"))
+            or dirname.find("assets") > -1
+        )
+
+        for f in files[:]:
+            # 排除指定文件名
+            if f in exclude_files:
+                continue
+
+            # 如果不在 assets 目录下，才应用扩展名过滤
+            if not in_assets:
+                if os.path.splitext(f)[1].lower() in exclude_ext:
+                    continue
+
+            file_paths.append(os.path.join(dirname, f))
 
     if not os.path.exists(target_dir):
-        os.mkdir(target_dir)
+        os.makedirs(target_dir)
     filepath = os.path.join(target_dir, target_filename)
     with ZipFile(filepath, "w", compression=zipfile.ZIP_DEFLATED) as zf:
         for file in file_paths:
@@ -135,13 +150,13 @@ def publish(zip_dir, zip_filename, title, tags, desc):
 
 
 if __name__ == "__main__":
-    OPERATIONS = ["build", "publish"]
+    OPERATIONS = ["build", "build-x", "publish"]
     parser = argparse.ArgumentParser()
     parser.add_argument("operation", type=str, choices=OPERATIONS, help="cluster name")
     parser.add_argument("-d", "--dir", type=str, help="target directory")
     args = parser.parse_args()
 
-    operation = args.operation
+    operation: str = args.operation
     directory = args.dir
     if not directory:
         directory = TARGET_DIR
@@ -150,9 +165,12 @@ if __name__ == "__main__":
     print(f"operation: {operation}")
     print(f"directory: {directory}")
 
-    if operation == "build":
-        create_zip(target_dir=directory)
-    elif operation == "publish":
-        raise RuntimeError(f"Operation '{operation}' is not implemented yet")
-    else:
-        raise RuntimeError(f"Unsupported operation: {operation}")
+    match operation:
+        case "build":
+            create_zip(target_dir=directory)
+        case "build-x":
+            create_zip(target_dir=directory, share_outside=True)
+        case "publish":
+            raise RuntimeError(f"Operation '{operation}' is not implemented yet")
+        case _:
+            raise RuntimeError(f"Unsupported operation: {operation}")
