@@ -3,6 +3,13 @@ import logging
 from .constants import USER_AGENT
 from .UIForm import loginDialog
 from aqt.qt import QWebEngineView, QWebEngineProfile, QUrl, pyqtSignal, QDialog, QIcon
+from aqt.qt.qt6 import QWidget
+from typing import Optional, Protocol, Any
+
+
+class loginCheckCallbackProtocol(Protocol):
+    def __call__(self, cookie: dict[str, Any], content: str) -> bool: ...
+
 
 logger = logging.getLogger("Apora dict2Anki")
 
@@ -10,7 +17,12 @@ logger = logging.getLogger("Apora dict2Anki")
 class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
     loginSucceed = pyqtSignal(str)
 
-    def __init__(self, loginUrl, loginCheckCallbackFn, parent=None):
+    def __init__(
+        self,
+        loginUrl: str,
+        loginCheckCallbackFn: loginCheckCallbackProtocol,
+        parent: Optional[QWidget],
+    ):
         """Initialize a login dialog window.
 
         This dialog creates a web view for user authentication through a specified login URL.
@@ -38,6 +50,9 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
         # set window icon
         self.setWindowIcon(QIcon(":icons/apora_icon.png"))
         self.page.load(self.url)
+
+        # set address
+        self.address.setText(loginUrl)
         self.makeConnection()
 
     def makeConnection(self):

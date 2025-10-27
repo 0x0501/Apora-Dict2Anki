@@ -123,10 +123,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         self.setupUi(self)
         self.setWindowTitle(WINDOW_TITLE)
-        
+
         # set window icon
         self.setWindowIcon(QIcon(":icons/apora_icon.png"))
-        
+
         self.logTextBox.setReadOnly(True)
         self.logTextBox.setUndoRedoEnabled(False)
 
@@ -526,7 +526,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
     @pyqtSlot()
     def onLoginFailed(self):
-        showCritical(title="Apora Dict2Anki",text="第一次登录或cookie失效!请重新登录")
+        showCritical(title="Apora Dict2Anki", text="第一次登录或cookie失效!请重新登录")
         self.progressBar.setValue(0)
         self.progressBar.setMaximum(1)
         self.mainTab.setEnabled(True)
@@ -647,7 +647,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 self.selectedDict = DICTIONARIES[idx]()
             except Exception as e:
                 logger.error(f"Failed to initialize selectedDict: {e}")
-                showCritical(title="Apora Dict2Anki", text="未能初始化词典实例，无法获取远程单词列表。")
+                showCritical(
+                    title="Apora Dict2Anki",
+                    text="未能初始化词典实例，无法获取远程单词列表。",
+                )
                 return
 
         group_map = dict(self.selectedDict.groups)

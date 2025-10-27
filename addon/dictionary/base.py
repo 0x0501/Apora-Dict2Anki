@@ -1,5 +1,6 @@
 from enum import Enum
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class CredentialPlatformEnum(Enum):
@@ -84,11 +85,11 @@ class AbstractDictionary(ABC):
 
     @staticmethod
     @abstractmethod
-    def loginCheckCallbackFn(cookie: dict, content: str) -> bool:
+    def loginCheckCallbackFn(cookie: dict[str, Any], content: str) -> bool:
         pass
 
     @abstractmethod
-    def checkCookie(self, cookie: dict) -> bool:
+    def checkCookie(self, cookie: dict[str, Any]) -> bool:
         pass
 
     @abstractmethod

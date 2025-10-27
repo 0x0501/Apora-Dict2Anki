@@ -10,7 +10,7 @@ from .dictionary.base import SimpleWord
 from requests.adapters import HTTPAdapter
 from .queryApi.base import AbstractQueryAPI, QueryAPIReturnType
 from aqt.qt import QObject, pyqtSignal, QThread
-from typing import Type, Optional
+from typing import Type, Optional, Any, Protocol
 
 
 # Use anki addon web to check version
@@ -38,12 +38,16 @@ from typing import Type, Optional
 #             self.finished.emit()
 
 
+class CheckCookieProtocol(Protocol):
+    def __call__(self, cookie: dict[str, Any]) -> bool: ...
+
+
 class LoginStateCheckWorker(QObject):
     start = pyqtSignal()
     logSuccess = pyqtSignal(str)
     logFailed = pyqtSignal()
 
-    def __init__(self, checkFn, cookie):
+    def __init__(self, checkFn: CheckCookieProtocol, cookie: dict[str, Any]):
         super().__init__()
         self.checkFn = checkFn
         self.cookie = cookie
