@@ -1089,6 +1089,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 )
             logger.info(f"实际删除({self.deleted})")
         logger.info("完成")
+        tooltip(f"成功添加{self.added}张笔记")
 
         if not (imagesDownloadTasks or audiosDownloadTasks):
             self.printSyncReport()
