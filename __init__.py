@@ -46,7 +46,7 @@ def disable_ssl_check_if_debug():
     if not os.path.exists(BASHRC_FILE):
         return
     try:
-        rc = os.system(f'source {BASHRC_FILE} && test "$DICT2ANKI_SSL_VERIFY" = "0"')
+        rc = os.system(f'source {BASHRC_FILE} && test "$Apora DICT2ANKI_SSL_VERIFY" = "0"')
         if rc == 0:
             DEBUG = True
             showInfo("[Apora Dict2Anki] DEBUG=True, SSL Check is DISABLED!")

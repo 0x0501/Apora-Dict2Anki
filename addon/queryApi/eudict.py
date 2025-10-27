@@ -14,7 +14,7 @@ from ..dictionary.base import SimpleWord
 from bs4 import BeautifulSoup
 from ..deprecated import deprecated
 
-logger = logging.getLogger("dict2Anki.queryApi.eudict")
+logger = logging.getLogger("Apora dict2Anki.queryApi.eudict")
 __all__ = ["API"]
 
 

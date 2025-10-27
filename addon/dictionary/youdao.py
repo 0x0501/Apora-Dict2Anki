@@ -8,7 +8,7 @@ from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
 from .base import CredentialPlatformEnum, AbstractDictionary, SimpleWord
 
-logger = logging.getLogger("dict2Anki.dictionary.youdao")
+logger = logging.getLogger("Apora dict2Anki.dictionary.youdao")
 
 
 class Youdao(AbstractDictionary):

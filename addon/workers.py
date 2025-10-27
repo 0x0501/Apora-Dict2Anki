@@ -18,7 +18,7 @@ class VersionCheckWorker(QObject):
     haveNewVersion = pyqtSignal(str, str)
     finished = pyqtSignal()
     start = pyqtSignal()
-    logger = logging.getLogger("dict2Anki.workers.UpdateCheckWorker")
+    logger = logging.getLogger("Apora dict2Anki.workers.UpdateCheckWorker")
 
     def run(self):
         try:
@@ -62,7 +62,7 @@ class RemoteWordFetchingWorker(QObject):
     setProgress = pyqtSignal(int)
     done = pyqtSignal()
     doneThisGroup = pyqtSignal(list)
-    logger = logging.getLogger("dict2Anki.workers.RemoteWordFetchingWorker")
+    logger = logging.getLogger("Apora dict2Anki.workers.RemoteWordFetchingWorker")
 
     def __init__(self, selectedDict, selectedGroups: list[tuple]):
         super().__init__()
@@ -97,7 +97,7 @@ class QueryWorker(QObject):
     thisRowDone = pyqtSignal(int, QueryAPIReturnType)
     thisRowFailed = pyqtSignal(int)
     allQueryDone = pyqtSignal()
-    logger = logging.getLogger("dict2Anki.workers.QueryWorker")
+    logger = logging.getLogger("Apora dict2Anki.workers.QueryWorker")
 
     def __init__(
         self, wordList: list[tuple[SimpleWord, int]], api: Type[AbstractQueryAPI]
@@ -136,7 +136,7 @@ class AssetDownloadWorker(QObject):
     start = pyqtSignal()
     tick = pyqtSignal()
     done = pyqtSignal()
-    logger = logging.getLogger("dict2Anki.workers.AudioDownloadWorker")
+    logger = logging.getLogger("Apora dict2Anki.workers.AudioDownloadWorker")
     retries = Retry(total=5, backoff_factor=3, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
     session.mount("http://", HTTPAdapter(max_retries=retries))

@@ -12,7 +12,7 @@ from typing import Optional
 from ..misc import safe_load_config_from_mw
 
 
-logger = logging.getLogger("dict2Anki.queryApi.eudict")
+logger = logging.getLogger("Apora dict2Anki.queryApi.eudict")
 __all__ = ["API"]
 
 

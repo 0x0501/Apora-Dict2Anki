@@ -86,7 +86,7 @@ except ImportError:
         getWordsByDeck,
     )
 
-logger = logging.getLogger("dict2Anki")
+logger = logging.getLogger("Apora dict2Anki")
 
 
 def fatal_error(exc_type, exc_value, exc_traceback):

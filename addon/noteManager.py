@@ -22,7 +22,7 @@ from .utils import swap_positions_with_list, default_audio_filename
 from pathlib import Path
 
 
-logger = logging.getLogger("dict2Anki.noteManager")
+logger = logging.getLogger("Apora dict2Anki.noteManager")
 
 
 def getDeckList() -> list[str]:

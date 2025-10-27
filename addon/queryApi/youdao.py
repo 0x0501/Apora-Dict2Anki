@@ -13,7 +13,7 @@ from .base import (
 )
 from ..deprecated import deprecated
 
-logger = logging.getLogger("dict2Anki.queryApi.youdao")
+logger = logging.getLogger("Apora dict2Anki.queryApi.youdao")
 __all__ = ["API"]
 SENTENCE_SPEECH_URL_PREFIX = "http://dict.youdao.com/dictvoice?audio="
 

@@ -6,7 +6,7 @@ from aqt.qt import QUrl, pyqtSignal
 from aqt.qt import QDialog
 from aqt.qt import QWebEngineView, QWebEngineProfile
 
-logger = logging.getLogger("dict2Anki")
+logger = logging.getLogger("Apora dict2Anki")
 
 
 class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
