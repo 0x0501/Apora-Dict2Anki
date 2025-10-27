@@ -43,7 +43,10 @@ def getWordsByDeck(deckName: str) -> list[str]:
         if note_type is None:
             raise Exception("note_type is none")
 
-        if note_type.get("name", "").lower().startswith("apora-dict2anki") and note["term"]:
+        if (
+            note_type.get("name", "").lower().startswith("apora-dict2anki")
+            and note["term"]
+        ):
             words.append(note["term"])
     return words
 
