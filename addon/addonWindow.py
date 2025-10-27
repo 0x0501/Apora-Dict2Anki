@@ -71,16 +71,15 @@ from .workers import (
     LoginStateCheckWorker,
     QueryWorker,
     RemoteWordFetchingWorker,
-    VersionCheckWorker,
 )
 from typing import Callable, Optional
 
 try:
     from aqt import mw
-    from aqt.utils import askUser, openLink, showCritical, showInfo, tooltip
+    from aqt.utils import askUser, showCritical, showInfo, tooltip
 
 except ImportError:
-    from test.dummy_aqt import askUser, mw, openLink, showCritical, showInfo, tooltip
+    from test.dummy_aqt import askUser, mw, showCritical, showInfo, tooltip
     from test.dummy_noteManager import (
         getDeckList,
         getWordsByDeck,
@@ -403,18 +402,18 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         return fg
 
     # TODO: check new version
-    def checkUpdate(self):
-        @pyqtSlot(str, str)
-        def on_haveNewVersion(version, changeLog):
-            if askUser(f"有新版本:{version}是否更新？\n\n{changeLog.strip()}"):
-                openLink(RELEASE_URL)
+    # def checkUpdate(self):
+    #     @pyqtSlot(str, str)
+    #     def on_haveNewVersion(version, changeLog):
+    #         if askUser(f"有新版本:{version}是否更新？\n\n{changeLog.strip()}"):
+    #             openLink(RELEASE_URL)
 
-        self.updateCheckWork = VersionCheckWorker()
-        self.updateCheckWork.moveToThread(self.updateCheckThead)
-        self.updateCheckWork.haveNewVersion.connect(on_haveNewVersion)
-        self.updateCheckWork.finished.connect(self.updateCheckThead.quit)
-        self.updateCheckWork.start.connect(self.updateCheckWork.run)
-        self.updateCheckWork.start.emit()
+    #     self.updateCheckWork = VersionCheckWorker()
+    #     self.updateCheckWork.moveToThread(self.updateCheckThead)
+    #     self.updateCheckWork.haveNewVersion.connect(on_haveNewVersion)
+    #     self.updateCheckWork.finished.connect(self.updateCheckThead.quit)
+    #     self.updateCheckWork.start.connect(self.updateCheckWork.run)
+    #     self.updateCheckWork.start.emit()
 
     @pyqtSlot(int)
     def on_dictionaryComboBox_currentIndexChanged(self, index):

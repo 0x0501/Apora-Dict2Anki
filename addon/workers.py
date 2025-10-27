@@ -6,36 +6,36 @@ import requests
 from urllib3 import Retry
 from itertools import chain
 from .misc import ThreadPool
-from .dictionary.base import SimpleWord, PronunciationVariantEnum
+from .dictionary.base import SimpleWord
 from requests.adapters import HTTPAdapter
-from .constants import VERSION, VERSION_CHECK_API
 from .queryApi.base import AbstractQueryAPI, QueryAPIReturnType
 from aqt.qt import QObject, pyqtSignal, QThread
 from typing import Type, Optional
 
 
-class VersionCheckWorker(QObject):
-    haveNewVersion = pyqtSignal(str, str)
-    finished = pyqtSignal()
-    start = pyqtSignal()
-    logger = logging.getLogger("Apora dict2Anki.workers.UpdateCheckWorker")
+# Use anki addon web to check version
+# class VersionCheckWorker(QObject):
+#     haveNewVersion = pyqtSignal(str, str)
+#     finished = pyqtSignal()
+#     start = pyqtSignal()
+#     logger = logging.getLogger("Apora dict2Anki.workers.UpdateCheckWorker")
 
-    def run(self):
-        try:
-            self.logger.info("检查新版本")
-            rsp = requests.get(VERSION_CHECK_API, timeout=20).json()
-            version = rsp["tag_name"]
-            changeLog = rsp["body"]
-            if version != VERSION:
-                self.logger.info(f"检查到新版本:{version}--{changeLog.strip()}")
-                self.haveNewVersion.emit(version.strip(), changeLog.strip())
-            else:
-                self.logger.info(f"当前为最新版本:{VERSION}")
-        except Exception as e:
-            self.logger.error(f"版本检查失败{e}")
+#     def run(self):
+#         try:
+#             self.logger.info("检查新版本")
+#             rsp = requests.get(VERSION_CHECK_API, timeout=20).json()
+#             version = rsp["tag_name"]
+#             changeLog = rsp["body"]
+#             if version != VERSION:
+#                 self.logger.info(f"检查到新版本:{version}--{changeLog.strip()}")
+#                 self.haveNewVersion.emit(version.strip(), changeLog.strip())
+#             else:
+#                 self.logger.info(f"当前为最新版本:{VERSION}")
+#         except Exception as e:
+#             self.logger.error(f"版本检查失败{e}")
 
-        finally:
-            self.finished.emit()
+#         finally:
+#             self.finished.emit()
 
 
 class LoginStateCheckWorker(QObject):
