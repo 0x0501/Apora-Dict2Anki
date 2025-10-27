@@ -4,5 +4,6 @@
     <file>done.png</file>
     <file>failed.png</file>
     <file>wait.png</file>
+    <file>apora_icon.png</file>
   </qresource>
 </RCC>
