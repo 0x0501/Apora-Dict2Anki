@@ -1,6 +1,5 @@
 VERSION = "v1.0.0"
 RELEASE_URL = "https://github.com/0x0501/Apora-Dict2Anki"
-VERSION_CHECK_API = "https://api.github.com/repos/lixvbnet/Dict2Anki/releases/latest"
 WINDOW_TITLE = f"Apora Dict2Anki {VERSION}"
 MODEL_NAME = "Apora-Dict2Anki"
 MODEL_NAME_DISABLED_CONTEXT = "Apora-Dick2Anki (Disabled Context)"

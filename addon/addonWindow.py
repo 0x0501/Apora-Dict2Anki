@@ -24,7 +24,6 @@ from .constants import (
     WINDOW_TITLE,
     BACKWARDS_CARD_TEMPLATE_NAME,
     CARD_SETTINGS,
-    RELEASE_URL,
 )
 from .noteManager import (
     FieldGroup,
@@ -74,16 +73,9 @@ from .workers import (
 )
 from typing import Callable, Optional
 
-try:
-    from aqt import mw
-    from aqt.utils import askUser, showCritical, showInfo, tooltip
+from aqt import mw
+from aqt.utils import askUser, showCritical, showInfo, tooltip
 
-except ImportError:
-    from test.dummy_aqt import askUser, mw, showCritical, showInfo, tooltip
-    from test.dummy_noteManager import (
-        getDeckList,
-        getWordsByDeck,
-    )
 
 logger = logging.getLogger("Apora dict2Anki")
 
