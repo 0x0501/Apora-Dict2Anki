@@ -2,9 +2,7 @@ import json
 import logging
 from .constants import USER_AGENT
 from .UIForm import loginDialog
-from aqt.qt import QUrl, pyqtSignal
-from aqt.qt import QDialog
-from aqt.qt import QWebEngineView, QWebEngineProfile
+from aqt.qt import QWebEngineView, QWebEngineProfile, QUrl, pyqtSignal, QDialog, QIcon
 
 logger = logging.getLogger("Apora dict2Anki")
 
@@ -36,6 +34,9 @@ class LoginDialog(QDialog, loginDialog.Ui_LoginDialog):
         self.setupUi(self)
         self.page = LoginWebEngineView(self)
         self.pageContainer.addWidget(self.page)
+
+        # set window icon
+        self.setWindowIcon(QIcon(":icons/apora_icon.png"))
         self.page.load(self.url)
         self.makeConnection()
 
