@@ -26,6 +26,6 @@
   "enableContext": true,
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
-  "USSpeaking": false,
+  "USSpeaking": true,
   "aporaApiToken": ""
 }
