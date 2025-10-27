@@ -1,6 +1,6 @@
 # Apora-Dict2Anki
 
-<img alt="apora dict2anki title" src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-1.svg" />
+<img alt="apora dict2anki title" src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-1.png" />
 
 This is a fork of Dict2Anki plugin (from [https://github.com/lixvbnet/Dict2Anki](https://github.com/lixvbnet/Dict2Anki)), for using [Apora](https://apora.sumku.cc) in Anki.
 
@@ -17,8 +17,8 @@ Features:
 ## Screenshots
 
 <p style="display: flex; width: 100%;">
-  <img src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-3.svg">
-  <img src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-2.svg">
+  <img src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-3.png">
+  <img src="https://github.com/0x0501/Apora-Dict2Anki/blob/main/_image/Apora2Anki-2.png">
 </p>
 
 ## Installment
