@@ -5,10 +5,9 @@ import zipfile
 from bs4 import BeautifulSoup
 from requests.sessions import Session
 from zipfile import ZipFile
-from addon.constants import WINDOW_TITLE
 
-TARGET_DIR = "."
-TARGET_FILENAME = f"{WINDOW_TITLE}.zip"
+TARGET_DIR = ".build"
+TARGET_FILENAME = "Apora-Dict2Anki.zip"
 
 
 def create_zip(
