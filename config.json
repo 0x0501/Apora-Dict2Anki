@@ -23,6 +23,7 @@
   "syncTemplates": true,
   "termSpeaking": false,
   "contextSpeaking": false,
+  "contextDifficulty": "normal",
   "enableContext": true,
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
