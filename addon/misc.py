@@ -7,6 +7,12 @@ from .dictionary.base import CredentialPlatformEnum
 from enum import Enum
 
 
+class ContextDifficulty(Enum):
+    EASY = "easy"
+    NORMAL = "normal"
+    PROFESSIONAL = "professional"
+
+
 @dataclass
 class Credential:
     platform: CredentialPlatformEnum
@@ -28,6 +34,7 @@ class ConfigType:
     syncTemplates: bool
     termSpeaking: bool
     contextSpeaking: bool
+    contextDifficulty: ContextDifficulty
     enableContext: bool
     disableSpeaking: bool
     GreatBritainSpeaking: bool
@@ -66,6 +73,7 @@ def safe_load_empty_config() -> ConfigType:
         syncTemplates=False,
         termSpeaking=False,
         contextSpeaking=False,
+        contextDifficulty=ContextDifficulty.NORMAL,
         enableContext=False,
         disableSpeaking=True,
         GreatBritainSpeaking=False,
@@ -89,6 +97,7 @@ def safe_load_config(data: dict) -> ConfigType:
         syncTemplates=data["syncTemplates"],
         termSpeaking=data["termSpeaking"],
         contextSpeaking=data["contextSpeaking"],
+        contextDifficulty=data["contextDifficulty"],
         enableContext=data["enableContext"],
         disableSpeaking=data["disableSpeaking"],
         GreatBritainSpeaking=data["GreatBritainSpeaking"],

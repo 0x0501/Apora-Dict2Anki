@@ -59,6 +59,7 @@ from .misc import (
     safe_load_empty_config,
     safe_convert_config_to_dict,
     ConfigType,
+    ContextDifficulty,
     Credential,
 )
 from .queryApi import QUERY_APIS
@@ -205,6 +206,15 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         config = safe_load_config(untypedConfig)
 
+        selectedDifficulty = 0
+
+        if config.contextDifficulty == ContextDifficulty.EASY.value:
+            selectedDifficulty = 0
+        elif config.contextDifficulty == ContextDifficulty.NORMAL.value:
+            selectedDifficulty = 1
+        else:
+            selectedDifficulty = 2
+
         # basic settings
         self.deckComboBox.setCurrentText(config.deck)
         self.dictionaryComboBox.setCurrentIndex(config.selectedDict)
@@ -236,6 +246,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.enableAddPartOfSpeechToTag.setChecked(config.enableAddPartOfSpeechToTag)
         self.enableChineseCheckBox.setChecked(config.enableChineseDefinition)
         self.enableTermHighlight.setChecked(config.enableTermHighlight)
+        self.contextDifficultyComboBox.setCurrentIndex(selectedDifficulty)
 
     def initCore(self):
         # Temporarily disable username/password login, use cookie is more stable
@@ -306,6 +317,14 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             cookie=self.cookieLineEdit.text(),
         )
 
+        contextDifficultyValue = (
+            ContextDifficulty.EASY
+            if self.contextDifficultyComboBox.currentIndex() == 0
+            else ContextDifficulty.NORMAL
+            if self.contextDifficultyComboBox.currentIndex() == 1
+            else ContextDifficulty.PROFESSIONAL
+        )
+
         currentConfig = ConfigType(
             # basic settings
             deck=self.deckComboBox.currentText(),
@@ -332,6 +351,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             termSpeaking=self.termSpeakingRadioButton.isChecked(),
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
             enableTermHighlight=self.enableTermHighlight.isChecked(),
+            contextDifficulty=contextDifficultyValue,
         )
 
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)

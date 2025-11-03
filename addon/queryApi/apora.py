@@ -39,9 +39,7 @@ class API(AbstractQueryAPI):
 
         queryResult = None
 
-        payload = {
-            "inquire": term.term,
-        }
+        payload = {"inquire": term.term, "contextDifficulty": config.contextDifficulty}
 
         if config.contextSpeaking:
             payload["speech"] = "tts_sentence"
