@@ -1,0 +1,35 @@
+name: Build and release anki addon
+on: 
+    push:
+        tags:
+            - 'v*' # only trigger on version tags
+    workflow_dispatch:
+jobs:
+    build-and-release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v5
+            - name: Install uv
+              uses: astral-sh/setup-uv@v6
+            - name: Set up Python
+              run: uv python install
+            - name: Build addon
+              run: uv run deploy.py build-x
+            - name: Change addon extension
+              run: mv ./build/Apora-Dict2Anki.zip ./build/Apora-Dict2Anki.ankiaddon
+            - name: Create Release
+              uses: softprops/action-gh-release@v2
+              if: github.ref_type == 'tag'
+              with:
+                tag_name: ${{ github.ref_name }} # v1.0.0 .etc
+                name: Release ${{ github.ref_name }}
+                body: |
+                    Automated build for version ${{ github.ref_name }}.
+                    - Anki addon: Apora-Dict2Anki-${{ github.ref_name }}-.ankiaddon
+                    - Download the `*.ankiaddon` file, double-click to install.
+                draft: false
+                prerelease: false
+                files: .build/*.ankiaddon
+                token: ${{ secrets.GITHUB_TOKEN }}
+
