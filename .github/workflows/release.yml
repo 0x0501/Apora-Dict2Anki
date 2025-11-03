@@ -17,7 +17,7 @@ jobs:
             - name: Build addon
               run: uv run deploy.py build-x
             - name: Change addon extension
-              run: mv ./build/Apora-Dict2Anki.zip ./build/Apora-Dict2Anki.ankiaddon
+              run: mv .build/Apora-Dict2Anki.zip .build/Apora-Dict2Anki.ankiaddon
             - name: Create Release
               uses: softprops/action-gh-release@v2
               if: github.ref_type == 'tag'
