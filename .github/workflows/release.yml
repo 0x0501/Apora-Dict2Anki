@@ -23,7 +23,7 @@ jobs:
               if: github.ref_type == 'tag'
               with:
                 tag_name: ${{ github.ref_name }} # v1.0.0 .etc
-                name: Release ${{ github.ref_name }}
+                name: ${{ github.ref_name }}
                 body: |
                     Automated build for version ${{ github.ref_name }}.
                     - Anki addon: Apora-Dict2Anki-${{ github.ref_name }}-.ankiaddon
