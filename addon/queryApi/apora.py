@@ -42,7 +42,7 @@ class API(AbstractQueryAPI):
         payload = {
             "inquire": term.term,
             "contextDifficulty": config.contextDifficulty,
-            "language": config.language,
+            "language": config.language.value,
         }
 
         if config.contextSpeaking:
