@@ -14,8 +14,7 @@ from aqt import mw
 from anki.decks import DeckDict
 from anki.notes import Note
 from anki.models import NotetypeDict
-from .misc import ConfigType
-from .dictionary.base import PronunciationVariantEnum
+from .misc import ConfigType, PronunciationVariantEnum
 from .queryApi.base import QueryAPIReturnType
 from typing import Optional, Union
 from .utils import swap_positions_with_list, default_audio_filename

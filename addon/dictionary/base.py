@@ -1,20 +1,6 @@
-from enum import Enum
 from abc import ABC, abstractmethod
 from typing import Any
-
-
-class CredentialPlatformEnum(Enum):
-    """Represent credentials of different platforms"""
-
-    NONE = 0
-    YOUDAO = 1
-    EUDIC = 2
-
-
-class PronunciationVariantEnum(Enum):
-    NONE = 0
-    US = 1
-    UK = 2
+from ..misc import CredentialPlatformEnum
 
 
 class SimpleWord(ABC):
@@ -81,7 +67,10 @@ class AbstractDictionary(ABC):
     group name which represent a set of words/phrases in the dictionary.
     """
 
-    loginUrl: str
+    @staticmethod
+    @abstractmethod
+    def getLoginUrl() -> str:
+        pass
 
     @staticmethod
     @abstractmethod

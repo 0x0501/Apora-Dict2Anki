@@ -47,9 +47,7 @@ from .noteManager import (
 from . import utils
 from .dictionary import DICTIONARIES
 from .dictionary.base import (
-    CredentialPlatformEnum,
     SimpleWord,
-    PronunciationVariantEnum,
 )
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
@@ -61,6 +59,9 @@ from .misc import (
     ConfigType,
     ContextDifficulty,
     Credential,
+    Language,
+    CredentialPlatformEnum,
+    PronunciationVariantEnum,
 )
 from .queryApi import QUERY_APIS
 from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI, QueryAPIReturnType
@@ -215,10 +216,17 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         else:
             selectedDifficulty = 2
 
+        selectedLanguage = 0  # set english as default language
+
+        if config.language == Language.FRENCH:
+            selectedLanguage = 1
+
         # basic settings
         self.deckComboBox.setCurrentText(config.deck)
         self.dictionaryComboBox.setCurrentIndex(config.selectedDict)
         self.apiComboBox.setCurrentIndex(config.selectedApi)
+        self.languageComboBox.setCurrentIndex(selectedLanguage)
+
         if config.selectedGroup:
             self.selectedGroups = config.selectedGroup
         else:
@@ -259,8 +267,10 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         for d in DICTIONARIES:
             self.dictionaryComboBox.addItem(d.name, d.platform)
 
+        # dynamically add apis, languages and decks
         self.apiComboBox.addItems([d.name for d in QUERY_APIS])
         self.deckComboBox.addItems(getDeckList())
+        self.languageComboBox.addItems([x.value.capitalize() for x in Language])
 
         # bind save button and shortcut (Ctrl+S)
         saveSettingsAction = QAction(self)
@@ -277,6 +287,22 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.enableContextCheckBox.toggled.connect(
             self.on_enable_context_checkbox_change
         )
+
+        # if the target language is not english (0 index), disable pronunciation variant radio buttons
+        isTargetEnglish = self.languageComboBox.currentIndex() == 0
+        self.languageComboBox.currentIndexChanged.connect(
+            self.on_languageComboBox_change
+        )
+        self.GBSpeakingRadioButton.setEnabled(isTargetEnglish)
+        self.USSpeakingRadioButton.setEnabled(isTargetEnglish)
+
+    def on_languageComboBox_change(self, index: int):
+        if index == 0:
+            self.GBSpeakingRadioButton.setEnabled(True)
+            self.USSpeakingRadioButton.setEnabled(True)
+        else:
+            self.GBSpeakingRadioButton.setEnabled(False)
+            self.USSpeakingRadioButton.setEnabled(False)
 
     def on_enable_context_checkbox_change(self, checked):
         self.enableTermHighlight.setEnabled(checked)
@@ -325,6 +351,12 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             else ContextDifficulty.PROFESSIONAL
         )
 
+        currentSelectedLanguageIndex = self.languageComboBox.currentIndex()
+        languageValue: Language = Language.ENGLISH  # set english as default language
+
+        if currentSelectedLanguageIndex == 1:
+            languageValue = Language.FRENCH
+
         currentConfig = ConfigType(
             # basic settings
             deck=self.deckComboBox.currentText(),
@@ -352,6 +384,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
             enableTermHighlight=self.enableTermHighlight.isChecked(),
             contextDifficulty=contextDifficultyValue,
+            language=languageValue,
         )
 
         configChanged, cardSettingsChanged = self._saveConfig(currentConfig)
@@ -556,7 +589,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             idx = self.dictionaryComboBox.currentIndex()
             self.selectedDict = DICTIONARIES[idx]()
         self.loginDialog = LoginDialog(
-            loginUrl=self.selectedDict.loginUrl,
+            loginUrl=self.selectedDict.getLoginUrl(),
             loginCheckCallbackFn=self.selectedDict.loginCheckCallbackFn,
             parent=self,
         )
@@ -1038,8 +1071,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                 raise Exception("Cannot get wordItem")
 
             wordItemData: QueryAPIReturnType = wordItem.data(Qt.ItemDataRole.UserRole)
-            # print("WordItemData")
-            # print(wordItemData)
+
             if wordItemData:
                 term = wordItemData.term
                 logger.debug(f"wordItemData ({term}): {wordItemData}")

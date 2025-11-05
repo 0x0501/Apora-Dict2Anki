@@ -3,8 +3,26 @@ from queue import Queue
 from threading import Thread
 from typing import Optional, Any
 from dataclasses import dataclass, asdict
-from .dictionary.base import CredentialPlatformEnum
 from enum import Enum
+
+
+class CredentialPlatformEnum(Enum):
+    """Represent credentials of different platforms"""
+
+    NONE = 0
+    YOUDAO = 1
+    EUDIC = 2
+
+
+class PronunciationVariantEnum(Enum):
+    NONE = 0
+    US = 1
+    UK = 2
+
+
+class Language(Enum):
+    ENGLISH = "english"
+    FRENCH = "french"
 
 
 class ContextDifficulty(Enum):
@@ -40,6 +58,7 @@ class ConfigType:
     GreatBritainSpeaking: bool
     USSpeaking: bool
     aporaApiToken: str
+    language: Language
 
 
 def asdict_with_enum(obj) -> Any:
@@ -79,6 +98,7 @@ def safe_load_empty_config() -> ConfigType:
         GreatBritainSpeaking=False,
         USSpeaking=True,
         aporaApiToken="",
+        language=Language.ENGLISH,
     )
     return config
 
@@ -103,6 +123,7 @@ def safe_load_config(data: dict) -> ConfigType:
         GreatBritainSpeaking=data["GreatBritainSpeaking"],
         USSpeaking=data["USSpeaking"],
         aporaApiToken=data["aporaApiToken"],
+        language=Language[str(data["language"]).upper()],
     )
     return config
 
@@ -119,7 +140,6 @@ def safe_load_config_from_mw() -> ConfigType:
         raise Exception("Cannot load Apora dict2anki config.")
 
     config = safe_load_config(untypedConfig)
-
     return config
 
 
