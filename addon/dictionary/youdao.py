@@ -6,7 +6,8 @@ from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
 from ..constants import HEADERS
-from .base import CredentialPlatformEnum, AbstractDictionary, SimpleWord
+from .base import AbstractDictionary, SimpleWord
+from ..misc import CredentialPlatformEnum
 
 logger = logging.getLogger("Apora dict2Anki.dictionary.youdao")
 
@@ -14,7 +15,6 @@ logger = logging.getLogger("Apora dict2Anki.dictionary.youdao")
 class Youdao(AbstractDictionary):
     platform = CredentialPlatformEnum.YOUDAO
     name = "有道词典"
-    loginUrl = "https://c.youdao.com/common-login-web/index.html?redirect_url=https://youdao.com/webwordbook/wordlist"
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
@@ -25,6 +25,10 @@ class Youdao(AbstractDictionary):
     def __init__(self):
         self.indexSoup = None
         self.groups = []
+
+    @staticmethod
+    def getLoginUrl() -> str:
+        return "https://c.youdao.com/common-login-web/index.html?redirect_url=https://youdao.com/webwordbook/wordlist"
 
     def checkCookie(self, cookie: dict) -> bool:
         """

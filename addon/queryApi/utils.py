@@ -1,5 +1,5 @@
 from .base import QueryAPIReturnType
-from ..dictionary.base import PronunciationVariantEnum
+from ..misc import PronunciationVariantEnum
 
 
 def get_pronunciation(

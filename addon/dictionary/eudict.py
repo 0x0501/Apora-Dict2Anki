@@ -6,27 +6,55 @@ from math import ceil
 from bs4 import BeautifulSoup
 from urllib3.util.retry import Retry
 from requests.adapters import HTTPAdapter
-
+from ..misc import safe_load_config_from_mw, Language, ConfigType
+from dataclasses import dataclass
 from ..constants import HEADERS
-from .base import CredentialPlatformEnum, AbstractDictionary, SimpleWord
+from .base import AbstractDictionary, SimpleWord
+from ..misc import CredentialPlatformEnum
 
 logger = logging.getLogger("Apora dict2Anki.dictionary.eudict")
+
+
+@dataclass
+class Validation:
+    name: str
+    baseUrl: str
 
 
 class Eudict(AbstractDictionary):
     platform = CredentialPlatformEnum.EUDIC
     name = "欧陆词典"
-    loginUrl = "https://dict.eudic.net/account/login"
     timeout = 10
     retries = Retry(total=5, backoff_factor=1, status_forcelist=[500, 502, 503, 504])
     session = requests.Session()
     session.headers.update(HEADERS)
     session.mount("http://", HTTPAdapter(max_retries=retries))
     session.mount("https://", HTTPAdapter(max_retries=retries))
+    config: ConfigType
+    validations = {
+        "english": Validation(
+            name="English",
+            baseUrl="my.eudic.net",
+        ),
+        "french": Validation(
+            name="French",
+            baseUrl="my.frdic.com",
+        ),
+    }
 
     def __init__(self):
         self.groups = []
         self.indexSoup = None
+        self.config = safe_load_config_from_mw()
+
+    @staticmethod
+    def getLoginUrl() -> str:
+        config = safe_load_config_from_mw()
+
+        if config.language == Language.ENGLISH:
+            return "https://dict.eudic.net/account/login"  # for English
+        else:
+            return "https://www.frdic.com/account/login"  # for French
 
     def checkCookie(self, cookie: dict) -> bool:
         """
@@ -34,10 +62,16 @@ class Eudict(AbstractDictionary):
         :param cookie:
         :return: Boolean cookie是否有效
         """
+
+        validation = self.validations[self.config.language.value]
+
+        studyList = f"https://{validation.baseUrl}/studylist"
+        print(studyList)
+
         rsp = requests.get(
-            "https://my.eudic.net/studylist", cookies=cookie, headers=HEADERS
+            f"https://{validation.baseUrl}/studylist", cookies=cookie, headers=HEADERS
         )
-        if "dict.eudic.net/account/login" not in rsp.url:
+        if f"{validation.baseUrl}/account/login" not in rsp.url:
             self.indexSoup = BeautifulSoup(rsp.text, features="html.parser")
             logger.info("Cookie有效")
             cookiesJar = requests.utils.cookiejar_from_dict(
@@ -82,9 +116,10 @@ class Eudict(AbstractDictionary):
         :param groupId:分组id
         :return:
         """
+        validation = self.validations[self.config.language.value]
         try:
             r = self.session.post(
-                url="https://my.eudic.net/StudyList/WordsDataSource",
+                url=f"https://{validation.baseUrl}/StudyList/WordsDataSource",
                 timeout=self.timeout,
                 data={"categoryid": groupId},
             )
@@ -107,10 +142,11 @@ class Eudict(AbstractDictionary):
             "categoryid": int(groupId),
             "_": int(time.time()) * 1000,
         }
+        validation = self.validations[self.config.language.value]
         try:
             logger.info(f"获取单词本({groupName}-{groupId})第:{pageNo + 1}页")
             r = self.session.post(
-                url="https://my.eudic.net/StudyList/WordsDataSource",
+                url=f"https://{validation.baseUrl}/StudyList/WordsDataSource",
                 timeout=self.timeout,
                 data=data,
             )
@@ -119,6 +155,7 @@ class Eudict(AbstractDictionary):
         except Exception as error:
             logger.exception(f"网络异常{error}")
         finally:
+            logger.info(f"单词本({groupName}-{groupId})获取结果：")
             logger.info(wordList)
             return wordList
 

@@ -47,9 +47,7 @@ from .noteManager import (
 from . import utils
 from .dictionary import DICTIONARIES
 from .dictionary.base import (
-    CredentialPlatformEnum,
     SimpleWord,
-    PronunciationVariantEnum,
 )
 from .logger import TimedBufferingHandler
 from .loginDialog import LoginDialog
@@ -62,6 +60,8 @@ from .misc import (
     ContextDifficulty,
     Credential,
     Language,
+    CredentialPlatformEnum,
+    PronunciationVariantEnum,
 )
 from .queryApi import QUERY_APIS
 from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI, QueryAPIReturnType
@@ -218,7 +218,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         selectedLanguage = 0  # set english as default language
 
-        if config.language == Language.FRENCH.value:
+        if config.language == Language.FRENCH:
             selectedLanguage = 1
 
         # basic settings
@@ -573,7 +573,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             idx = self.dictionaryComboBox.currentIndex()
             self.selectedDict = DICTIONARIES[idx]()
         self.loginDialog = LoginDialog(
-            loginUrl=self.selectedDict.loginUrl,
+            loginUrl=self.selectedDict.getLoginUrl(),
             loginCheckCallbackFn=self.selectedDict.loginCheckCallbackFn,
             parent=self,
         )
