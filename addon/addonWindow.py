@@ -288,6 +288,22 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             self.on_enable_context_checkbox_change
         )
 
+        # if the target language is not english (0 index), disable pronunciation variant radio buttons
+        isTargetEnglish = self.languageComboBox.currentIndex() == 0
+        self.languageComboBox.currentIndexChanged.connect(
+            self.on_languageComboBox_change
+        )
+        self.GBSpeakingRadioButton.setEnabled(isTargetEnglish)
+        self.USSpeakingRadioButton.setEnabled(isTargetEnglish)
+
+    def on_languageComboBox_change(self, index: int):
+        if index == 0:
+            self.GBSpeakingRadioButton.setEnabled(True)
+            self.USSpeakingRadioButton.setEnabled(True)
+        else:
+            self.GBSpeakingRadioButton.setEnabled(False)
+            self.USSpeakingRadioButton.setEnabled(False)
+
     def on_enable_context_checkbox_change(self, checked):
         self.enableTermHighlight.setEnabled(checked)
 
