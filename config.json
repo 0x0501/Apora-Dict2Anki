@@ -28,5 +28,6 @@
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
   "USSpeaking": true,
-  "aporaApiToken": ""
+  "aporaApiToken": "",
+  "language": "english"
 }

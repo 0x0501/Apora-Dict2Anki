@@ -84,16 +84,113 @@ class Ui_Dialog(object):
         self.mainTab.setObjectName("mainTab")
         self.gridLayout_4 = QGridLayout(self.mainTab)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.queryBtn = QPushButton(self.mainTab)
-        self.queryBtn.setObjectName("queryBtn")
-        self.queryBtn.setEnabled(False)
+        self.dictionaryLayout = QHBoxLayout()
+        self.dictionaryLayout.setObjectName("dictionaryLayout")
+        self.dictionaryLabel = QLabel(self.mainTab)
+        self.dictionaryLabel.setObjectName("dictionaryLabel")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dictionaryLabel.sizePolicy().hasHeightForWidth()
+        )
+        self.dictionaryLabel.setSizePolicy(sizePolicy)
 
-        self.gridLayout_4.addWidget(self.queryBtn, 5, 3, 1, 1)
+        self.dictionaryLayout.addWidget(self.dictionaryLabel)
+
+        self.dictionaryComboBox = QComboBox(self.mainTab)
+        self.dictionaryComboBox.setObjectName("dictionaryComboBox")
+        sizePolicy1 = QSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
+        )
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(
+            self.dictionaryComboBox.sizePolicy().hasHeightForWidth()
+        )
+        self.dictionaryComboBox.setSizePolicy(sizePolicy1)
+
+        self.dictionaryLayout.addWidget(self.dictionaryComboBox)
+
+        self.gridLayout_4.addLayout(self.dictionaryLayout, 2, 0, 1, 5)
 
         self.pullRemoteWordsBtn = QPushButton(self.mainTab)
         self.pullRemoteWordsBtn.setObjectName("pullRemoteWordsBtn")
 
         self.gridLayout_4.addWidget(self.pullRemoteWordsBtn, 5, 0, 1, 1)
+
+        self.deckLayout = QHBoxLayout()
+        self.deckLayout.setObjectName("deckLayout")
+        self.deckLabel = QLabel(self.mainTab)
+        self.deckLabel.setObjectName("deckLabel")
+        sizePolicy.setHeightForWidth(self.deckLabel.sizePolicy().hasHeightForWidth())
+        self.deckLabel.setSizePolicy(sizePolicy)
+
+        self.deckLayout.addWidget(self.deckLabel)
+
+        self.deckComboBox = QComboBox(self.mainTab)
+        self.deckComboBox.setObjectName("deckComboBox")
+        sizePolicy1.setHeightForWidth(
+            self.deckComboBox.sizePolicy().hasHeightForWidth()
+        )
+        self.deckComboBox.setSizePolicy(sizePolicy1)
+        self.deckComboBox.setEditable(True)
+
+        self.deckLayout.addWidget(self.deckComboBox)
+
+        self.gridLayout_4.addLayout(self.deckLayout, 1, 0, 1, 5)
+
+        self.queryAndLanguageLayout = QHBoxLayout()
+        self.queryAndLanguageLayout.setObjectName("queryAndLanguageLayout")
+        self.apiLayout = QHBoxLayout()
+        self.apiLayout.setObjectName("apiLayout")
+        self.apiLabel = QLabel(self.mainTab)
+        self.apiLabel.setObjectName("apiLabel")
+        sizePolicy.setHeightForWidth(self.apiLabel.sizePolicy().hasHeightForWidth())
+        self.apiLabel.setSizePolicy(sizePolicy)
+
+        self.apiLayout.addWidget(self.apiLabel)
+
+        self.apiComboBox = QComboBox(self.mainTab)
+        self.apiComboBox.setObjectName("apiComboBox")
+        sizePolicy1.setHeightForWidth(self.apiComboBox.sizePolicy().hasHeightForWidth())
+        self.apiComboBox.setSizePolicy(sizePolicy1)
+        self.apiComboBox.setEditable(False)
+
+        self.apiLayout.addWidget(self.apiComboBox)
+
+        self.queryAndLanguageLayout.addLayout(self.apiLayout)
+
+        self.languageLayout = QHBoxLayout()
+        self.languageLayout.setObjectName("languageLayout")
+        self.languageLabel = QLabel(self.mainTab)
+        self.languageLabel.setObjectName("languageLabel")
+        sizePolicy.setHeightForWidth(
+            self.languageLabel.sizePolicy().hasHeightForWidth()
+        )
+        self.languageLabel.setSizePolicy(sizePolicy)
+
+        self.languageLayout.addWidget(self.languageLabel)
+
+        self.languageComboBox = QComboBox(self.mainTab)
+        self.languageComboBox.setObjectName("languageComboBox")
+
+        self.languageLayout.addWidget(self.languageComboBox)
+
+        self.queryAndLanguageLayout.addLayout(self.languageLayout)
+
+        self.gridLayout_4.addLayout(self.queryAndLanguageLayout, 3, 0, 1, 5)
+
+        self.btnSync = QPushButton(self.mainTab)
+        self.btnSync.setObjectName("btnSync")
+        self.btnSync.setEnabled(False)
+
+        self.gridLayout_4.addWidget(self.btnSync, 5, 4, 1, 1)
+
+        self.btnImportFromFiles = QToolButton(self.mainTab)
+        self.btnImportFromFiles.setObjectName("btnImportFromFiles")
+
+        self.gridLayout_4.addWidget(self.btnImportFromFiles, 5, 1, 1, 1)
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -137,85 +234,11 @@ class Ui_Dialog(object):
 
         self.gridLayout_4.addLayout(self.horizontalLayout, 4, 0, 1, 5)
 
-        self.btnImportFromFiles = QToolButton(self.mainTab)
-        self.btnImportFromFiles.setObjectName("btnImportFromFiles")
+        self.queryBtn = QPushButton(self.mainTab)
+        self.queryBtn.setObjectName("queryBtn")
+        self.queryBtn.setEnabled(False)
 
-        self.gridLayout_4.addWidget(self.btnImportFromFiles, 5, 1, 1, 1)
-
-        self.btnSync = QPushButton(self.mainTab)
-        self.btnSync.setObjectName("btnSync")
-        self.btnSync.setEnabled(False)
-
-        self.gridLayout_4.addWidget(self.btnSync, 5, 4, 1, 1)
-
-        self.dictionaryLayout = QHBoxLayout()
-        self.dictionaryLayout.setObjectName("dictionaryLayout")
-        self.dictionaryLabel = QLabel(self.mainTab)
-        self.dictionaryLabel.setObjectName("dictionaryLabel")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dictionaryLabel.sizePolicy().hasHeightForWidth()
-        )
-        self.dictionaryLabel.setSizePolicy(sizePolicy)
-
-        self.dictionaryLayout.addWidget(self.dictionaryLabel)
-
-        self.dictionaryComboBox = QComboBox(self.mainTab)
-        self.dictionaryComboBox.setObjectName("dictionaryComboBox")
-        sizePolicy1 = QSizePolicy(
-            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
-        )
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(
-            self.dictionaryComboBox.sizePolicy().hasHeightForWidth()
-        )
-        self.dictionaryComboBox.setSizePolicy(sizePolicy1)
-
-        self.dictionaryLayout.addWidget(self.dictionaryComboBox)
-
-        self.gridLayout_4.addLayout(self.dictionaryLayout, 2, 0, 1, 5)
-
-        self.deckLayout = QHBoxLayout()
-        self.deckLayout.setObjectName("deckLayout")
-        self.deckLabel = QLabel(self.mainTab)
-        self.deckLabel.setObjectName("deckLabel")
-        sizePolicy.setHeightForWidth(self.deckLabel.sizePolicy().hasHeightForWidth())
-        self.deckLabel.setSizePolicy(sizePolicy)
-
-        self.deckLayout.addWidget(self.deckLabel)
-
-        self.deckComboBox = QComboBox(self.mainTab)
-        self.deckComboBox.setObjectName("deckComboBox")
-        sizePolicy1.setHeightForWidth(
-            self.deckComboBox.sizePolicy().hasHeightForWidth()
-        )
-        self.deckComboBox.setSizePolicy(sizePolicy1)
-        self.deckComboBox.setEditable(True)
-
-        self.deckLayout.addWidget(self.deckComboBox)
-
-        self.gridLayout_4.addLayout(self.deckLayout, 1, 0, 1, 5)
-
-        self.apiLayout = QHBoxLayout()
-        self.apiLayout.setObjectName("apiLayout")
-        self.apiLabel = QLabel(self.mainTab)
-        self.apiLabel.setObjectName("apiLabel")
-        sizePolicy.setHeightForWidth(self.apiLabel.sizePolicy().hasHeightForWidth())
-        self.apiLabel.setSizePolicy(sizePolicy)
-
-        self.apiLayout.addWidget(self.apiLabel)
-
-        self.apiComboBox = QComboBox(self.mainTab)
-        self.apiComboBox.setObjectName("apiComboBox")
-        sizePolicy1.setHeightForWidth(self.apiComboBox.sizePolicy().hasHeightForWidth())
-        self.apiComboBox.setSizePolicy(sizePolicy1)
-
-        self.apiLayout.addWidget(self.apiComboBox)
-
-        self.gridLayout_4.addLayout(self.apiLayout, 3, 0, 1, 5)
+        self.gridLayout_4.addWidget(self.queryBtn, 5, 3, 1, 1)
 
         self.tabWidget.addTab(self.mainTab, "")
         self.settingTab = QWidget()
@@ -516,20 +539,22 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", "Dialog", None))
-        self.queryBtn.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u83b7\u53d6\u8bcd\u5178\u6570\u636e", None
-            )
+        self.dictionaryLabel.setText(
+            QCoreApplication.translate("Dialog", "\u8bcd\u5178", None)
         )
         self.pullRemoteWordsBtn.setText(
             QCoreApplication.translate("Dialog", "\u62c9\u53d6\u5355\u8bcd\u8868", None)
         )
-        self.label.setText(
-            QCoreApplication.translate("Dialog", "\u65b0\u5355\u8bcd", None)
+        self.deckLabel.setText(
+            QCoreApplication.translate("Dialog", "\u724c\u7ec4", None)
         )
-        self.label_2.setText(
-            QCoreApplication.translate("Dialog", "\u5f85\u5220\u9664", None)
+        self.apiLabel.setText(
+            QCoreApplication.translate("Dialog", "\u67e5\u8be2", None)
         )
+        self.languageLabel.setText(
+            QCoreApplication.translate("Dialog", "\u8bed\u8a00", None)
+        )
+        self.btnSync.setText(QCoreApplication.translate("Dialog", "\u540c\u6b65", None))
         # if QT_CONFIG(tooltip)
         self.btnImportFromFiles.setToolTip(
             QCoreApplication.translate(
@@ -542,15 +567,16 @@ class Ui_Dialog(object):
         self.btnImportFromFiles.setText(
             QCoreApplication.translate("Dialog", "...", None)
         )
-        self.btnSync.setText(QCoreApplication.translate("Dialog", "\u540c\u6b65", None))
-        self.dictionaryLabel.setText(
-            QCoreApplication.translate("Dialog", "\u8bcd\u5178", None)
+        self.label.setText(
+            QCoreApplication.translate("Dialog", "\u65b0\u5355\u8bcd", None)
         )
-        self.deckLabel.setText(
-            QCoreApplication.translate("Dialog", "\u724c\u7ec4", None)
+        self.label_2.setText(
+            QCoreApplication.translate("Dialog", "\u5f85\u5220\u9664", None)
         )
-        self.apiLabel.setText(
-            QCoreApplication.translate("Dialog", "\u67e5\u8be2", None)
+        self.queryBtn.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u83b7\u53d6\u8bcd\u5178\u6570\u636e", None
+            )
         )
         self.tabWidget.setTabText(
             self.tabWidget.indexOf(self.mainTab),

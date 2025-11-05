@@ -27,20 +27,141 @@
        <string>同步</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="5" column="3">
-        <widget class="QPushButton" name="queryBtn">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>获取词典数据</string>
-         </property>
-        </widget>
+       <item row="2" column="0" colspan="5">
+        <layout class="QHBoxLayout" name="dictionaryLayout">
+         <item>
+          <widget class="QLabel" name="dictionaryLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>词典</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="dictionaryComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="5" column="0">
         <widget class="QPushButton" name="pullRemoteWordsBtn">
          <property name="text">
           <string>拉取单词表</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="5">
+        <layout class="QHBoxLayout" name="deckLayout">
+         <item>
+          <widget class="QLabel" name="deckLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>牌组</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="deckComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0" colspan="5">
+        <layout class="QHBoxLayout" name="queryAndLanguageLayout">
+         <item>
+          <layout class="QHBoxLayout" name="apiLayout">
+           <item>
+            <widget class="QLabel" name="apiLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>查询</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="apiComboBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="editable">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="languageLayout">
+           <item>
+            <widget class="QLabel" name="languageLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>语言</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="languageComboBox"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="5" column="4">
+        <widget class="QPushButton" name="btnSync">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>同步</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QToolButton" name="btnImportFromFiles">
+         <property name="toolTip">
+          <string>Import words from txt files. (Use Tabs to separate the fields)</string>
+         </property>
+         <property name="text">
+          <string>...</string>
          </property>
         </widget>
        </item>
@@ -96,109 +217,15 @@
          </item>
         </layout>
        </item>
-       <item row="5" column="1">
-        <widget class="QToolButton" name="btnImportFromFiles">
-         <property name="toolTip">
-          <string>Import words from txt files. (Use Tabs to separate the fields)</string>
-         </property>
-         <property name="text">
-          <string>...</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="4">
-        <widget class="QPushButton" name="btnSync">
+       <item row="5" column="3">
+        <widget class="QPushButton" name="queryBtn">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>同步</string>
+          <string>获取词典数据</string>
          </property>
         </widget>
-       </item>
-       <item row="2" column="0" colspan="5">
-        <layout class="QHBoxLayout" name="dictionaryLayout">
-         <item>
-          <widget class="QLabel" name="dictionaryLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>词典</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="dictionaryComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="0" colspan="5">
-        <layout class="QHBoxLayout" name="deckLayout">
-         <item>
-          <widget class="QLabel" name="deckLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>牌组</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="deckComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="3" column="0" colspan="5">
-        <layout class="QHBoxLayout" name="apiLayout">
-         <item>
-          <widget class="QLabel" name="apiLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>查询</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="apiComboBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>

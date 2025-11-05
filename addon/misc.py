@@ -7,6 +7,11 @@ from .dictionary.base import CredentialPlatformEnum
 from enum import Enum
 
 
+class Language(Enum):
+    ENGLISH = "english"
+    FRENCH = "french"
+
+
 class ContextDifficulty(Enum):
     EASY = "easy"
     NORMAL = "normal"
@@ -40,6 +45,7 @@ class ConfigType:
     GreatBritainSpeaking: bool
     USSpeaking: bool
     aporaApiToken: str
+    language: Language
 
 
 def asdict_with_enum(obj) -> Any:
@@ -79,6 +85,7 @@ def safe_load_empty_config() -> ConfigType:
         GreatBritainSpeaking=False,
         USSpeaking=True,
         aporaApiToken="",
+        language=Language.ENGLISH,
     )
     return config
 
@@ -103,6 +110,7 @@ def safe_load_config(data: dict) -> ConfigType:
         GreatBritainSpeaking=data["GreatBritainSpeaking"],
         USSpeaking=data["USSpeaking"],
         aporaApiToken=data["aporaApiToken"],
+        language=data["language"],
     )
     return config
 
