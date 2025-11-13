@@ -36,6 +36,11 @@ class Youdao(AbstractDictionary):
         :param cookie:
         :return: bool
         """
+
+        # Empty dict return False
+        if len(cookie) == 0:
+            return False
+
         rsp = requests.get(
             "http://dict.youdao.com/login/acc/query/accountinfo",
             cookies=cookie,

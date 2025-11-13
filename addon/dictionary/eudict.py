@@ -19,6 +19,7 @@ logger = logging.getLogger("Apora dict2Anki.dictionary.eudict")
 class Validation:
     name: str
     baseUrl: str
+    checkUrl: str
 
 
 class Eudict(AbstractDictionary):
@@ -33,12 +34,10 @@ class Eudict(AbstractDictionary):
     config: ConfigType
     validations = {
         "english": Validation(
-            name="English",
-            baseUrl="my.eudic.net",
+            name="English", baseUrl="my.eudic.net", checkUrl="dict.eudic.net"
         ),
         "french": Validation(
-            name="French",
-            baseUrl="my.frdic.com",
+            name="French", baseUrl="my.frdic.com", checkUrl="www.frdic.com"
         ),
     }
 
@@ -63,15 +62,20 @@ class Eudict(AbstractDictionary):
         :return: Boolean cookie是否有效
         """
 
+        # Empty dict return False
+        if len(cookie) == 0:
+            return False
+
         validation = self.validations[self.config.language.value]
 
-        studyList = f"https://{validation.baseUrl}/studylist"
-        print(studyList)
-
         rsp = requests.get(
-            f"https://{validation.baseUrl}/studylist", cookies=cookie, headers=HEADERS
+            f"https://{validation.baseUrl}/studylist",
+            cookies=cookie,
+            headers=HEADERS,
+            allow_redirects=True,
         )
-        if f"{validation.baseUrl}/account/login" not in rsp.url:
+
+        if f"{validation.checkUrl}/account/login" not in rsp.url:
             self.indexSoup = BeautifulSoup(rsp.text, features="html.parser")
             logger.info("Cookie有效")
             cookiesJar = requests.utils.cookiejar_from_dict(
