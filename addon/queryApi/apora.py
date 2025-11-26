@@ -10,6 +10,7 @@ from .base import (
 )
 from typing import Optional
 from ..misc import safe_load_config_from_mw
+from ..exceptions import BalanceInsufficientException, QueryAPIError
 
 
 logger = logging.getLogger("Apora dict2Anki.queryApi.eudict")
@@ -29,15 +30,11 @@ class API(AbstractQueryAPI):
 
     @classmethod
     def query(cls, term) -> Optional[QueryAPIReturnType]:
-        # We need Bearer token in request header
         config = safe_load_config_from_mw()
-
-        if len(config.aporaApiToken) == 0:
+        if not config.aporaApiToken:
             raise RuntimeError("Apora API Token cannot be empty.")
 
         cls.session.headers["Authorization"] = f"Bearer {config.aporaApiToken}"
-
-        queryResult = None
 
         payload = {
             "inquire": term.term,
@@ -47,66 +44,78 @@ class API(AbstractQueryAPI):
 
         if config.contextSpeaking:
             payload["speech"] = "tts_sentence"
-        if config.termSpeaking:
+        elif config.termSpeaking:  # 注意：这里用 elif，避免同时设置
             payload["speech"] = "tts_words"
+
         if config.USSpeaking:
             payload["variant"] = "US"
-        if config.GreatBritainSpeaking:
+        elif config.GreatBritainSpeaking:
             payload["variant"] = "GB"
 
         try:
             response = cls.session.post(cls.url, json=payload, timeout=cls.timeout)
             logger.debug(
-                f"code:{response.status_code}- word:{term.term} text:{response.text}"
+                "code:%d - word:%s - text:%s",
+                response.status_code,
+                term.term,
+                response.text,
             )
 
-            response_json = response.json()
+            # 1. parse json from request body
+            response_json: dict = response.json()
+            logger.info("API response: %s", response_json)
 
-            logger.info(response_json)
+            if "data" not in response_json:
+                error = response_json.get("error")
+                if error is not None:
+                    error_str = str(error)
+                    if "Insufficient balance" in error_str:
+                        raise BalanceInsufficientException(
+                            "Insufficient balance to perform the query."
+                        )
+                    else:
+                        raise QueryAPIError(f"API error: {error_str}")
+                else:
+                    raise QueryAPIError(
+                        "Server returned no 'data' and no 'error' field."
+                    )
 
-            response_data_json = response_json["data"]
+            response_data = response_json["data"]
 
-            if (
-                response.status_code == 200
-                and response_json["success"]
-                and response_data_json
-            ):
-                audio_download_link = None
-                # for highlight term in context
-                replacing = None
+            # 2. check query result, success should be Truthy
+            if not response_json.get("success", False) or not response_data:
+                message = response_json.get("message", "Unknown reason")
+                raise QueryAPIError(f"Query failed for '{term.term}': {message}")
 
-                if config.contextSpeaking or config.termSpeaking:
-                    # we need to create audio download link
-                    filename_tag = response_data_json["fileNameTag"]
+            audio_download_link = None
+            if config.contextSpeaking or config.termSpeaking:
+                filename_tag = response_data.get("fileNameTag")
+                if filename_tag:
                     audio_download_link = f"https://apora.sumku.cc/api/audio/{config.aporaApiToken}/{filename_tag}.wav"
 
-                if config.enableContext:
-                    replacing = response_data_json["replacing"]
+            replacing = response_data.get("replacing") if config.enableContext else None
 
-                # successfully get dict data from Apora
-                queryResult = QueryAPIReturnType(
-                    term=term.term,
-                    definition=response_data_json["meaning"],
-                    part_of_speech=response_data_json["partOfSpeech"],
-                    original=response_data_json["original"],
-                    chinese_definition=response_data_json["chineseMeaning"],
-                    ipa=response_data_json["ipa"],
-                    context=response_data_json["context"],
-                    collocation=None,
-                    context_audio_url=audio_download_link,
-                    term_audio_url=audio_download_link,
-                    replacing=replacing,
-                )
-            else:
-                raise Exception(
-                    f"Get dict data for word: {term.term} failed, reason: {response_json['message']}"
-                )
+            queryResult = QueryAPIReturnType(
+                term=term.term,
+                definition=response_data["meaning"],
+                part_of_speech=response_data["partOfSpeech"],
+                original=response_data["original"],
+                chinese_definition=response_data["chineseMeaning"],
+                ipa=response_data["ipa"],
+                context=response_data["context"],
+                collocation=None,
+                context_audio_url=audio_download_link,
+                term_audio_url=audio_download_link,
+                replacing=replacing,
+            )
 
-        except Exception as e:
-            logger.exception(e)
-        finally:
-            logger.debug(queryResult)
+            logger.debug("Query result: %s", queryResult)
             return queryResult
+
+        except requests.RequestException as e:
+            # network error
+            logger.exception("Network error during query for term: %s", term.term)
+            raise QueryAPIError(f"Network error: {e}") from e
 
     @classmethod
     def close(cls):

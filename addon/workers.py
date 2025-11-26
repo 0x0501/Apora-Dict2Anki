@@ -10,7 +10,10 @@ from .dictionary.base import SimpleWord
 from requests.adapters import HTTPAdapter
 from .queryApi.base import AbstractQueryAPI, QueryAPIReturnType
 from aqt.qt import QObject, pyqtSignal, QThread
+from .exceptions import BalanceInsufficientException
 from typing import Type, Optional, Any, Protocol
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 
 # Use anki addon web to check version
@@ -101,6 +104,7 @@ class QueryWorker(QObject):
     thisRowDone = pyqtSignal(int, QueryAPIReturnType)
     thisRowFailed = pyqtSignal(int)
     allQueryDone = pyqtSignal()
+    insufficientBalance = pyqtSignal()
     logger = logging.getLogger("Apora dict2Anki.workers.QueryWorker")
 
     def __init__(
@@ -109,6 +113,7 @@ class QueryWorker(QObject):
         super().__init__()
         self.wordList = wordList
         self.api = api
+        self._stop_flag = threading.Event()
 
     def run(self):
         currentThread = QThread.currentThread()
@@ -116,7 +121,19 @@ class QueryWorker(QObject):
         def _query(word: SimpleWord, row) -> Optional[QueryAPIReturnType]:
             if currentThread.isInterruptionRequested():  # type: ignore
                 return
-            queryResult = self.api.query(word)
+            queryResult: QueryAPIReturnType | None = None
+            try:
+                queryResult = self.api.query(word)
+            except BalanceInsufficientException:
+                self.logger.error(f"余额不足，停止所有查询: {word}")
+                self._stop_flag.set()  # 设置停止标志
+                self.insufficientBalance.emit()  # 通知 UI
+            except Exception as e:
+                self.logger.exception(f"查询时发生未预期错误 ({word}): {e}")
+                self.thisRowFailed.emit(row)
+                self.tick.emit()
+                return None
+
             if queryResult:
                 self.logger.info(f"查询成功: {word} -- {queryResult}")
                 self.thisRowDone.emit(row, queryResult)
@@ -127,9 +144,17 @@ class QueryWorker(QObject):
             self.tick.emit()
             return queryResult
 
-        with ThreadPool(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = []
             for word, row in self.wordList:
-                executor.submit(_query, word, row)
+                if self._stop_flag.is_set():
+                    break
+                future = executor.submit(_query, word, row)
+                futures.append(future)
+
+            for future in as_completed(futures):
+                # 可以在这里处理 future.result()，但通常不需要
+                pass
 
         self.allQueryDone.emit()
 
