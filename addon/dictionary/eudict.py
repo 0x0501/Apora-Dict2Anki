@@ -33,10 +33,10 @@ class Eudict(AbstractDictionary):
     session.mount("https://", HTTPAdapter(max_retries=retries))
     config: ConfigType
     validations = {
-        "english": Validation(
+        "en": Validation(
             name="English", baseUrl="my.eudic.net", checkUrl="dict.eudic.net"
         ),
-        "french": Validation(
+        "fr": Validation(
             name="French", baseUrl="my.frdic.com", checkUrl="www.frdic.com"
         ),
     }

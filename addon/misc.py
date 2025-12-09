@@ -21,8 +21,8 @@ class PronunciationVariantEnum(Enum):
 
 
 class Language(Enum):
-    ENGLISH = "english"
-    FRENCH = "french"
+    ENGLISH = "en"
+    FRENCH = "fr"
 
 
 class ContextDifficulty(Enum):
@@ -78,6 +78,19 @@ def asdict_with_enum(obj) -> Any:
 def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
     return asdict_with_enum(config)
 
+def transform_lang_to_text(lang : Language) -> str:
+
+    if lang == Language.ENGLISH:
+        return "English"
+    else:
+        return "French"
+    
+def transform_text_to_lang(text: str) -> Language:
+    if text.lower() == "en":
+        return Language.ENGLISH
+    else:
+        return Language.FRENCH
+
 
 def safe_load_empty_config() -> ConfigType:
     config = ConfigType(
@@ -123,7 +136,7 @@ def safe_load_config(data: dict) -> ConfigType:
         GreatBritainSpeaking=data["GreatBritainSpeaking"],
         USSpeaking=data["USSpeaking"],
         aporaApiToken=data["aporaApiToken"],
-        language=Language[str(data["language"]).upper()],
+        language=transform_text_to_lang(str(data["language"])),
     )
     return config
 
