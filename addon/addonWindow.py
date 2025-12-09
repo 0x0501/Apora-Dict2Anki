@@ -56,6 +56,7 @@ from .misc import (
     safe_load_config,
     safe_load_empty_config,
     safe_convert_config_to_dict,
+    transform_lang_to_text,
     ConfigType,
     ContextDifficulty,
     Credential,
@@ -255,6 +256,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.enableChineseCheckBox.setChecked(config.enableChineseDefinition)
         self.enableTermHighlight.setChecked(config.enableTermHighlight)
         self.contextDifficultyComboBox.setCurrentIndex(selectedDifficulty)
+        
 
     def initCore(self):
         # Temporarily disable username/password login, use cookie is more stable
@@ -270,7 +272,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # dynamically add apis, languages and decks
         self.apiComboBox.addItems([d.name for d in QUERY_APIS])
         self.deckComboBox.addItems(getDeckList())
-        self.languageComboBox.addItems([x.value.capitalize() for x in Language])
+        self.languageComboBox.addItems([transform_lang_to_text(x) for x in Language])
 
         # bind save button and shortcut (Ctrl+S)
         saveSettingsAction = QAction(self)
