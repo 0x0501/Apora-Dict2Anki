@@ -256,7 +256,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         self.enableChineseCheckBox.setChecked(config.enableChineseDefinition)
         self.enableTermHighlight.setChecked(config.enableTermHighlight)
         self.contextDifficultyComboBox.setCurrentIndex(selectedDifficulty)
-        
+        self.contextTranslation.setChecked(config.contextTranslation)
 
     def initCore(self):
         # Temporarily disable username/password login, use cookie is more stable
@@ -384,6 +384,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             enableContext=self.enableContextCheckBox.isChecked(),
             termSpeaking=self.termSpeakingRadioButton.isChecked(),
             contextSpeaking=self.contextSpeakingRadioButton.isChecked(),
+            contextTranslation=self.contextTranslation.isChecked(),
             enableTermHighlight=self.enableTermHighlight.isChecked(),
             contextDifficulty=contextDifficultyValue,
             language=languageValue,

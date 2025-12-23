@@ -52,6 +52,7 @@ class ConfigType:
     syncTemplates: bool
     termSpeaking: bool
     contextSpeaking: bool
+    contextTranslation: bool
     contextDifficulty: ContextDifficulty
     enableContext: bool
     disableSpeaking: bool
@@ -78,13 +79,14 @@ def asdict_with_enum(obj) -> Any:
 def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
     return asdict_with_enum(config)
 
-def transform_lang_to_text(lang : Language) -> str:
 
+def transform_lang_to_text(lang: Language) -> str:
     if lang == Language.ENGLISH:
         return "English"
     else:
         return "French"
-    
+
+
 def transform_text_to_lang(text: str) -> Language:
     if text.lower() == "en":
         return Language.ENGLISH
@@ -105,6 +107,7 @@ def safe_load_empty_config() -> ConfigType:
         syncTemplates=False,
         termSpeaking=False,
         contextSpeaking=False,
+        contextTranslation=False,
         contextDifficulty=ContextDifficulty.NORMAL,
         enableContext=False,
         disableSpeaking=True,
@@ -130,6 +133,7 @@ def safe_load_config(data: dict) -> ConfigType:
         syncTemplates=data["syncTemplates"],
         termSpeaking=data["termSpeaking"],
         contextSpeaking=data["contextSpeaking"],
+        contextTranslation=data["contextTranslation"],
         contextDifficulty=data["contextDifficulty"],
         enableContext=data["enableContext"],
         disableSpeaking=data["disableSpeaking"],

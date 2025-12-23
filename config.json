@@ -24,10 +24,11 @@
   "termSpeaking": false,
   "contextSpeaking": false,
   "contextDifficulty": "normal",
+  "contextTranslation": "false",
   "enableContext": true,
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
   "USSpeaking": true,
   "aporaApiToken": "",
-  "language": "english"
+  "language": "en"
 }

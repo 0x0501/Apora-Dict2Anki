@@ -455,6 +455,10 @@ def addNoteToDeck(
         else:
             setNoteFieldValue(note, "context", word.context, isNewNote, overwrite)
 
+    # if context translation enabled
+    if word.translation:
+        setNoteFieldValue(note, "translation", word.translation,isNewNote,overwrite)
+
     if isNewNote:
         mw.col.addNote(note)
         logger.info(f"添加笔记{term}")
