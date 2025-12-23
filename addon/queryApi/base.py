@@ -56,7 +56,7 @@ def todo_empty_query_result() -> QueryAPIReturnType:
         term_audio_url=None,
         context_audio_url=None,
         replacing=None,
-        translation=None
+        translation=None,
     )
 
 
@@ -73,7 +73,7 @@ def mock_query_result() -> QueryAPIReturnType:
         term_audio_url=None,
         context_audio_url=None,
         replacing="liability",
-        translation="保持低成本，减少负债，并努力建立坚实的资产基础。"
+        translation="保持低成本，减少负债，并努力建立坚实的资产基础。",
     )
 
 

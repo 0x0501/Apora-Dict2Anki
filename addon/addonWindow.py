@@ -858,9 +858,20 @@ class Windows(QDialog, mainUI.Ui_Dialog):
                     wordList.append((word, row))
 
         logger.info(f"待查询单词{wordList}")
+
+        # --- rate limit configuration
+
+        max_workers = 3
+        query_delay = 1
+        
         # 查询线程
         self.progressBar.setMaximum(len(wordList))
-        self.queryWorker = QueryWorker(wordList, QUERY_APIS[currentConfig.selectedApi])
+        self.queryWorker = QueryWorker(
+            wordList,
+            QUERY_APIS[currentConfig.selectedApi],
+            max_workers=max_workers,
+            delay=query_delay,
+        )
         self.queryWorker.moveToThread(self.workerThread)
         self.queryWorker.thisRowDone.connect(self.on_thisRowDone)
         self.queryWorker.thisRowFailed.connect(self.on_thisRowFailed)
