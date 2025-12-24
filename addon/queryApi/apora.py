@@ -40,6 +40,7 @@ class API(AbstractQueryAPI):
             "inquire": term.term,
             "contextDifficulty": config.contextDifficulty,
             "language": config.language.value,
+            "translation": config.contextTranslation,
         }
 
         if config.contextSpeaking:
@@ -80,7 +81,7 @@ class API(AbstractQueryAPI):
                         "Server returned no 'data' and no 'error' field."
                     )
 
-            response_data = response_json["data"]
+            response_data: dict = response_json.get("data", {})
 
             # 2. check query result, success should be Truthy
             if not response_json.get("success", False) or not response_data:
@@ -97,16 +98,17 @@ class API(AbstractQueryAPI):
 
             queryResult = QueryAPIReturnType(
                 term=term.term,
-                definition=response_data["meaning"],
-                part_of_speech=response_data["partOfSpeech"],
-                original=response_data["original"],
-                chinese_definition=response_data["chineseMeaning"],
-                ipa=response_data["ipa"],
-                context=response_data["context"],
+                definition=response_data.get("meaning", ""),
+                part_of_speech=response_data.get("partOfSpeech", ""),
+                original=response_data.get("original", ""),
+                chinese_definition=response_data.get("chineseMeaning"),
+                ipa=response_data.get("ipa", ""),
+                context=response_data.get("context", ""),
                 collocation=None,
                 context_audio_url=audio_download_link,
                 term_audio_url=audio_download_link,
                 replacing=replacing,
+                translation=response_data.get("translation"),
             )
 
             logger.debug("Query result: %s", queryResult)

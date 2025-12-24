@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-
+import time
 import requests
 from urllib3 import Retry
 from itertools import chain
@@ -14,32 +14,6 @@ from .exceptions import BalanceInsufficientException
 from typing import Type, Optional, Any, Protocol
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
-
-
-# Use anki addon web to check version
-# class VersionCheckWorker(QObject):
-#     haveNewVersion = pyqtSignal(str, str)
-#     finished = pyqtSignal()
-#     start = pyqtSignal()
-#     logger = logging.getLogger("Apora dict2Anki.workers.UpdateCheckWorker")
-
-#     def run(self):
-#         try:
-#             self.logger.info("检查新版本")
-#             rsp = requests.get(VERSION_CHECK_API, timeout=20).json()
-#             version = rsp["tag_name"]
-#             changeLog = rsp["body"]
-#             if version != VERSION:
-#                 self.logger.info(f"检查到新版本:{version}--{changeLog.strip()}")
-#                 self.haveNewVersion.emit(version.strip(), changeLog.strip())
-#             else:
-#                 self.logger.info(f"当前为最新版本:{VERSION}")
-#         except Exception as e:
-#             self.logger.error(f"版本检查失败{e}")
-
-#         finally:
-#             self.finished.emit()
-
 
 class CheckCookieProtocol(Protocol):
     def __call__(self, cookie: dict[str, Any]) -> bool: ...
@@ -108,11 +82,17 @@ class QueryWorker(QObject):
     logger = logging.getLogger("Apora dict2Anki.workers.QueryWorker")
 
     def __init__(
-        self, wordList: list[tuple[SimpleWord, int]], api: Type[AbstractQueryAPI]
+        self,
+        wordList: list[tuple[SimpleWord, int]],
+        api: Type[AbstractQueryAPI],
+        max_workers: int = 3,  # concurrent number
+        delay: float = 0,  # delay seconds for api query
     ):
         super().__init__()
         self.wordList = wordList
         self.api = api
+        self.max_workers = max_workers
+        self.delay = delay
         self._stop_flag = threading.Event()
 
     def run(self):
@@ -144,10 +124,17 @@ class QueryWorker(QObject):
             self.tick.emit()
             return queryResult
 
-        with ThreadPoolExecutor(max_workers=3) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             futures = []
             for word, row in self.wordList:
                 if self._stop_flag.is_set():
+                    break
+
+                if self.delay > 0 and len(futures) > 0:
+                    time.sleep(self.delay)
+
+                # check interruption
+                if currentThread and currentThread.isInterruptionRequested():
                     break
                 future = executor.submit(_query, word, row)
                 futures.append(future)
