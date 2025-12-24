@@ -862,7 +862,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
         # --- rate limit configuration
 
         max_workers = 3
-        query_delay = 1
+        query_delay = 0.5
         
         # 查询线程
         self.progressBar.setMaximum(len(wordList))
