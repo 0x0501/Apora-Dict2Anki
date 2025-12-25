@@ -15,6 +15,7 @@ from typing import Type, Optional, Any, Protocol
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 
+
 class CheckCookieProtocol(Protocol):
     def __call__(self, cookie: dict[str, Any]) -> bool: ...
 

@@ -36,6 +36,9 @@ class Eudict(AbstractDictionary):
         "en": Validation(
             name="English", baseUrl="my.eudic.net", checkUrl="dict.eudic.net"
         ),
+        "jp": Validation(
+            name="Japanese", baseUrl="my.eudic.net", checkUrl="dict.eudic.net"
+        ),
         "fr": Validation(
             name="French", baseUrl="my.frdic.com", checkUrl="www.frdic.com"
         ),

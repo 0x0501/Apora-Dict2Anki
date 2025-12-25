@@ -23,6 +23,7 @@ class PronunciationVariantEnum(Enum):
 class Language(Enum):
     ENGLISH = "en"
     FRENCH = "fr"
+    JAPANESE = "jp"
 
 
 class ContextDifficulty(Enum):
@@ -83,15 +84,23 @@ def safe_convert_config_to_dict(config: ConfigType) -> dict[str, Any]:
 def transform_lang_to_text(lang: Language) -> str:
     if lang == Language.ENGLISH:
         return "English"
-    else:
+    elif lang == Language.FRENCH:
         return "French"
+    elif lang == Language.JAPANESE:
+        return "Japanese"
+    else:
+        return "English"
 
 
 def transform_text_to_lang(text: str) -> Language:
-    if text.lower() == "en":
+    if text.lower() == "en" or text.lower() == "english":
         return Language.ENGLISH
-    else:
+    elif text.lower() == "fr" or text.lower() == "french":
         return Language.FRENCH
+    elif text.lower() == "jp" or text.lower() == "japanese":
+        return Language.JAPANESE
+    else:
+        return Language.ENGLISH
 
 
 def safe_load_empty_config() -> ConfigType:

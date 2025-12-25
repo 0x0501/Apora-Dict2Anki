@@ -63,6 +63,7 @@ from .misc import (
     Language,
     CredentialPlatformEnum,
     PronunciationVariantEnum,
+    transform_text_to_lang,
 )
 from .queryApi import QUERY_APIS
 from .queryApi.base import QueryAPIPlatformEnum, AbstractQueryAPI, QueryAPIReturnType
@@ -221,6 +222,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         if config.language == Language.FRENCH:
             selectedLanguage = 1
+        elif config.language == Language.JAPANESE:
+            selectedLanguage = 2
 
         # basic settings
         self.deckComboBox.setCurrentText(config.deck)
@@ -353,11 +356,8 @@ class Windows(QDialog, mainUI.Ui_Dialog):
             else ContextDifficulty.PROFESSIONAL
         )
 
-        currentSelectedLanguageIndex = self.languageComboBox.currentIndex()
-        languageValue: Language = Language.ENGLISH  # set english as default language
-
-        if currentSelectedLanguageIndex == 1:
-            languageValue = Language.FRENCH
+        currentSelectedLanguageText = self.languageComboBox.currentText()
+        languageValue: Language = transform_text_to_lang(currentSelectedLanguageText)
 
         currentConfig = ConfigType(
             # basic settings
@@ -863,7 +863,7 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         max_workers = 3
         query_delay = 0.5
-        
+
         # 查询线程
         self.progressBar.setMaximum(len(wordList))
         self.queryWorker = QueryWorker(
