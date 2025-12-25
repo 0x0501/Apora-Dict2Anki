@@ -1,4 +1,4 @@
-VERSION = "v1.0.7"
+VERSION = "v1.0.8"
 RELEASE_URL = "https://github.com/0x0501/Apora-Dict2Anki"
 WINDOW_TITLE = f"Apora Dict2Anki {VERSION}"
 MODEL_NAME = "Apora-Dict2Anki"
