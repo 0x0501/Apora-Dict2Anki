@@ -24,7 +24,7 @@
   "termSpeaking": false,
   "contextSpeaking": false,
   "contextDifficulty": "normal",
-  "contextTranslation": "false",
+  "contextTranslation": false,
   "enableContext": true,
   "disableSpeaking": true,
   "GreatBritainSpeaking": false,
