@@ -861,8 +861,15 @@ class Windows(QDialog, mainUI.Ui_Dialog):
 
         # --- rate limit configuration
 
+        currentConfig, _, _ = self.getAndSaveCurrentConfig_returnMetaInfo()
+
         max_workers = 3
         query_delay = 0.5
+
+        # if TTS enabled, set a longer delay
+        if currentConfig.termSpeaking or currentConfig.contextSpeaking:
+            max_workers = 2
+            query_delay = 2
 
         # 查询线程
         self.progressBar.setMaximum(len(wordList))

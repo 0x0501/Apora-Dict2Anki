@@ -7,6 +7,7 @@
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
+
 from . import icons_rc
 from PyQt6.QtCore import (
     QCoreApplication,
@@ -73,11 +74,18 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName("Dialog")
-        Dialog.resize(595, 698)
+        Dialog.resize(613, 725)
         self.main_layout = QVBoxLayout(Dialog)
         self.main_layout.setObjectName("main_layout")
         self.tabWidget = QTabWidget(Dialog)
         self.tabWidget.setObjectName("tabWidget")
+        sizePolicy = QSizePolicy(
+            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
+        )
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tabWidget.sizePolicy().hasHeightForWidth())
+        self.tabWidget.setSizePolicy(sizePolicy)
         self.tabWidget.setAutoFillBackground(False)
         self.mainTab = QWidget()
         self.mainTab.setObjectName("mainTab")
@@ -87,27 +95,27 @@ class Ui_Dialog(object):
         self.dictionaryLayout.setObjectName("dictionaryLayout")
         self.dictionaryLabel = QLabel(self.mainTab)
         self.dictionaryLabel.setObjectName("dictionaryLabel")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(
             self.dictionaryLabel.sizePolicy().hasHeightForWidth()
         )
-        self.dictionaryLabel.setSizePolicy(sizePolicy)
+        self.dictionaryLabel.setSizePolicy(sizePolicy1)
 
         self.dictionaryLayout.addWidget(self.dictionaryLabel)
 
         self.dictionaryComboBox = QComboBox(self.mainTab)
         self.dictionaryComboBox.setObjectName("dictionaryComboBox")
-        sizePolicy1 = QSizePolicy(
+        sizePolicy2 = QSizePolicy(
             QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed
         )
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(
             self.dictionaryComboBox.sizePolicy().hasHeightForWidth()
         )
-        self.dictionaryComboBox.setSizePolicy(sizePolicy1)
+        self.dictionaryComboBox.setSizePolicy(sizePolicy2)
 
         self.dictionaryLayout.addWidget(self.dictionaryComboBox)
 
@@ -122,17 +130,17 @@ class Ui_Dialog(object):
         self.deckLayout.setObjectName("deckLayout")
         self.deckLabel = QLabel(self.mainTab)
         self.deckLabel.setObjectName("deckLabel")
-        sizePolicy.setHeightForWidth(self.deckLabel.sizePolicy().hasHeightForWidth())
-        self.deckLabel.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.deckLabel.sizePolicy().hasHeightForWidth())
+        self.deckLabel.setSizePolicy(sizePolicy1)
 
         self.deckLayout.addWidget(self.deckLabel)
 
         self.deckComboBox = QComboBox(self.mainTab)
         self.deckComboBox.setObjectName("deckComboBox")
-        sizePolicy1.setHeightForWidth(
+        sizePolicy2.setHeightForWidth(
             self.deckComboBox.sizePolicy().hasHeightForWidth()
         )
-        self.deckComboBox.setSizePolicy(sizePolicy1)
+        self.deckComboBox.setSizePolicy(sizePolicy2)
         self.deckComboBox.setEditable(True)
 
         self.deckLayout.addWidget(self.deckComboBox)
@@ -145,15 +153,15 @@ class Ui_Dialog(object):
         self.apiLayout.setObjectName("apiLayout")
         self.apiLabel = QLabel(self.mainTab)
         self.apiLabel.setObjectName("apiLabel")
-        sizePolicy.setHeightForWidth(self.apiLabel.sizePolicy().hasHeightForWidth())
-        self.apiLabel.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.apiLabel.sizePolicy().hasHeightForWidth())
+        self.apiLabel.setSizePolicy(sizePolicy1)
 
         self.apiLayout.addWidget(self.apiLabel)
 
         self.apiComboBox = QComboBox(self.mainTab)
         self.apiComboBox.setObjectName("apiComboBox")
-        sizePolicy1.setHeightForWidth(self.apiComboBox.sizePolicy().hasHeightForWidth())
-        self.apiComboBox.setSizePolicy(sizePolicy1)
+        sizePolicy2.setHeightForWidth(self.apiComboBox.sizePolicy().hasHeightForWidth())
+        self.apiComboBox.setSizePolicy(sizePolicy2)
         self.apiComboBox.setEditable(False)
 
         self.apiLayout.addWidget(self.apiComboBox)
@@ -164,10 +172,10 @@ class Ui_Dialog(object):
         self.languageLayout.setObjectName("languageLayout")
         self.languageLabel = QLabel(self.mainTab)
         self.languageLabel.setObjectName("languageLabel")
-        sizePolicy.setHeightForWidth(
+        sizePolicy1.setHeightForWidth(
             self.languageLabel.sizePolicy().hasHeightForWidth()
         )
-        self.languageLabel.setSizePolicy(sizePolicy)
+        self.languageLabel.setSizePolicy(sizePolicy1)
 
         self.languageLayout.addWidget(self.languageLabel)
 
@@ -244,16 +252,123 @@ class Ui_Dialog(object):
         self.settingTab.setObjectName("settingTab")
         self.gridLayout_2 = QGridLayout(self.settingTab)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.cardConfigGroupBox = QGroupBox(self.settingTab)
+        self.cardConfigGroupBox.setObjectName("cardConfigGroupBox")
+        sizePolicy.setHeightForWidth(
+            self.cardConfigGroupBox.sizePolicy().hasHeightForWidth()
+        )
+        self.cardConfigGroupBox.setSizePolicy(sizePolicy)
+        self.gridLayout_6 = QGridLayout(self.cardConfigGroupBox)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.enableTermHighlight = QCheckBox(self.cardConfigGroupBox)
+        self.enableTermHighlight.setObjectName("enableTermHighlight")
+
+        self.gridLayout_6.addWidget(self.enableTermHighlight, 1, 0, 1, 1)
+
+        self.USSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingVariantRadioButtonGroup = QButtonGroup(Dialog)
+        self.SpeakingVariantRadioButtonGroup.setObjectName(
+            "SpeakingVariantRadioButtonGroup"
+        )
+        self.SpeakingVariantRadioButtonGroup.addButton(self.USSpeakingRadioButton)
+        self.USSpeakingRadioButton.setObjectName("USSpeakingRadioButton")
+        self.USSpeakingRadioButton.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.USSpeakingRadioButton, 2, 0, 1, 1)
+
+        self.label_4 = QLabel(self.cardConfigGroupBox)
+        self.label_4.setObjectName("label_4")
+
+        self.gridLayout_6.addWidget(self.label_4, 3, 0, 1, 1)
+
+        self.enableContextCheckBox = QCheckBox(self.cardConfigGroupBox)
+        self.enableContextCheckBox.setObjectName("enableContextCheckBox")
+        self.enableContextCheckBox.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.enableContextCheckBox, 0, 0, 1, 1)
+
+        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
+        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
+        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
+        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
+        self.disableSpeakingRadioButton.setEnabled(True)
+
+        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 1, 1, 1, 1)
+
+        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
+        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
+        self.termSpeakingRadioButton.setChecked(False)
+
+        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 1, 3, 1, 1)
+
+        self.enableChineseCheckBox = QCheckBox(self.cardConfigGroupBox)
+        self.enableChineseCheckBox.setObjectName("enableChineseCheckBox")
+
+        self.gridLayout_6.addWidget(self.enableChineseCheckBox, 0, 1, 1, 1)
+
+        self.contextTranslation = QCheckBox(self.cardConfigGroupBox)
+        self.contextTranslation.setObjectName("contextTranslation")
+
+        self.gridLayout_6.addWidget(self.contextTranslation, 3, 3, 1, 1)
+
+        self.GBSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingVariantRadioButtonGroup.addButton(self.GBSpeakingRadioButton)
+        self.GBSpeakingRadioButton.setObjectName("GBSpeakingRadioButton")
+        self.GBSpeakingRadioButton.setChecked(False)
+
+        self.gridLayout_6.addWidget(self.GBSpeakingRadioButton, 2, 1, 1, 1)
+
+        self.enableAddPartOfSpeechToTag = QCheckBox(self.cardConfigGroupBox)
+        self.enableAddPartOfSpeechToTag.setObjectName("enableAddPartOfSpeechToTag")
+
+        self.gridLayout_6.addWidget(self.enableAddPartOfSpeechToTag, 0, 3, 1, 1)
+
+        self.contextDifficultyComboBox = QComboBox(self.cardConfigGroupBox)
+        self.contextDifficultyComboBox.addItem("")
+        self.contextDifficultyComboBox.addItem("")
+        self.contextDifficultyComboBox.addItem("")
+        self.contextDifficultyComboBox.setObjectName("contextDifficultyComboBox")
+        sizePolicy3 = QSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed
+        )
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(
+            self.contextDifficultyComboBox.sizePolicy().hasHeightForWidth()
+        )
+        self.contextDifficultyComboBox.setSizePolicy(sizePolicy3)
+        self.contextDifficultyComboBox.setFrame(True)
+
+        self.gridLayout_6.addWidget(self.contextDifficultyComboBox, 3, 1, 1, 1)
+
+        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
+        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
+        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
+        self.contextSpeakingRadioButton.setChecked(True)
+
+        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 2, 3, 1, 1)
+
+        self.cardSettingDescription = QTextBrowser(self.cardConfigGroupBox)
+        self.cardSettingDescription.setObjectName("cardSettingDescription")
+        self.cardSettingDescription.setMinimumSize(QSize(0, 45))
+        self.cardSettingDescription.setMaximumSize(QSize(16777215, 50))
+
+        self.gridLayout_6.addWidget(self.cardSettingDescription, 4, 0, 1, 4)
+
+        self.gridLayout_2.addWidget(self.cardConfigGroupBox, 4, 0, 1, 2)
+
         self.credentialGroupBox = QGroupBox(self.settingTab)
         self.credentialGroupBox.setObjectName("credentialGroupBox")
         self.gridLayout_3 = QGridLayout(self.credentialGroupBox)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.currentDictionaryLabel = QLabel(self.credentialGroupBox)
         self.currentDictionaryLabel.setObjectName("currentDictionaryLabel")
-        sizePolicy1.setHeightForWidth(
+        sizePolicy2.setHeightForWidth(
             self.currentDictionaryLabel.sizePolicy().hasHeightForWidth()
         )
-        self.currentDictionaryLabel.setSizePolicy(sizePolicy1)
+        self.currentDictionaryLabel.setSizePolicy(sizePolicy2)
 
         self.gridLayout_3.addWidget(self.currentDictionaryLabel, 0, 0, 1, 2)
 
@@ -279,8 +394,8 @@ class Ui_Dialog(object):
 
         self.cookieLabel = QLabel(self.credentialGroupBox)
         self.cookieLabel.setObjectName("cookieLabel")
-        sizePolicy.setHeightForWidth(self.cookieLabel.sizePolicy().hasHeightForWidth())
-        self.cookieLabel.setSizePolicy(sizePolicy)
+        sizePolicy1.setHeightForWidth(self.cookieLabel.sizePolicy().hasHeightForWidth())
+        self.cookieLabel.setSizePolicy(sizePolicy1)
         self.cookieLabel.setAlignment(
             Qt.AlignmentFlag.AlignLeading
             | Qt.AlignmentFlag.AlignLeft
@@ -315,10 +430,10 @@ class Ui_Dialog(object):
         self.gridLayout_10.setObjectName("gridLayout_10")
         self.AporaTokenLabel = QLabel(self.aporaCredentialGroupBox)
         self.AporaTokenLabel.setObjectName("AporaTokenLabel")
-        sizePolicy.setHeightForWidth(
+        sizePolicy1.setHeightForWidth(
             self.AporaTokenLabel.sizePolicy().hasHeightForWidth()
         )
-        self.AporaTokenLabel.setSizePolicy(sizePolicy)
+        self.AporaTokenLabel.setSizePolicy(sizePolicy1)
         self.AporaTokenLabel.setAlignment(
             Qt.AlignmentFlag.AlignLeading
             | Qt.AlignmentFlag.AlignLeft
@@ -343,112 +458,6 @@ class Ui_Dialog(object):
         self.gridLayout_10.addWidget(self.AporaAPITokenDescription, 1, 0, 1, 3)
 
         self.gridLayout_2.addWidget(self.aporaCredentialGroupBox, 1, 0, 1, 2)
-
-        self.cardConfigGroupBox = QGroupBox(self.settingTab)
-        self.cardConfigGroupBox.setObjectName("cardConfigGroupBox")
-        self.gridLayout_6 = QGridLayout(self.cardConfigGroupBox)
-        self.gridLayout_6.setObjectName("gridLayout_6")
-        self.enableAddPartOfSpeechToTag = QCheckBox(self.cardConfigGroupBox)
-        self.enableAddPartOfSpeechToTag.setObjectName("enableAddPartOfSpeechToTag")
-
-        self.gridLayout_6.addWidget(self.enableAddPartOfSpeechToTag, 0, 3, 1, 1)
-
-        self.ContextDifficultyLayout = QHBoxLayout()
-        self.ContextDifficultyLayout.setObjectName("ContextDifficultyLayout")
-        self.label_4 = QLabel(self.cardConfigGroupBox)
-        self.label_4.setObjectName("label_4")
-
-        self.ContextDifficultyLayout.addWidget(self.label_4)
-
-        self.contextDifficultyComboBox = QComboBox(self.cardConfigGroupBox)
-        self.contextDifficultyComboBox.addItem("")
-        self.contextDifficultyComboBox.addItem("")
-        self.contextDifficultyComboBox.addItem("")
-        self.contextDifficultyComboBox.setObjectName("contextDifficultyComboBox")
-        sizePolicy2 = QSizePolicy(
-            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed
-        )
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(
-            self.contextDifficultyComboBox.sizePolicy().hasHeightForWidth()
-        )
-        self.contextDifficultyComboBox.setSizePolicy(sizePolicy2)
-        self.contextDifficultyComboBox.setFrame(True)
-
-        self.ContextDifficultyLayout.addWidget(self.contextDifficultyComboBox)
-
-        self.gridLayout_6.addLayout(self.ContextDifficultyLayout, 5, 0, 1, 5)
-
-        self.enableContextCheckBox = QCheckBox(self.cardConfigGroupBox)
-        self.enableContextCheckBox.setObjectName("enableContextCheckBox")
-        self.enableContextCheckBox.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.enableContextCheckBox, 0, 0, 1, 1)
-
-        self.contextSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup = QButtonGroup(Dialog)
-        self.SpeakingRadioButtonGroup.setObjectName("SpeakingRadioButtonGroup")
-        self.SpeakingRadioButtonGroup.addButton(self.contextSpeakingRadioButton)
-        self.contextSpeakingRadioButton.setObjectName("contextSpeakingRadioButton")
-        self.contextSpeakingRadioButton.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.contextSpeakingRadioButton, 2, 3, 1, 1)
-
-        self.enableChineseCheckBox = QCheckBox(self.cardConfigGroupBox)
-        self.enableChineseCheckBox.setObjectName("enableChineseCheckBox")
-
-        self.gridLayout_6.addWidget(self.enableChineseCheckBox, 0, 1, 1, 1)
-
-        self.USSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingVariantRadioButtonGroup = QButtonGroup(Dialog)
-        self.SpeakingVariantRadioButtonGroup.setObjectName(
-            "SpeakingVariantRadioButtonGroup"
-        )
-        self.SpeakingVariantRadioButtonGroup.addButton(self.USSpeakingRadioButton)
-        self.USSpeakingRadioButton.setObjectName("USSpeakingRadioButton")
-        self.USSpeakingRadioButton.setChecked(True)
-
-        self.gridLayout_6.addWidget(self.USSpeakingRadioButton, 2, 0, 1, 1)
-
-        self.GBSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingVariantRadioButtonGroup.addButton(self.GBSpeakingRadioButton)
-        self.GBSpeakingRadioButton.setObjectName("GBSpeakingRadioButton")
-        self.GBSpeakingRadioButton.setChecked(False)
-
-        self.gridLayout_6.addWidget(self.GBSpeakingRadioButton, 2, 1, 1, 1)
-
-        self.disableSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.disableSpeakingRadioButton)
-        self.disableSpeakingRadioButton.setObjectName("disableSpeakingRadioButton")
-        self.disableSpeakingRadioButton.setEnabled(True)
-
-        self.gridLayout_6.addWidget(self.disableSpeakingRadioButton, 1, 1, 1, 1)
-
-        self.termSpeakingRadioButton = QRadioButton(self.cardConfigGroupBox)
-        self.SpeakingRadioButtonGroup.addButton(self.termSpeakingRadioButton)
-        self.termSpeakingRadioButton.setObjectName("termSpeakingRadioButton")
-        self.termSpeakingRadioButton.setChecked(False)
-
-        self.gridLayout_6.addWidget(self.termSpeakingRadioButton, 1, 3, 1, 1)
-
-        self.cardSettingDescription = QTextBrowser(self.cardConfigGroupBox)
-        self.cardSettingDescription.setObjectName("cardSettingDescription")
-        self.cardSettingDescription.setMaximumSize(QSize(16777215, 30))
-
-        self.gridLayout_6.addWidget(self.cardSettingDescription, 8, 0, 1, 5)
-
-        self.enableTermHighlight = QCheckBox(self.cardConfigGroupBox)
-        self.enableTermHighlight.setObjectName("enableTermHighlight")
-
-        self.gridLayout_6.addWidget(self.enableTermHighlight, 1, 0, 1, 1)
-
-        self.contextTranslation = QCheckBox(self.cardConfigGroupBox)
-        self.contextTranslation.setObjectName("contextTranslation")
-
-        self.gridLayout_6.addWidget(self.contextTranslation, 3, 0, 1, 1)
-
-        self.gridLayout_2.addWidget(self.cardConfigGroupBox, 4, 0, 1, 2)
 
         self.tabWidget.addTab(self.settingTab, "")
         self.utilitiesTab = QWidget()
@@ -586,6 +595,94 @@ class Ui_Dialog(object):
             self.tabWidget.indexOf(self.mainTab),
             QCoreApplication.translate("Dialog", "\u540c\u6b65", None),
         )
+        self.cardConfigGroupBox.setTitle(
+            QCoreApplication.translate("Dialog", "\u5361\u7247\u8bbe\u7f6e", None)
+        )
+        self.enableTermHighlight.setText(
+            QCoreApplication.translate(
+                "Dialog", "Context\u4e2d\u9ad8\u4eae\u5355\u8bcd/\u77ed\u8bed", None
+            )
+        )
+        self.USSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u7f8e\u5f0f\u53d1\u97f3\uff08US\uff09", None
+            )
+        )
+        self.label_4.setText(
+            QCoreApplication.translate(
+                "Dialog", "Context\u4e0a\u4e0b\u6587\u96be\u5ea6", None
+            )
+        )
+        self.enableContextCheckBox.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u5355\u8bcd\u4e0a\u4e0b\u6587\uff08Context\uff09", None
+            )
+        )
+        self.disableSpeakingRadioButton.setText(
+            QCoreApplication.translate("Dialog", "\u65e0\u53d1\u97f3", None)
+        )
+        self.termSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u5355\u8bcd\u53d1\u97f3\uff08\u4e0d\u63a8\u8350\uff09", None
+            )
+        )
+        self.enableChineseCheckBox.setText(
+            QCoreApplication.translate("Dialog", "\u4e2d\u6587\u91ca\u4e49", None)
+        )
+        self.contextTranslation.setText(
+            QCoreApplication.translate(
+                "Dialog",
+                "\u4e0a\u4e0b\u6587\u7ffb\u8bd1\uff08Context Translation\uff09",
+                None,
+            )
+        )
+        self.GBSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u82f1\u5f0f\u53d1\u97f3\uff08GB\uff09", None
+            )
+        )
+        self.enableAddPartOfSpeechToTag.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u6dfb\u52a0\u8bcd\u6027\u5230Anki\u6807\u7b7e", None
+            )
+        )
+        self.contextDifficultyComboBox.setItemText(
+            0,
+            QCoreApplication.translate("Dialog", "\u7b80\u5355\uff08Easy\uff09", None),
+        )
+        self.contextDifficultyComboBox.setItemText(
+            1,
+            QCoreApplication.translate(
+                "Dialog", "\u4e2d\u7b49\uff08Normal\uff09", None
+            ),
+        )
+        self.contextDifficultyComboBox.setItemText(
+            2,
+            QCoreApplication.translate(
+                "Dialog", "\u4e13\u4e1a\uff08Professional\uff09", None
+            ),
+        )
+
+        self.contextSpeakingRadioButton.setText(
+            QCoreApplication.translate(
+                "Dialog", "\u53e5\u5b50\u53d1\u97f3\uff08\u63a8\u8350\uff09", None
+            )
+        )
+        self.cardSettingDescription.setHtml(
+            QCoreApplication.translate(
+                "Dialog",
+                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
+                '<html><head><meta name="qrichtext" content="1" /><meta charset="utf-8" /><style type="text/css">\n'
+                "p, li { white-space: pre-wrap; }\n"
+                "hr { height: 1px; border-width: 0; }\n"
+                'li.unchecked::marker { content: "\\2610"; }\n'
+                'li.checked::marker { content: "\\2612"; }\n'
+                "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+                '<p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">\u6ce8\u610f\uff1a\u5355\u8bcd\u53d1\u97f3\uff08Term Speaking\uff09\u548c\u53e5\u5b50\u53d1\u97f3\uff08Context Speaking\uff09\u4e0d\u80fd\u540c\u65f6\u5f00\u542f\u3002\u5efa\u8bae<span style=" font-weight:700;">\u4f18\u5148\u4f7f\u7528\u53e5\u5b50\u53d1\u97f3</span>\uff0cTTS\u6a21\u578b\u5728\u8f93\u5165\u8bcd\u6c47\u8f83\u5c11\u65f6\u53ef\u80fd\u51fa\u73b0\u5f02\u5e38\u3002'
+                "</p></body></html>",
+                None,
+            )
+        )
         self.credentialGroupBox.setTitle(
             QCoreApplication.translate(
                 "Dialog", "\u8bcd\u5178\u8d26\u53f7\u8bbe\u7f6e", None
@@ -631,91 +728,8 @@ class Ui_Dialog(object):
                 'li.unchecked::marker { content: "\\2610"; }\n'
                 'li.checked::marker { content: "\\2612"; }\n'
                 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Token\u9700\u8981\u4eceApora\u5b98\u7f51<a href="https://apora.sumku.cc"><span style=" text-decoration: underline; color:#134958;">https://apora.sumku.cc</span></a>\u83b7\u53d6\u3002\u6b65\u9aa4\uff1a\u767b\u9646Apora\u8d26\u53f7\u3002\u8fdb\u5165\u7ba1\u7406\u540e\u53f0\uff0c\u70b9\u51fbToken\u6309\u94ae\u751f\u6210\u3002\u8bf7\u4fdd\u7ba1\u597d\u60a8\u7684Token\uff0c\u4e0d\u8981\u6cc4\u9732'
-                "\u7ed9\u4ed6\u4eba\u3002</p></body></html>",
-                None,
-            )
-        )
-        self.cardConfigGroupBox.setTitle(
-            QCoreApplication.translate("Dialog", "\u5361\u7247\u8bbe\u7f6e", None)
-        )
-        self.enableAddPartOfSpeechToTag.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u6dfb\u52a0\u8bcd\u6027\u5230Anki\u6807\u7b7e", None
-            )
-        )
-        self.label_4.setText(
-            QCoreApplication.translate(
-                "Dialog", "Context\u4e0a\u4e0b\u6587\u96be\u5ea6", None
-            )
-        )
-        self.contextDifficultyComboBox.setItemText(
-            0,
-            QCoreApplication.translate("Dialog", "\u7b80\u5355\uff08Easy\uff09", None),
-        )
-        self.contextDifficultyComboBox.setItemText(
-            1,
-            QCoreApplication.translate(
-                "Dialog", "\u4e2d\u7b49\uff08Normal\uff09", None
-            ),
-        )
-        self.contextDifficultyComboBox.setItemText(
-            2,
-            QCoreApplication.translate(
-                "Dialog", "\u4e13\u4e1a\uff08Professional\uff09", None
-            ),
-        )
-
-        self.enableContextCheckBox.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u5355\u8bcd\u4e0a\u4e0b\u6587\uff08Context\uff09", None
-            )
-        )
-        self.contextSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u53e5\u5b50\u53d1\u97f3", None)
-        )
-        self.enableChineseCheckBox.setText(
-            QCoreApplication.translate("Dialog", "\u4e2d\u6587\u91ca\u4e49", None)
-        )
-        self.USSpeakingRadioButton.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u7f8e\u5f0f\u53d1\u97f3\uff08US\uff09", None
-            )
-        )
-        self.GBSpeakingRadioButton.setText(
-            QCoreApplication.translate(
-                "Dialog", "\u82f1\u5f0f\u53d1\u97f3\uff08GB\uff09", None
-            )
-        )
-        self.disableSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u65e0\u53d1\u97f3", None)
-        )
-        self.termSpeakingRadioButton.setText(
-            QCoreApplication.translate("Dialog", "\u5355\u8bcd\u53d1\u97f3", None)
-        )
-        self.cardSettingDescription.setHtml(
-            QCoreApplication.translate(
-                "Dialog",
-                '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">\n'
-                '<html><head><meta name="qrichtext" content="1" /><meta charset="utf-8" /><style type="text/css">\n'
-                "p, li { white-space: pre-wrap; }\n"
-                "hr { height: 1px; border-width: 0; }\n"
-                'li.unchecked::marker { content: "\\2610"; }\n'
-                'li.checked::marker { content: "\\2612"; }\n'
-                "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-                '<p align="justify" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">\u6ce8\u610f\uff1a\u5355\u8bcd\u53d1\u97f3\uff08Term Speaking\uff09\u548c\u53e5\u5b50\u53d1\u97f3\uff08Context Speaking\uff09\u4e0d\u80fd\u540c\u65f6\u5f00\u542f\u3002</p></body></html>',
-                None,
-            )
-        )
-        self.enableTermHighlight.setText(
-            QCoreApplication.translate(
-                "Dialog", "Context\u4e2d\u9ad8\u4eae\u5355\u8bcd/\u77ed\u8bed", None
-            )
-        )
-        self.contextTranslation.setText(
-            QCoreApplication.translate(
-                "Dialog",
-                "\u4e0a\u4e0b\u6587\u7ffb\u8bd1\uff08Context Translation\uff09",
+                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Token\u9700\u8981\u4eceApora\u5b98\u7f51<a href="https://apora.sumku.cc"><span style=" text-decoration: underline; color:#134958;">https://apora.sumku.cc</span></a>\u83b7\u53d6\u3002\u6b65\u9aa4\uff1a\u767b\u9646Apora\u8d26\u53f7\u3002\u8fdb\u5165\u7ba1\u7406\u540e\u53f0\uff0c\u5728\u8d26\u53f7\u914d\u7f6e\u9875\u9762\u70b9\u51fb\u751f\u6210Token\uff0c\u8bf7\u4fdd\u7ba1\u597d\u60a8\u7684'
+                "Token\uff0c\u4e0d\u8981\u6cc4\u9732\u7ed9\u4ed6\u4eba\u3002</p></body></html>",
                 None,
             )
         )
