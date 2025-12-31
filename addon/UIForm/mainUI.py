@@ -728,8 +728,8 @@ class Ui_Dialog(object):
                 'li.unchecked::marker { content: "\\2610"; }\n'
                 'li.checked::marker { content: "\\2612"; }\n'
                 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Token\u9700\u8981\u4eceApora\u5b98\u7f51<a href="https://apora.sumku.cc"><span style=" text-decoration: underline; color:#134958;">https://apora.sumku.cc</span></a>\u83b7\u53d6\u3002\u6b65\u9aa4\uff1a\u767b\u9646Apora\u8d26\u53f7\u3002\u8fdb\u5165\u7ba1\u7406\u540e\u53f0\uff0c\u70b9\u51fbToken\u6309\u94ae\u751f\u6210\u3002\u8bf7\u4fdd\u7ba1\u597d\u60a8\u7684Token\uff0c\u4e0d\u8981\u6cc4\u9732'
-                "\u7ed9\u4ed6\u4eba\u3002</p></body></html>",
+                '<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Token\u9700\u8981\u4eceApora\u5b98\u7f51<a href="https://apora.sumku.cc"><span style=" text-decoration: underline; color:#134958;">https://apora.sumku.cc</span></a>\u83b7\u53d6\u3002\u6b65\u9aa4\uff1a\u767b\u9646Apora\u8d26\u53f7\u3002\u8fdb\u5165\u7ba1\u7406\u540e\u53f0\uff0c\u5728\u8d26\u53f7\u914d\u7f6e\u9875\u9762\u70b9\u51fb\u751f\u6210Token\uff0c\u8bf7\u4fdd\u7ba1\u597d\u60a8\u7684'
+                "Token\uff0c\u4e0d\u8981\u6cc4\u9732\u7ed9\u4ed6\u4eba\u3002</p></body></html>",
                 None,
             )
         )
